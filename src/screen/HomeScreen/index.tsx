@@ -108,25 +108,25 @@ const HomeScreen = () => {
       flex: 1,
       editable: false,
       sortable: false,
-      renderCell: ({ row }) => {
-        return (
-          <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-            <Box
-              p={1}
-            // sx={{  borderRadius: "10px", width: 100 }}
-            // onClick={() => {
-            //   const body = {
-            //     room: row?.id,
-            //     roomName: row?.name,
-            //   };
-            //   navigate(`/call?${queryString.stringify(body)}`);
-            // }}
-            >
-              {row.description}
-            </Box>
-          </Box>
-        );
-      },
+      // renderCell: ({ row }) => {
+      //   return (
+      //     <Box style={{ display: "flex", flexDirection: "row", alignItems: "center",  }}>
+      //       <Box
+      //         p={1}
+      //       // sx={{  borderRadius: "10px", width: 100 }}
+      //       // onClick={() => {
+      //       //   const body = {
+      //       //     room: row?.id,
+      //       //     roomName: row?.name,
+      //       //   };
+      //       //   navigate(`/call?${queryString.stringify(body)}`);
+      //       // }}
+      //       >
+      //         {row.description}
+      //       </Box>
+      //     </Box>
+      //   );
+      // },
     },
     {
       field: "decentralize",
