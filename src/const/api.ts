@@ -16,3 +16,4 @@ export const ADD_DOCUMENT_NOTE = `${ROOT_URL}/meeting-document-note`
 
 export const ADD_MEETING_NOTE = `${ROOT_URL}/meeting-note`
 export const GET_LIST_MEETING_NOTE = `${ROOT_URL}/meeting-note`
+export const DELETE_MEET = `${ROOT_URL}/meeting`
