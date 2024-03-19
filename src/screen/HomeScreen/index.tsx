@@ -63,6 +63,27 @@ const HomeScreen = () => {
       showError(error);
     }
   };
+  const handleComplete = async (row: any) => {
+    // const newValue = rows?.map((e: any) => {
+    //   if (e?.id === row.id) {
+    //     return { ...e, status: 0 };
+    //   }
+    //   return e;
+    // });
+    // setRows(newValue);
+
+    const body = {
+      status: "FINISHED",
+    };
+    try {
+      const response = await MeetingServices.updateMeeting(row.id, body);
+      if (response?.data) {
+        refetch();
+      }
+    } catch (error: any) {
+      showError(error);
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -186,8 +207,23 @@ const HomeScreen = () => {
       sortable: false,
       width: 300,
       renderCell: ({ row }) => {
-        const isDisaled = row.status !== "WAITING";
-        if (isDisaled) return <Box />;
+        const isDisabled = row.status === "FINISHED";
+        if (isDisabled)
+          return (
+            <Box
+              p={1}
+              sx={{ backgroundColor: "#6c757d", color: "white", borderRadius: "10px", width: 100 }}
+              // onClick={() => {
+              //   const body = {
+              //     room: row?.id,
+              //     roomName: row?.name,
+              //   };
+              //   navigate(`/call?${queryString.stringify(body)}`);
+              // }}
+            >
+              Meeting note
+            </Box>
+          );
         return (
           <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             {/* {`${row?.creatorId}` === `${userInfo.id}` ? (
@@ -197,7 +233,6 @@ const HomeScreen = () => {
             ) : (
               <Box sx={{ width: "24px", height: "24px" }} m={1} />
             )} */}
-
             <Box
               p={1}
               sx={{ backgroundColor: "#17a2b8", color: "white", borderRadius: "10px", width: 100 }}
@@ -209,26 +244,10 @@ const HomeScreen = () => {
                 navigate(`/call?${queryString.stringify(body)}`);
               }}
             >
-              {/* <CallIcon /> */}
               Tham gia
             </Box>
-
             {`${row?.creatorId}` === `${userInfo.id}` ? (
-              <Box
-                p={1}
-                ml={1}
-                sx={{ backgroundColor: "#0d801c", color: "white", borderRadius: "10px", width: 100 }}
-                onClick={() => {
-                  const newValue = rows?.map((e: any) => {
-                    if (e?.id === row.id) {
-                      return { ...e, status: 0 };
-                    }
-                    return e;
-                  });
-                  setRows(newValue);
-                }}
-              >
-                {/* <Check /> */}
+              <Box p={1} ml={1} sx={{ backgroundColor: "#0d801c", color: "white", borderRadius: "10px", width: 100 }} onClick={() => handleComplete(row)}>
                 Hoàn thành
               </Box>
             ) : null}
@@ -242,7 +261,6 @@ const HomeScreen = () => {
     return data?.data || [];
   }, [data?.data]);
 
-  console.log(dataRows, "dataRowsdataRows");
   const onAdd = async (value: any) => {
     const newValue = {
       id: rows?.length + 1,
@@ -263,13 +281,11 @@ const HomeScreen = () => {
       memberType: "MEMBER",
     }));
     const members = secretary.concat(assigned);
-
     const body = {
       title: value?.name,
       members,
       description: value?.description,
     };
-
     try {
       const response = await MeetingServices.createMeeting(body);
       if (response?.status === 201 && response?.data) {

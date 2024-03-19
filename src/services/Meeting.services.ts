@@ -14,6 +14,9 @@ class MeetingServices {
   deleteMeeting(id: number){
     return httpServices.delete(`${DELETE_MEET}${id}`)
   }
+  updateMeeting(id: number, body: any){
+    return httpServices.patch(`${CREATE_LIST_MEET}/${id}`, body)
+  }
 
 }
 
