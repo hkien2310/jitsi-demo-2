@@ -1,10 +1,10 @@
 import React from 'react'
 import AuthServices from '../../../services/Auth.services'
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, Button } from '@mui/material'
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import TextField from '@mui/material/TextField';
 import SendIcon from '@mui/icons-material/Send';
-import { uploadFile } from '../../../helper/function';
+import { downloadFile, uploadFile } from '../../../helper/function';
 import useGetListDocument from '../../../hooks/useGetListDocument';
 import useFiltersHandler from '../../../hooks/useFilters';
 import { ROOT_URL_ASSET } from '../../../const/api';
@@ -15,7 +15,7 @@ import DocumentServices from '../../../services/Document.services';
 import { IAddDocumentNote } from '../../../interface/document';
 import useGetListMeetingNote from '../../../hooks/useGetListMeetingNote';
 import MeetingServices from '../../../services/Meeting.services';
-
+import DownloadIcon from '@mui/icons-material/Download';
 interface IFile {
     url: string
     name: string
@@ -31,6 +31,7 @@ const DocumentShow = (props: IProps) => {
     const [openDialog, setOpenDialog] = React.useState(false)
     const [meetingDocumentId, setMeetingDocumentId] = React.useState<any>()
     const [meetingDocumentName, setMeetingDocumentName] = React.useState<any>()
+    const [linkFile, setLinkFile] = React.useState<any>('')
 
     const [noteMemberTemp, setNoteMemberTemp] = React.useState<string>('');
     const [noteWriteTemp, setNoteWriterTemp] = React.useState<string>('');
@@ -93,6 +94,7 @@ const DocumentShow = (props: IProps) => {
                                 setOpenDialog(true)
                                 setMeetingDocumentId(e?.id)
                                 setMeetingDocumentName(e?.fileName)
+                                setLinkFile(e?.filePath)
                                 refetch({ ...filterDocumentNote, meetingDocumentId: e?.id })
                             }}>
                             <Box pr={1}>
@@ -131,6 +133,16 @@ const DocumentShow = (props: IProps) => {
                             <Box p={2} onClick={handleAdd}>
                                 <SendIcon />
                             </Box>
+                        </Box>
+                        <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                        <Button 
+                            variant='contained'
+                            // sx={{backgroundColor: '#1e703b', color: 'white', fontWeight: 'bold'}} 
+                            onClick={() => downloadFile(`${ROOT_URL_ASSET}${linkFile}`, meetingDocumentName)}
+                        >
+                            Tải xuống
+                        </Button>
+
                         </Box>
 
                     </Box>
