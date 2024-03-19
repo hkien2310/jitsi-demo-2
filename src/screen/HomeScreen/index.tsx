@@ -122,6 +122,15 @@ const HomeScreen = () => {
             <Box sx={{ width: '24px', height: '24px' }} m={1} />
           }
 
+<Box p={1} onClick={() => {
+                const body = {
+                  room: row?.id,
+                  roomName: row?.name,
+                }
+                navigate(`/call?${queryString.stringify(body)}`)
+              }}>
+                <CallIcon />
+              </Box>
           {
             `${row?.creatorId}` === `${userInfo.id}` ?
               <Box p={1} onClick={() => {
@@ -163,8 +172,6 @@ const HomeScreen = () => {
     return data?.data || []
   }, [data?.data])
 
-  console.log(dataRows, 'dataRowsdataRows')
-  
 
   return <NavigationBar>
     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

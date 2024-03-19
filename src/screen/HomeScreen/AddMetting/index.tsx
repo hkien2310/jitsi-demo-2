@@ -33,6 +33,7 @@ const AddMeeting = (props: IProps) => {
             }
         }) || []
     }, [data?.data])
+
     return <Box>
         <Box p={2} sx={{ textAlign: 'center', fontSize: '25px' }}>
             Tạo mới cuộc họp
@@ -68,6 +69,8 @@ const AddMeeting = (props: IProps) => {
                             name={'description'}
                             fullWidth
                             label={"Mô tả phiên họp"}
+                            multiline
+                            rows={3}
                             required
                             variant="standard"
                         />
