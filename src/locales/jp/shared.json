@@ -1,0 +1,22 @@
+{
+  "hello": "こんにちは",
+  "list": "メッセージ",
+  "changeLang": "言語を変更する",
+  "message": "メッセージ",
+  "group": "グループ",
+  "startCall": "通話を開始",
+  "chooseMember": "メンバーを選択",
+  "create": "作成する",
+  "logout": "ログアウト",
+  "login": "ログイン",
+  "vi": "ベトナム語",
+  "en": "英語",
+  "jp": "日本語",
+  "email": "メール",
+  "avatar": "アバター",
+  "wrongPass": "メールアドレスまたはパスワードが正しくありません",
+  "password": "パスワード",
+  "listMember": "メンバーをリストする",
+  "demo": "Jitsiデモ通話",
+  "newNoti": "新しい通知があります!"
+}

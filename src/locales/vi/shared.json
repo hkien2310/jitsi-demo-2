@@ -1,0 +1,22 @@
+{
+  "hello": "Xin chào",
+  "list": "Tin nhắn",
+  "changeLang": "Thay đổi ngôn ngữ",
+  "message": "Tin nhắn",
+  "group": "Nhóm",
+  "startCall": "Bắt đầu cuộc gọi",
+  "chooseMember": "Chọn thành viên",
+  "create": "Tạo",
+  "logout": "Đăng xuất",
+  "login": "Đăng nhập",
+  "vi": "Tiếng Việt",
+  "en": "Tiếng Anh",
+  "jp": "Tiếng Nhật",
+  "email": "Email",
+  "avatar": "Avatar",
+  "wrongPass": "Email hoặc mật khẩu không chính xác",
+  "password": "Mật khẩu",
+  "listMember": "Danh sách thành viên",
+  "demo": "Cuộc gọi Jitsi demo",
+  "newNoti": "Bạn có thông báo mới!"
+}

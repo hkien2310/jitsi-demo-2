@@ -1,24 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useEffect } from 'react';
 import './App.css';
+import LoadingScreen from './component/Loading/Loading';
+import cacheKeys from './const/cachedKeys';
+import MainLayout from './layout/mainLayout';
+import listUser from './mock/listUser.json';
+import { useGet, useSave } from './store/useStores';
+import AuthServices from './services/Auth.services';
+import { Slide, ToastContainer } from "react-toastify";
+
+
+const rowsDemo = [
+  { id: 1, name: 'Họp Daily', status: 1, description: 'Báo cáo hằng ngày' },
+  { id: 2, name: 'Họp Weekly', status: 1, description: 'Báo cáo hằng tuần' },
+  { id: 3, name: 'Họp Quý', status: 1, description: 'Tổng kết quý' },
+  { id: 4, name: 'Họp Team', status: 1, description: 'Team báo cáo' },
+  { id: 5, name: 'Họp Demo Sản phẩm', status: 1, description: 'Demo sản phẩm' },
+  { id: 6, name: 'Họp Chiến Lược', status: 1, description: 'Họp chiến lược' },
+];
 
 function App() {
+  const isLoadingApp = useGet(cacheKeys.LOADING_APP)
+  const isLogged = useGet(cacheKeys.IS_LOGGED)
+  const save = useSave()
+  
+  useEffect(() => {
+    save(cacheKeys.DEMO_LIST, rowsDemo)
+    save(cacheKeys.DEMO_LIST_USER, listUser)
+  }, [save])
+
+  useEffect(() => {
+    const assetToken = AuthServices.getToken()
+    if(assetToken) {
+      save(cacheKeys.IS_LOGGED, true)
+    } else {
+      save(cacheKeys.IS_LOGGED, false)
+    }
+  }, [save])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop
+        // closeButton={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        // toastClassName={classes.eachToast}
+        transition={Slide}
+      />
+      <LoadingScreen isLoading={isLoadingApp || isLogged === undefined} hideScreen={isLogged === undefined}/>
+      <MainLayout />
     </div>
   );
 }

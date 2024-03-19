@@ -1,0 +1,23 @@
+
+{
+  "hello": "Hello",
+  "list": "Message",
+  "changeLang": "Change Language",
+  "message": "Message",
+  "group": "Group",
+  "startCall": "Start Call",
+  "chooseMember": "Choose Member",
+  "create": "Create",
+  "logout": "Logout",
+  "login": "Login",
+  "vi": "Vietnamese",
+  "en": "English",
+  "jp": "Japanese",
+  "email": "Email",
+  "avatar": "Avatar",
+  "wrongPass": "Incorrect email or password",
+  "password": "Password",
+  "listMember": "List Member",
+  "demo": "Jitsi call demo",
+  "newNoti": "You have a new notification!"
+}
