@@ -28,3 +28,37 @@ export interface IResponseMeeting {
 }
 
 export type IResponseListMeeting = AxiosResponse<IResponseMeeting>;
+
+
+// meeting note
+
+export interface IRequestGetListMeetingNote {
+    page?: number
+    perPage?: number
+    sortField?: string
+    sortOrder?: string
+    textSearch?: string
+    meetingId?: any
+}
+
+export interface IMeetingNoteItem {
+    id: string,
+    content: string,
+    creatorId: string,
+    meetingId: string,
+    createdAt: string,
+    updatedAt: string,
+    creator: {
+        id: string,
+        username: string,
+        fullname: string,
+        email: string
+    }
+}
+
+export interface IResponseMeetingNote {
+    data: IMeetingNoteItem[]
+    total: number
+}
+
+export type IResponseListMeetingNote = AxiosResponse<IResponseMeetingNote>;
