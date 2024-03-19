@@ -43,3 +43,28 @@ export const uploadFile = async (props: IUploadFile) => {
         onFailed?.()
     }
 };
+
+
+export const downloadFile = (url: string, filename: string) => {
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to download file');
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+      })
+      .catch(error => {
+        console.error('Error downloading file:', error);
+        alert('Failed to download file');
+      });
+  };
+  
