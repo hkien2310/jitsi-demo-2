@@ -4,4 +4,5 @@ export const REFRESH_TOKEN = `${ROOT_URL}/auth/refresh/`;
 
 export const GET_LIST_MEET = `${ROOT_URL}/meeting`
 export const CREATE_LIST_MEET = `${ROOT_URL}/meeting`
+export const DELETE_MEET = `${ROOT_URL}/meeting`
 export const GET_LIST_USER = `${ROOT_URL}/user`
