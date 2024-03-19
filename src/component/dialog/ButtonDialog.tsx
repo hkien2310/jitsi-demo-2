@@ -44,13 +44,13 @@ export default function ButtonDialog(props: IProps) {
             <Dialog
                 open={open}
                 TransitionComponent={Transition}
-                keepMounted
+                keepMounted={false}
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
                 {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-slide-description">
+                    <DialogContentText id="alert-dialog-slide-description" >
                         {content}
                     </DialogContentText>
                 </DialogContent>
