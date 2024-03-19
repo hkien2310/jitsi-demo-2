@@ -81,7 +81,7 @@ const DocumentShow = (props: IProps) => {
     const renderGeneralNote = () => {
         return <>
             <Box sx={{ fontSize: '20px', fontWeight: 'bold', borderBottom: '1px solid grey' }}>
-                Ghi chú
+                Tài liệu chia sẻ
             </Box>
             <Box sx={{ flex: 1 }}>
                 {listDocument?.data?.map((e, index) => {

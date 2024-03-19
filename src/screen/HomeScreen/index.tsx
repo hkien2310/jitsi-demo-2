@@ -215,6 +215,7 @@ const HomeScreen = () => {
               p={1}
               sx={{ backgroundColor: "#6c757d", color: "white", borderRadius: "10px", width: 125 }}
               onClick={() => {
+                console.log('ádasdasd', noteViewOpen)
                 handleClickOpenDialogViewNote()
                 refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id })
               }}
@@ -308,15 +309,21 @@ const HomeScreen = () => {
 
   const renderListNote = () => {
     return <Box>
-      <Box sx={{fontSize: '20px', fontWeight: 'bold'}}>
+      <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>
         Ghi chú của cuộc họp
       </Box>
       <Box>
-        {dataListMeetingNote?.data?.map((e, index) => {
-          return <Box key={e?.id}>
-            {`${index + 1}. ${e?.content}`}
+        {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ?
+          dataListMeetingNote?.data?.map((e, index) => {
+            return <Box key={e?.id}>
+              {`${index + 1}. ${e?.content}`}
+            </Box>
+          })
+          :
+          <Box>
+            Cuộc họp này chưa có ghi chú
           </Box>
-        })}
+        }
       </Box>
     </Box>
   }
@@ -324,24 +331,26 @@ const HomeScreen = () => {
   return (
     <NavigationBar>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Dialog
-          open={noteViewOpen}
-          TransitionComponent={Transition}
-          keepMounted={false}
-          onClose={handleCloseDialogViewNote}
-          aria-describedby="alert-dialog-slide-description"
-        >
-          {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
-          <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description" >
-              {renderListNote()}
-            </DialogContentText>
-          </DialogContent>
-          {/* <DialogActions>
+        {noteViewOpen &&
+          <Dialog
+            open={noteViewOpen}
+            TransitionComponent={Transition}
+            keepMounted={false}
+            onClose={handleCloseDialogViewNote}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description" >
+                {renderListNote()}
+              </DialogContentText>
+            </DialogContent>
+            {/* <DialogActions>
           <Button onClick={handleClose}>Disagree</Button>
           <Button onClick={handleClose}>Agree</Button>
         </DialogActions> */}
-        </Dialog>
+          </Dialog>
+        }
         <ButtonDialog
           open={open}
           onToggle={(value) => setOpen(value)}
