@@ -78,10 +78,10 @@ const useGetListMeetingNote = (
     );
 
     //* Refetch implicity (without changing loading state)
-    const refetch = useCallback(async () => {
+    const refetch = useCallback(async (filterRaw?: IRequestGetListMeetingNote) => {
         try {
             setRefetching(true);
-            const nextFilters = parseRequest(filters);
+            const nextFilters = parseRequest(filterRaw || filters);
             const response = await MeetingServices.getListMeetingNote(nextFilters);
             checkConditionPass(response);
             setRefetching(false);

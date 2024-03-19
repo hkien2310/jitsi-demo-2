@@ -14,27 +14,28 @@ import AuthServices from "../../services/Auth.services";
 import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
 import AddMeeting from "./AddMetting";
+import { RoleMeeting } from "../../const/enum";
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
+import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
 
-// const rowsDemo = [
-//   { id: 1, name: 'Họp Daily', status: 1, description: 'Báo cáo hằng ngày' },
-//   { id: 2, name: 'Họp Weekly', status: 1, description: 'Báo cáo hằng tuần' },
-//   { id: 3, name: 'Họp Quý', status: 1, description: 'Tổng kết quý' },
-//   { id: 4, name: 'Họp Team', status: 1, description: 'Team báo cáo' },
-//   { id: 5, name: 'Họp Demo Sản phẩm', status: 1, description: 'Demo sản phẩm' },
-//   { id: 6, name: 'Họp Chiến Lược', status: 1, description: 'Họp chiến lược' },
-// ];
 
 const HomeScreen = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
+  const [noteViewOpen, setNoteViewOpen] = useState(false);
   const userInfo = AuthServices.getUserLocalStorage();
 
-  // const [paginationModel, setPaginationModel] = React.useState({
-  //   pageSize: 3,
-  //   page: 0,
-  // });
   const { filters, handleChangePage } = useFiltersHandler({ page: 0 });
+
+  const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 })
+  const {data: dataListMeetingNote, refetch: refetchMeetingNote} = useGetListMeetingNote(filtersMeetingNote, {isTrigger: false})
+
+  // const useGetListMeetingNote
   const paginationModel = React.useMemo(() => {
     return {
       // pageSize: filters?.,
@@ -64,14 +65,6 @@ const HomeScreen = () => {
     }
   };
   const handleComplete = async (row: any) => {
-    // const newValue = rows?.map((e: any) => {
-    //   if (e?.id === row.id) {
-    //     return { ...e, status: 0 };
-    //   }
-    //   return e;
-    // });
-    // setRows(newValue);
-
     const body = {
       status: "FINISHED",
     };
@@ -83,6 +76,14 @@ const HomeScreen = () => {
     } catch (error: any) {
       showError(error);
     }
+  };
+
+  const handleClickOpenDialogViewNote = () => {
+    setNoteViewOpen(true);
+  };
+
+  const handleCloseDialogViewNote = () => {
+    setNoteViewOpen(false);
   };
 
   const columns: GridColDef[] = [
@@ -112,14 +113,14 @@ const HomeScreen = () => {
           <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <Box
               p={1}
-              // sx={{  borderRadius: "10px", width: 100 }}
-              // onClick={() => {
-              //   const body = {
-              //     room: row?.id,
-              //     roomName: row?.name,
-              //   };
-              //   navigate(`/call?${queryString.stringify(body)}`);
-              // }}
+            // sx={{  borderRadius: "10px", width: 100 }}
+            // onClick={() => {
+            //   const body = {
+            //     room: row?.id,
+            //     roomName: row?.name,
+            //   };
+            //   navigate(`/call?${queryString.stringify(body)}`);
+            // }}
             >
               {row.description}
             </Box>
@@ -135,20 +136,20 @@ const HomeScreen = () => {
       sortable: false,
       renderCell: ({ row }) => {
         console.log(row, "row111111");
-        const members = row?.members.map((elm) => elm?.user.fullname);
+        const members = row?.members.map((elm: any) => elm?.user.fullname);
         const stringMember = members.join(", ");
         return (
           <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
             <Box
               p={1}
-              // sx={{  borderRadius: "10px", width: 100 }}
-              // onClick={() => {
-              //   const body = {
-              //     room: row?.id,
-              //     roomName: row?.name,
-              //   };
-              //   navigate(`/call?${queryString.stringify(body)}`);
-              // }}
+            // sx={{  borderRadius: "10px", width: 100 }}
+            // onClick={() => {
+            //   const body = {
+            //     room: row?.id,
+            //     roomName: row?.name,
+            //   };
+            //   navigate(`/call?${queryString.stringify(body)}`);
+            // }}
             >
               {stringMember}
             </Box>
@@ -187,13 +188,13 @@ const HomeScreen = () => {
             <Box
               p={1}
               sx={{ color: meetingColorStatus[`${row.status}`], borderRadius: "10px", width: 100 }}
-              onClick={() => {
-                const body = {
-                  room: row?.id,
-                  roomName: row?.name,
-                };
-                navigate(`/call?${queryString.stringify(body)}`);
-              }}
+            // onClick={() => {
+            //   const body = {
+            //     room: row?.id,
+            //     roomName: row?.name,
+            //   };
+            //   navigate(`/call?${queryString.stringify(body)}`);
+            // }}
             >
               {meetingStatus[`${row.status}`]}
             </Box>
@@ -212,14 +213,11 @@ const HomeScreen = () => {
           return (
             <Box
               p={1}
-              sx={{ backgroundColor: "#6c757d", color: "white", borderRadius: "10px", width: 100 }}
-              // onClick={() => {
-              //   const body = {
-              //     room: row?.id,
-              //     roomName: row?.name,
-              //   };
-              //   navigate(`/call?${queryString.stringify(body)}`);
-              // }}
+              sx={{ backgroundColor: "#6c757d", color: "white", borderRadius: "10px", width: 125 }}
+              onClick={() => {
+                handleClickOpenDialogViewNote()
+                refetchMeetingNote({...filtersMeetingNote, meetingId: row?.id})
+              }}
             >
               Meeting note
             </Box>
@@ -235,11 +233,13 @@ const HomeScreen = () => {
             )} */}
             <Box
               p={1}
-              sx={{ backgroundColor: "#17a2b8", color: "white", borderRadius: "10px", width: 100 }}
+              sx={{ backgroundColor: "#17a2b8", color: "white", borderRadius: "10px", width: 125 }}
               onClick={() => {
                 const body = {
-                  room: row?.id,
-                  roomName: row?.name,
+                  room: row?.meetingCode,
+                  roomName: row?.title,
+                  meetingId: row?.id,
+                  idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null
                 };
                 navigate(`/call?${queryString.stringify(body)}`);
               }}
@@ -276,7 +276,7 @@ const HomeScreen = () => {
         memberType: "SECRETARY",
       },
     ];
-    const assigned = value.assigned.map((elm) => ({
+    const assigned = value.assigned.map((elm: any) => ({
       userId: elm?.value,
       memberType: "MEMBER",
     }));
@@ -297,9 +297,42 @@ const HomeScreen = () => {
     }
   };
 
+  const Transition = React.forwardRef(function Transition(
+    props: TransitionProps & {
+      children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+  ) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+
+  const renderListNote = () => {
+    return <Box>
+
+    </Box>
+  }
+
   return (
     <NavigationBar>
       <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Dialog
+          open={noteViewOpen}
+          TransitionComponent={Transition}
+          keepMounted={false}
+          onClose={handleCloseDialogViewNote}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description" >
+              {renderListNote()}
+            </DialogContentText>
+          </DialogContent>
+          {/* <DialogActions>
+          <Button onClick={handleClose}>Disagree</Button>
+          <Button onClick={handleClose}>Agree</Button>
+        </DialogActions> */}
+        </Dialog>
         <ButtonDialog
           open={open}
           onToggle={(value) => setOpen(value)}

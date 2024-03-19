@@ -4,12 +4,14 @@ import { useLocation } from 'react-router-dom';
 import { searchParamsToObject } from '../../helper/function';
 import { Box, Grid } from '@mui/material';
 import DocumentShow from './component/DocumentShow';
+import AuthServices from '../../services/Auth.services';
 
 export interface IParamsCall {
     room: string
     roomName: string
-    userName: string
     email?: string
+    idRoleSecretary?: string 
+    meetingId?: string
 }
 
 
@@ -29,9 +31,9 @@ const CallScreen = () => {
 
 
     const search = searchParamsToObject(location?.search || '')
-    const { room, roomName, userName, email } = search ?? {}
-    console.log(search, 'searchsearch')
+    const { idRoleSecretary, room, roomName, email, meetingId } = search ?? {}
     // const ticketId = location.pathname.split("/")[2];
+    const userInfo = AuthServices.getUserLocalStorage()
 
     // const params = location?.state as IParamsCall
     const handleJitsiIFrameRef1 = (iframeRef: any) => {
@@ -82,7 +84,7 @@ const CallScreen = () => {
                         hideConferenceSubject: false,
                     }}
                     userInfo={{
-                        displayName: userName,
+                        displayName: userInfo?.fullname,
                         email: email || ''
                     }}
                     lang={'vi'}
@@ -94,7 +96,7 @@ const CallScreen = () => {
                 />
             </Grid>
             <Grid item xs={12} md={3}>
-                <DocumentShow meetingId={room}/>
+                <DocumentShow meetingId={meetingId} isSecretary={`${idRoleSecretary}` === `${userInfo?.id}`} />
             </Grid>
         </Grid>
 

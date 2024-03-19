@@ -23,11 +23,11 @@ interface IFile {
 
 interface IProps {
     meetingId: any
-    role: any
+    isSecretary: boolean
 }
 
 const DocumentShow = (props: IProps) => {
-    const { meetingId, role } = props
+    const { meetingId, isSecretary } = props
     const [openDialog, setOpenDialog] = React.useState(false)
     const [meetingDocumentId, setMeetingDocumentId] = React.useState<any>()
     const [meetingDocumentName, setMeetingDocumentName] = React.useState<any>()
@@ -189,7 +189,7 @@ const DocumentShow = (props: IProps) => {
         <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, borderBottom: '1px solid' }} p={1}>
             {renderGeneralNote()}
         </Box>
-        {role !== 'Demo.WRITER' ?
+        {isSecretary ?
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, borderBottom: '1px solid' }} p={1}>
                 {renderWriterNote()}
             </Box>
