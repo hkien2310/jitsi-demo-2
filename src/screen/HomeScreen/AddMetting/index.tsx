@@ -1,11 +1,13 @@
 import { Box, Grid, Switch, Typography } from '@mui/material'
-import { FastField, Formik } from 'formik'
+import { FastField, Formik, Field } from 'formik'
 import React from 'react'
 import TextField from '../../../component/TextField'
 import * as Yup from "yup";
 import cacheKeys from '../../../const/cachedKeys';
 import { useGet } from '../../../store/useStores';
 import AutoCompleteField from '../../../component/Autocomplete';
+import useGetListUser from '../../../hooks/useGetListUser';
+import useFiltersHandler from '../../../hooks/useFilters';
 
 interface IProps {
     onAdd: (value: any) => void
@@ -21,7 +23,16 @@ const validationSchema = () => {
 
 const AddMeeting = (props: IProps) => {
     const { onAdd } = props
-    const listUser = useGet(cacheKeys.DEMO_LIST_USER)
+    const {filters} = useFiltersHandler({page: 0})
+    const {data} = useGetListUser(filters)
+    const listOptions = React.useMemo(() => {
+        return data?.data?.map((e) => {
+            return {
+                label: e?.fullname,
+                value: e?.id
+            }
+        }) || []
+    }, [data?.data])
     return <Box>
         <Box p={2} sx={{ textAlign: 'center', fontSize: '25px' }}>
             Tạo mới cuộc họp
@@ -68,7 +79,7 @@ const AddMeeting = (props: IProps) => {
                         </Box>
                     </Grid>
                     <Grid item xs={6} md={12}>
-                        <FastField
+                        <Field
                             component={AutoCompleteField}
                             name="assigned"
                             multiple
@@ -77,10 +88,7 @@ const AddMeeting = (props: IProps) => {
                             onChangeCustomize={(e: any, value: any) => {
                                 setFieldValue('assigned', value)
                             }}
-                            options={listUser?.map((e: any) => ({
-                                label: e?.name,
-                                value: e?.id,
-                            })) ?? []}
+                            options={listOptions}
                             label={'Thành viên'}
                         />
                     </Grid>

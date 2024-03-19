@@ -39,10 +39,12 @@ const HomeScreen = () => {
   const { filters, handleChangePage } = useFiltersHandler({ page: 0 });
   const paginationModel = React.useMemo(() => {
     return {
-      pageSize: filters?.page_size,
+      // pageSize: filters?.,
       page: filters?.page,
     }
   }, [filters])
+
+  console.log(paginationModel, 'paginationModel')
 
   const { data } = useGetListMeeting(filters)
 
