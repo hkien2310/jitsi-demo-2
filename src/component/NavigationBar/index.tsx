@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
+import { Button } from '@mui/material'
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
@@ -19,6 +20,9 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
 import { useLocation } from 'react-router-dom';
+import AuthServices from '../../services/Auth.services';
+import { useSave } from '../../store/useStores';
+import cacheKeys from '../../const/cachedKeys';
 
 const drawerWidth = 240;
 
@@ -77,13 +81,14 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    {path: '/', name: "Quản lý cuộc họp"}
+    { path: '/', name: "Quản lý cuộc họp" }
 ]
 
 const NavigationBar = ({ children }: MainLayoutProps) => {
     const location = useLocation();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const save = useSave()
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -92,7 +97,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    
+
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -135,7 +140,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 <List>
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding>
-                            <ListItemButton style={{backgroundColor: text?.path === location.pathname ? 'gray' : 'white'}}>
+                            <ListItemButton style={{ backgroundColor: text?.path === location.pathname ? 'gray' : 'white' }}>
                                 <ListItemIcon>
                                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                                 </ListItemIcon>
@@ -157,7 +162,14 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                         </ListItem>
                     ))}
                 </List> */}
+                <Button variant='contained' onClick={async () => {
+                    AuthServices.logout()
+                    save(cacheKeys.IS_LOGGED, false)
+                }}>
+                    Đăng xuất
+                </Button>
             </Drawer>
+
             <Main open={open}>
                 <DrawerHeader />
                 {children}
