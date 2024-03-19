@@ -33,7 +33,7 @@ const HomeScreen = () => {
   const { filters, handleChangePage } = useFiltersHandler({ page: 0 });
 
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 })
-  const {data: dataListMeetingNote, refetch: refetchMeetingNote} = useGetListMeetingNote(filtersMeetingNote, {isTrigger: false})
+  const { data: dataListMeetingNote, refetch: refetchMeetingNote } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false })
 
   // const useGetListMeetingNote
   const paginationModel = React.useMemo(() => {
@@ -216,7 +216,7 @@ const HomeScreen = () => {
               sx={{ backgroundColor: "#6c757d", color: "white", borderRadius: "10px", width: 125 }}
               onClick={() => {
                 handleClickOpenDialogViewNote()
-                refetchMeetingNote({...filtersMeetingNote, meetingId: row?.id})
+                refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id })
               }}
             >
               Meeting note
@@ -308,7 +308,16 @@ const HomeScreen = () => {
 
   const renderListNote = () => {
     return <Box>
-
+      <Box sx={{fontSize: '20px', fontWeight: 'bold'}}>
+        Ghi chú của cuộc họp
+      </Box>
+      <Box>
+        {dataListMeetingNote?.data?.map((e, index) => {
+          return <Box key={e?.id}>
+            {`${index + 1}. ${e?.content}`}
+          </Box>
+        })}
+      </Box>
     </Box>
   }
 
