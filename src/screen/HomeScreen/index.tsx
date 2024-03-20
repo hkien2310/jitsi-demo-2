@@ -1,39 +1,50 @@
+import { InfoOutlined, UploadFile } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import { Box } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import Slide from "@mui/material/Slide";
+import { blue } from "@mui/material/colors";
+import { TransitionProps } from "@mui/material/transitions";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { FastField, Formik } from "formik";
 import queryString from "query-string";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ButtonCommon from "../../component/Button";
 import NavigationBar from "../../component/NavigationBar";
+import TextField from "../../component/TextField";
+import TooltipButton from "../../component/Tooltip";
 import ButtonDialog from "../../component/dialog/ButtonDialog";
 import cacheKeys from "../../const/cachedKeys";
+import { RoleMeeting } from "../../const/enum";
 import { showError } from "../../helper/toast";
 import useFiltersHandler from "../../hooks/useFilters";
 import useGetListMeeting from "../../hooks/useGetListMeeting";
+import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
 import AuthServices from "../../services/Auth.services";
 import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
 import AddMeeting from "./AddMetting";
-import { RoleMeeting } from "../../const/enum";
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
-import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
-
 
 const HomeScreen = () => {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
+  const [dataRow, setDataRow] = useState();
   const [noteViewOpen, setNoteViewOpen] = useState(false);
   const userInfo = AuthServices.getUserLocalStorage();
 
   const { filters, handleChangePage } = useFiltersHandler({ page: 0 });
 
-  const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 })
-  const { data: dataListMeetingNote, refetch: refetchMeetingNote } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false })
+  const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
+  const { data: dataListMeetingNote, refetch: refetchMeetingNote } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
 
   // const useGetListMeetingNote
   const paginationModel = React.useMemo(() => {
@@ -52,14 +63,11 @@ const HomeScreen = () => {
     save(cacheKeys.DEMO_LIST, value);
   };
   const handleDelete = async (row: any) => {
-    const newValue = rows?.filter((item: any) => item.id !== row.id);
-    setRows(newValue);
+    // const newValue = rows?.filter((item: any) => item.id !== row.id);
+    // setRows(newValue);
     try {
-      const response = await MeetingServices.deleteMeeting(1);
-
-      if (response?.status === 201) {
-        refetch();
-      }
+      await MeetingServices.deleteMeeting(row.id);
+      refetch();
     } catch (error: any) {
       showError(error);
     }
@@ -84,6 +92,11 @@ const HomeScreen = () => {
 
   const handleCloseDialogViewNote = () => {
     setNoteViewOpen(false);
+  };
+
+  const openDetail = (row: any) => {
+    setOpen(row);
+    setDataRow(row);
   };
 
   const columns: GridColDef[] = [
@@ -135,26 +148,9 @@ const HomeScreen = () => {
       editable: false,
       sortable: false,
       renderCell: ({ row }) => {
-        console.log(row, "row111111");
         const members = row?.members.map((elm: any) => elm?.user.fullname);
         const stringMember = members.join(", ");
-        return (
-          <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-            <Box
-              p={1}
-            // sx={{  borderRadius: "10px", width: 100 }}
-            // onClick={() => {
-            //   const body = {
-            //     room: row?.id,
-            //     roomName: row?.name,
-            //   };
-            //   navigate(`/call?${queryString.stringify(body)}`);
-            // }}
-            >
-              {stringMember}
-            </Box>
-          </Box>
-        );
+        return <Box p={1}>{stringMember}</Box>;
       },
     },
     // {
@@ -167,9 +163,8 @@ const HomeScreen = () => {
     {
       field: "status",
       headerName: "Trạng thái",
-      type: "number",
+      // type: "number",
       width: 150,
-      headerAlign: "center",
       editable: false,
       sortable: false,
       renderCell: ({ row }) => {
@@ -184,20 +179,8 @@ const HomeScreen = () => {
           FINISHED: "#28a745",
         };
         return (
-          <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-            <Box
-              p={1}
-              sx={{ color: meetingColorStatus[`${row.status}`], borderRadius: "10px", width: 100 }}
-            // onClick={() => {
-            //   const body = {
-            //     room: row?.id,
-            //     roomName: row?.name,
-            //   };
-            //   navigate(`/call?${queryString.stringify(body)}`);
-            // }}
-            >
-              {meetingStatus[`${row.status}`]}
-            </Box>
+          <Box p={1} sx={{ color: meetingColorStatus[`${row.status}`] }}>
+            {meetingStatus[`${row.status}`]}
           </Box>
         );
       },
@@ -211,47 +194,46 @@ const HomeScreen = () => {
         const isDisabled = row.status === "FINISHED";
         if (isDisabled)
           return (
-            <Box
-              p={1}
-              sx={{ backgroundColor: "#6c757d", color: "white", borderRadius: "10px", width: 125 }}
+            <TooltipButton
+              title={"Ghi chú cuộc họp"}
               onClick={() => {
-                console.log('ádasdasd', noteViewOpen)
-                handleClickOpenDialogViewNote()
-                refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id })
+                handleClickOpenDialogViewNote();
+                refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id });
               }}
             >
-              Meeting note
-            </Box>
+              <DescriptionOutlinedIcon color="inherit" />
+            </TooltipButton>
           );
         return (
-          <Box style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
-            {/* {`${row?.creatorId}` === `${userInfo.id}` ? (
-              <Box p={1} onClick={(row) => handleDelete(row)}>
-                <DeleteIcon />
-              </Box>
-            ) : (
-              <Box sx={{ width: "24px", height: "24px" }} m={1} />
-            )} */}
-            <Box
-              p={1}
-              sx={{ backgroundColor: "#17a2b8", color: "white", borderRadius: "10px", width: 125 }}
+          <Box style={{ display: "flex", flexDirection: "row" }}>
+            <TooltipButton title="Chi tiết" onClick={() => openDetail(row)}>
+              <InfoOutlined color="info" />
+            </TooltipButton>
+            <TooltipButton title="Xoá" onClick={() => handleDelete(row)}>
+              <DeleteOutlineOutlinedIcon color="error" />
+            </TooltipButton>
+            <TooltipButton
+              title="Tham gia"
               onClick={() => {
                 const body = {
                   room: row?.meetingCode,
                   roomName: row?.title,
                   meetingId: row?.id,
-                  idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null
+                  idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null,
                 };
                 navigate(`/call?${queryString.stringify(body)}`);
               }}
             >
-              Tham gia
-            </Box>
+              <LoginOutlinedIcon color="primary" />
+            </TooltipButton>
             {`${row?.creatorId}` === `${userInfo.id}` ? (
-              <Box p={1} ml={1} sx={{ backgroundColor: "#0d801c", color: "white", borderRadius: "10px", width: 100 }} onClick={() => handleComplete(row)}>
-                Hoàn thành
-              </Box>
+              <TooltipButton title="Hoàn thành" onClick={() => handleComplete(row)}>
+                <TaskAltOutlinedIcon color="success" />
+              </TooltipButton>
             ) : null}
+            <TooltipButton title="Tải tệp">
+              <UploadFile color="action" />
+            </TooltipButton>
           </Box>
         );
       },
@@ -302,81 +284,111 @@ const HomeScreen = () => {
     props: TransitionProps & {
       children: React.ReactElement<any, any>;
     },
-    ref: React.Ref<unknown>,
+    ref: React.Ref<unknown>
   ) {
     return <Slide direction="up" ref={ref} {...props} />;
   });
 
   const renderListNote = () => {
-    return <Box>
-      <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>
-        Ghi chú của cuộc họp
-      </Box>
+    return (
       <Box>
-        {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ?
-          dataListMeetingNote?.data?.map((e, index) => {
-            return <Box key={e?.id}>
-              {`${index + 1}. ${e?.content}`}
-            </Box>
-          })
-          :
-          <Box>
-            Cuộc họp này chưa có ghi chú
-          </Box>
-        }
+        <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>Ghi chú của cuộc họp</Box>
+        <Box>
+          {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ? (
+            dataListMeetingNote?.data?.map((e, index) => {
+              return <Box key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>;
+            })
+          ) : (
+            <Box>Cuộc họp này chưa có ghi chú</Box>
+          )}
+        </Box>
       </Box>
-    </Box>
-  }
+    );
+  };
 
   return (
     <NavigationBar>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        {noteViewOpen &&
-          <Dialog
-            open={noteViewOpen}
-            TransitionComponent={Transition}
-            keepMounted={false}
-            onClose={handleCloseDialogViewNote}
-            aria-describedby="alert-dialog-slide-description"
-          >
-            {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
-            <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description" >
-                {renderListNote()}
-              </DialogContentText>
-            </DialogContent>
-            {/* <DialogActions>
-          <Button onClick={handleClose}>Disagree</Button>
-          <Button onClick={handleClose}>Agree</Button>
-        </DialogActions> */}
-          </Dialog>
-        }
-        <ButtonDialog
-          open={open}
-          onToggle={(value) => setOpen(value)}
-          text={
-            <Box mb={1} p={1} sx={{ backgroundColor: "#945148", color: "white", borderRadius: "10px", display: "flex", alignItems: "center" }}>
-              <AddIcon />
-              Thêm mới cuộc họp
-            </Box>
-          }
-          content={<AddMeeting onAdd={onAdd} />}
-        />
-      </Box>
-      <DataGrid
-        rows={dataRows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: paginationModel,
-          },
+      <Formik
+        initialValues={{
+          search: "",
         }}
-        onPaginationModelChange={(model) => handleChangePage(model?.page)}
-        pageSizeOptions={[5]}
-        checkboxSelection={false}
-        disableRowSelectionOnClick
-        hideFooterPagination={true}
-      />
+        onSubmit={() => {}}
+      >
+        {({ handleSubmit }) => {
+          return (
+            <>
+              <Box sx={{ display: "flex" }}>
+                {noteViewOpen && (
+                  <Dialog
+                    open={noteViewOpen}
+                    TransitionComponent={Transition}
+                    keepMounted={false}
+                    onClose={handleCloseDialogViewNote}
+                    aria-describedby="alert-dialog-slide-description"
+                  >
+                    <DialogContent>
+                      <DialogContentText id="alert-dialog-slide-description">{renderListNote()}</DialogContentText>
+                    </DialogContent>
+                  </Dialog>
+                )}
+                <Box sx={{ justifyContent: "space-between", flex: 1, display: "flex" }} mb={2}>
+                  <Box>
+                    <FastField
+                      style={{ width: 400 }}
+                      size="small"
+                      id={"search"}
+                      component={TextField}
+                      name={"search"}
+                      required
+                      placeholder="Nhập tên cuộc họp"
+                      fullWidth
+                    />
+                    <ButtonCommon sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }} color="info" variant="contained">
+                      <SearchOutlinedIcon /> Tìm kiếm
+                    </ButtonCommon>
+                  </Box>
+                  <ButtonDialog
+                    open={open}
+                    additionCloseFunction={() => setDataRow(undefined)}
+                    onToggle={(value) => {
+                      
+                      setOpen(value)}}
+                    text={
+                      <ButtonCommon sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }} color="error" variant="contained">
+                        <AddIcon /> Thêm mới cuộc họp
+                      </ButtonCommon>
+                    }
+                    content={<AddMeeting onAdd={onAdd} data={dataRow} />}
+                  />
+                </Box>
+              </Box>
+              <DataGrid
+                rows={dataRows}
+                columns={columns}
+                initialState={{
+                  pagination: {
+                    paginationModel: paginationModel,
+                  },
+                }}
+                onPaginationModelChange={(model) => handleChangePage(model?.page)}
+                pageSizeOptions={[5]}
+                checkboxSelection={false}
+                disableRowSelectionOnClick
+                hideFooterPagination={true}
+                sx={{
+                  "& .MuiDataGrid-columnHeaders": {
+                    background: blue["A100"],
+                    color: "white",
+                    "& .MuiDataGrid-columnHeaderTitle": {
+                      fontWeight: "700",
+                    },
+                  },
+                }}
+              />
+            </>
+          );
+        }}
+      </Formik>
     </NavigationBar>
   );
 };

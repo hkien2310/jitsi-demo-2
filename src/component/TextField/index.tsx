@@ -113,7 +113,11 @@ const TextField = ({
         "& div": {
           borderRadius: "0.5rem",
         },
-        "& label": {},
+        "& label": {
+          "& .MuiFormLabel-asterisk": {
+            color: 'red'
+          }
+        },
         "& input": {},
         ...sx,
       }}

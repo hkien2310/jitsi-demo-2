@@ -15,7 +15,7 @@ class MeetingServices {
     return httpServices.get(`${GET_LIST_MEETING_NOTE}?${queryString.stringify(body)}`);
   }
   deleteMeeting(id: number) {
-    return httpServices.delete(`${DELETE_MEET}${id}`)
+    return httpServices.delete(`${DELETE_MEET}/${id}`)
   }
   updateMeeting(id: number, body: any) {
     return httpServices.patch(`${CREATE_LIST_MEET}/${id}`, body)
