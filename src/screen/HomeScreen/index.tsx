@@ -377,6 +377,8 @@ const HomeScreen = () => {
         disableRowSelectionOnClick
         hideFooterPagination={true}
       />
+      {/* <UploadFile /> */}
+      
     </NavigationBar>
   );
 };
