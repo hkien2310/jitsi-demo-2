@@ -21,7 +21,11 @@ const rowsDemo = [
 function App() {
   const isLoadingApp = useGet(cacheKeys.LOADING_APP)
   const isLogged = useGet(cacheKeys.IS_LOGGED)
+  const userInfo = AuthServices.getUserLocalStorage()
+  
+
   const save = useSave()
+  save(cacheKeys.USER_INFO, userInfo)
   
   useEffect(() => {
     save(cacheKeys.DEMO_LIST, rowsDemo)

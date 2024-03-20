@@ -1,28 +1,26 @@
-import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import { Button } from '@mui/material'
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MailIcon from '@mui/icons-material/Mail';
+import MenuIcon from '@mui/icons-material/Menu';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import Divider from '@mui/material/Divider';
+import Drawer from '@mui/material/Drawer';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { styled, useTheme } from '@mui/material/styles';
+import * as React from 'react';
 import { useLocation } from 'react-router-dom';
-import AuthServices from '../../services/Auth.services';
 import { useSave } from '../../store/useStores';
-import cacheKeys from '../../const/cachedKeys';
+import UserRight from './UserRight';
 
 const drawerWidth = 240;
 
@@ -104,18 +102,25 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
             <CssBaseline />
             <AppBar position="fixed" open={open}>
                 <Toolbar>
-                    <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={{ mr: 2, ...(open && { display: 'none' }) }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h6" noWrap component="div">
-                        Hệ thống quản lý cuộc họp
-                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            <IconButton
+                                color="inherit"
+                                aria-label="open drawer"
+                                onClick={handleDrawerOpen}
+                                edge="start"
+                                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography variant="h6" noWrap component="div">
+                                Hệ thống quản lý cuộc họp
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <UserRight />
+                        </Box>
+                    </Box>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -162,12 +167,12 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                         </ListItem>
                     ))}
                 </List> */}
-                <Button variant='contained' onClick={async () => {
+                {/* <Button variant='contained' onClick={async () => {
                     AuthServices.logout()
                     save(cacheKeys.IS_LOGGED, false)
                 }}>
                     Đăng xuất
-                </Button>
+                </Button> */}
             </Drawer>
 
             <Main open={open}>
