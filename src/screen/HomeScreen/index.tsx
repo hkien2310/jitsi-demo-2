@@ -348,17 +348,17 @@ const HomeScreen = () => {
                     </ButtonCommon>
                   </Box>
                   <ButtonDialog
+                    dialogTitle={dataRow ? '' : 'Thêm mới' }
                     open={open}
                     additionCloseFunction={() => setDataRow(undefined)}
                     onToggle={(value) => {
-                      
                       setOpen(value)}}
                     text={
                       <ButtonCommon sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }} color="error" variant="contained">
                         <AddIcon /> Thêm mới cuộc họp
                       </ButtonCommon>
                     }
-                    content={<AddMeeting onAdd={onAdd} data={dataRow} />}
+                    content={<AddMeeting handleCancel={() => setOpen(false)} onAdd={onAdd} data={dataRow} />}
                   />
                 </Box>
               </Box>

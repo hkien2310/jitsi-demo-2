@@ -1,5 +1,4 @@
-import { Add } from "@mui/icons-material";
-import { Box, Grid } from "@mui/material";
+import { Box, Checkbox, Grid } from "@mui/material";
 import { DateTimeField, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FastField, Field, Formik } from "formik";
@@ -12,10 +11,14 @@ import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListUser from "../../../hooks/useGetListUser";
 import AuthServices from "../../../services/Auth.services";
 import { error } from "console";
+import Tiny from "../../../component/tinyMce";
+import LabelCommon from "../../../component/label";
+import { indigo } from "@mui/material/colors";
 
 interface IProps {
   onAdd: (value: any) => void;
   data: any;
+  handleCancel: () => void;
 }
 
 const validationSchema = () => {
@@ -33,7 +36,7 @@ const validationSchema = () => {
 };
 
 const AddMeeting = (props: IProps) => {
-  const { onAdd, data: dataRow } = props;
+  const { onAdd, data: dataRow, handleCancel } = props;
   const { filters } = useFiltersHandler({ page: 0 });
   const { data } = useGetListUser(filters);
   const userInfo = AuthServices.getUserLocalStorage();
@@ -102,8 +105,8 @@ const AddMeeting = (props: IProps) => {
 
   const filterSecretary = dataRow
     ? dataRow?.members
-        .filter((elm) => elm?.memberType === "SECRETARY")
-        .map((e) => {
+        .filter((elm: any) => elm?.memberType === "SECRETARY")
+        .map((e: any) => {
           return {
             label: e?.user.fullname,
             value: e?.user.id,
@@ -126,9 +129,6 @@ const AddMeeting = (props: IProps) => {
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Box p={2} sx={{ textAlign: "center", fontSize: "25px" }}>
-          Tạo mới cuộc họp
-        </Box>
         <Formik
           initialValues={initial}
           validationSchema={validationSchema}
@@ -139,129 +139,206 @@ const AddMeeting = (props: IProps) => {
           enableReinitialize
         >
           {({ values, setFieldValue, handleSubmit, errors }) => {
-            console.log(values, errors, "123hihuhu______________");
             return (
-              <Grid container spacing={2}>
-                <Grid item xs={6} md={12}>
-                  <FastField component={TextField} name={"name"} fullWidth label={"Tiêu đề"} required placeholder="Nhập tiêu đề cuộc họp" disabled={isDetail} />
-                </Grid>
-                <Grid item xs={6} md={12}>
-                  <FastField
-                    options={typeMeetingOptions}
-                    component={AutoCompleteField}
-                    name={"type"}
-                    fullWidth
-                    label={"Loại phiên họp"}
-                    required
-                    placeholder="Lựa chọn"
-                    disabled={isDetail}
-                  />
-                </Grid>
-                <Grid item xs={6} md={12}>
-                  <FastField
-                    component={TextField}
-                    multiline
-                    rows={2}
-                    name={"description"}
-                    fullWidth
-                    label={"Nội dung"}
-                    required
-                    placeholder="Vui lòng nhập nội dung"
-                    disabled={isDetail}
-                  />
-                </Grid>
-                <Grid item xs={6} md={12}>
-                  <FastField
-                    component={TextField}
-                    multiline
-                    rows={2}
-                    name={"agenda"}
-                    fullWidth
-                    label={"Chương trình họp"}
-                    required
-                    placeholder="Vui lòng nhập chương trình họp"
-                    disabled={isDetail}
-                  />
-                </Grid>
-                <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid" }}>
-                  <FastField
-                    component={DateTimeField}
-                    name="startTime"
-                    label={"Thời gian từ"}
-                    required
-                    placeholder="Vui lòng chọn thời gian"
-                    disabled={isDetail}
-                  />
-                  <FastField
-                    component={DateTimeField}
-                    name="endTime"
-                    label={"Thời gian hết hạn"}
-                    required
-                    placeholder="Vui lòng chọn thời gian"
-                    disabled={isDetail}
-                  />
-                  {/* <DateTimeField required label="Thời gian từ" name="startTime" />
-                  <DateTimeField required label="Thời gian hết hạn" name="endTime" /> */}
-                </Grid>
-                <Grid item xs={6} md={12}>
-                  <FastField component={TextField} name={"place"} fullWidth label={"Địa điểm"} required placeholder="Nhập địa điểm họp" disabled={isDetail} />
-                </Grid>
-
-                {/* <Grid item xs={6} md={12}>
-                <Tiny setContent={() => {}} initialValue="" />
-              </Grid> */}
-                {/* <Grid item xs={6} md={12}>
-                <Box>
-                  <Switch checked={Boolean(values.status)} onChange={() => setFieldValue("status", !Boolean(values.status))} />
-                  {Boolean(values.status) ? "Kích hoạt" : "Không kích hoạt"}
-                </Box>
-              </Grid> */}
-                <Grid item xs={6} md={12}>
-                  <Field
-                    component={AutoCompleteField}
-                    name="assigned"
-                    multiple
-                    fullWidth
-                    required
-                    onChangeCustomize={(e: any, value: any) => {
-                      setFieldValue("assigned", value);
+              <>
+                <Grid container spacing={2}>
+                  <Box
+                    sx={{
+                      flex: 1,
+                      borderWidth: 1,
+                      borderColor: indigo[50],
+                      borderRadius: 2,
+                      borderStyle: "solid",
+                      position: "relative",
+                      margin: 4,
+                      bgcolor: "white",
+                      boxShadow: 2,
                     }}
-                    options={listOptions}
-                    label={"Thành viên"}
-                    disabled={isDetail}
-                  />
-                </Grid>
-
-                <Grid item xs={6} md={12}>
-                  <Field
-                    component={AutoCompleteField}
-                    name="secretary"
-                    fullWidth
-                    required
-                    onChangeCustomize={(e: any, value: any) => {
-                      setFieldValue("secretary", value);
-                    }}
-                    options={listOptions}
-                    label={"Thư ký"}
-                    disabled={isDetail}
-                  />
-                </Grid>
-                {isDetail ? (
-                  <Box />
-                ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", m: 3 }} width="100%">
-                    <ButtonCommon
-                      startIcon={<Add />}
-                      sx={{ alignSelf: "center", padding: "40px auto" }}
-                      onClick={() => handleSubmit()}
-                      color="success"
-                      variant="contained"
+                  >
+                    <Box
+                      sx={{
+                        bgcolor: "white",
+                        fontWeight: 600,
+                        color: indigo[500],
+                        position: "absolute",
+                        top: -12,
+                        left: 24,
+                        width: 200,
+                        textAlign: "center",
+                      }}
                     >
-                      Tạo mới
-                    </ButtonCommon>
+                      {isDetail ? "Chi tiết phiên họp" : "Thêm mới phiên họp"}
+                    </Box>
+                    <Grid sx={{ marginRight: 4, marginTop: 5, marginLeft: 4, marginBottom: 4 }}>
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Tiêu đề" />
+                        <FastField
+                          component={TextField}
+                          sx={{ flex: 5 }}
+                          name={"name"}
+                          fullWidth
+                          required
+                          placeholder="Nhập tiêu đề cuộc họp"
+                          disabled={isDetail}
+                        />
+                      </Grid>
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Loại phiên họp" />
+                        <Box sx={{ flex: 5 }}>
+                          <FastField options={typeMeetingOptions} component={AutoCompleteField} name={"type"} required disabled={isDetail} />
+                        </Box>
+                      </Grid>
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Nội dung" />
+                        <FastField
+                          component={TextField}
+                          multiline
+                          rows={2}
+                          name={"description"}
+                          sx={{ flex: 5 }}
+                          required
+                          placeholder="Vui lòng nhập nội dung"
+                          disabled={isDetail}
+                        />
+                      </Grid>
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Chương trình họp" />
+                        <Box sx={{ flex: 5 }}>
+                          <Tiny setContent={() => {}} initialValue="" />
+                          <Box>
+                            <Checkbox defaultChecked color="success" />
+                            Chọn tải file
+                          </Box>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
+                        <Box sx={{ display: "flex" }}>
+                          <LabelCommon label="Thời gian từ" />
+                          <FastField
+                            component={DateTimeField}
+                            name="startTime"
+                            required
+                            sx={{ flex: 2, "& div": { borderRadius: "0.5rem" } }}
+                            placeholder="Chọn thời gian bắt đầu"
+                            disabled={isDetail}
+                          />
+                        </Box>
+                        <Box sx={{ display: "flex" }}>
+                          <LabelCommon label="Thời gian hết hạn" />
+                          <FastField
+                            component={DateTimeField}
+                            name="endTime"
+                            sx={{ flex: 2, "& div": { borderRadius: "0.5rem" } }}
+                            required
+                            placeholder="Chọn thời gian kết thúc"
+                            disabled={isDetail}
+                          />
+                        </Box>
+                      </Grid>
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Địa điểm" />
+                        <FastField sx={{ flex: 5 }} component={TextField} name={"place"} required placeholder="Nhập địa điểm họp" disabled={isDetail} />
+                      </Grid>
+
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Thành viên" />
+                        <Box sx={{ flex: 5 }}>
+                          <Field
+                            component={AutoCompleteField}
+                            name="assigned"
+                            multiple
+                            required
+                            onChangeCustomize={(e: any, value: any) => {
+                              setFieldValue("assigned", value);
+                            }}
+                            options={listOptions}
+                            disabled={isDetail}
+                          />
+                        </Box>
+                      </Grid>
+
+                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
+                        <LabelCommon label="Thư ký" />
+                        <Box sx={{ flex: 5 }}>
+                          <Field
+                            component={AutoCompleteField}
+                            name="secretary"
+                            fullWidth
+                            required
+                            onChangeCustomize={(e: any, value: any) => {
+                              setFieldValue("secretary", value);
+                            }}
+                            options={listOptions}
+                            disabled={isDetail}
+                          />
+                        </Box>
+                      </Grid>
+                    </Grid>
                   </Box>
-                )}
-              </Grid>
+                  {isDetail ? (
+                    <Box />
+                  ) : (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
+                      <Box
+                        sx={{
+                          color: "#E96B58",
+                          border: "1px solid #E96B58",
+                          padding: "10px 24px",
+                          borderRadius: 3,
+                          fontWeight: "600",
+                          boxShadow: 1,
+                          width: 130,
+                          textAlign: "center",
+                        }}
+                        onClick={handleCancel}
+                      >
+                        Huỷ
+                      </Box>
+                      <Box
+                        sx={{
+                          border: "1px solid #E96B58",
+                          padding: "10px 24px",
+                          borderRadius: 3,
+                          fontWeight: "600",
+                          color: "white",
+                          bgcolor: "#E96B58",
+                          ml: 1,
+                          boxShadow: 1,
+                          width: 130,
+                          alignItems: "center",
+                          textAlign: "center",
+                        }}
+                        onClick={() => handleSubmit()}
+                      >
+                        Tạo mới
+                      </Box>
+                      {/* <ButtonCommon
+                        // startIcon={<Add />}
+                        sx={{ alignSelf: "center", padding: "40px auto", color: "rgba(233, 107, 88, 0.5)", border: "1px solid rgba(233, 107, 88, 0.5)" }}
+                        onClick={() => handleSubmit()}
+                        variant="outlined"
+                      >
+                        Huỷ
+                      </ButtonCommon>
+                      <ButtonCommon
+                        // startIcon={<Add />}
+                        sx={{
+                          alignSelf: "center",
+                          color: "white",
+                          padding: "40px auto",
+                          bgcolor: "rgba(233, 107, 88, 0.5)",
+                          border: "1px solid rgba(233, 107, 88, 0.5)",
+                        }}
+                        onClick={() => handleSubmit()}
+                        // color="rgba(233, 107, 88, 0.5)"
+                        variant="outlined"
+                      >
+                        Tạo mới
+                      </ButtonCommon> */}
+                    </Box>
+                  )}
+                </Grid>
+              </>
             );
           }}
         </Formik>
