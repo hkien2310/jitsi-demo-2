@@ -83,8 +83,8 @@ const WriterNote = (props: IProps) => {
                     }}
                 />
                 <Box pl={1}>
-                    <Button onClick={handleWriterAddNote} style={{ backgroundColor: colors.background.grey2, height: '56px', width: '56px'}}>
-                        <SendIcon style={{ color: colors.background.grey }} />
+                    <Button onClick={handleWriterAddNote} variant='contained' style={{ height: '56px', width: '56px'}}>
+                        <SendIcon style={{ color: 'white' }} />
                     </Button>
                 </Box>
             </Box>
