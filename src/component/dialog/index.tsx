@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Slide } from "@mui/material"
+import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Slide, makeStyles } from "@mui/material"
 import { TransitionProps } from "@mui/material/transitions";
 import React from "react";
 import { IconsSource } from "../../const/icons";
@@ -22,6 +22,7 @@ const Transition = React.forwardRef(function Transition(
 
 const DialogCommon = (props: IProps) => {
     const { open, handleClose, title, content } = props
+
     return <Dialog
         open={open}
         TransitionComponent={Transition}
@@ -32,13 +33,13 @@ const DialogCommon = (props: IProps) => {
         style={{ width: '100%' }}
     >
 
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} px={3} py={2}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} px={3} py={2}>
             {title ?
                 <TypographyCommon sx={{
                     fontSize: '20px',
                     fontWeight: '600'
                 }}>{title}</TypographyCommon>
-                : <></>}
+                : <Box></Box>}
             <Button onClick={() => handleClose()}>
                 <IconsSource.CloseIcon sx={{ fontSize: '30px', fontWeight: '600' }} />
             </Button>

@@ -1,25 +1,17 @@
-import AttachmentIcon from '@mui/icons-material/Attachment';
-import SendIcon from '@mui/icons-material/Send';
-import { Box, Button, Divider, IconButton } from '@mui/material';
-import TextField from '@mui/material/TextField';
+import { Box, Button } from '@mui/material';
 import { useState } from 'react';
 import TypographyCommon from '../../../component/Typography';
 import UploadFile from '../../../component/UploadFile';
-import ButtonDialog from '../../../component/dialog/ButtonDialog';
+import { renderLogo } from '../../../component/UploadFile/Drag';
+import DialogCommon from '../../../component/dialog';
 import { ROOT_URL_ASSET } from '../../../const/api';
-import { downloadFile, uploadFile } from '../../../helper/function';
+import { colors } from '../../../const/colors';
+import { downloadFile, formatBytes, uploadFile } from '../../../helper/function';
 import useFiltersHandler from '../../../hooks/useFilters';
 import useGetListDocument from '../../../hooks/useGetListDocument';
 import useGetListDocumentNote from '../../../hooks/useGetListDocumentNote';
 import { IAddDocumentNote } from '../../../interface/document';
 import DocumentServices from '../../../services/Document.services';
-import DragAndDrop, { renderLogo } from '../../../component/UploadFile/Drag';
-import DropzoneDialogExample from '../../../component/UploadFile/DropZoneDialog';
-import DialogCommon from '../../../component/dialog';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { DownloadOutlined } from '@mui/icons-material';
-import { colors } from '../../../const/colors';
-import { IconsSource } from '../../../const/icons';
 
 interface IProps {
     meetingId: any
@@ -62,24 +54,31 @@ const GeneralNote = (props: IProps) => {
     }
 
     const handleChooseFile = async (files: File[] | null) => {
-        if (files) {
-            files?.forEach(async (e) => {
-                await uploadFile({
-                    file: e,
-                    meetingId: meetingId,
-                    onSuccess: () => {
-                        refetchListDocument()
-                        setFiles(files)
-                    }
+        try {
+            if (files) {
+                files?.forEach(async (e) => {
+                    await uploadFile({
+                        file: e,
+                        meetingId: meetingId,
+                        onSuccess: () => {
+                            setFiles((prev) => ([...(prev || []), e]))
+                        }
+                    })
                 })
-            })
+            }
+        } catch {
+
+        } finally {
+            refetchListDocument()
+            console.log('asasasas')
         }
+       
     }
 
 
     return <>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-            <TypographyCommon style={{ color: colors.text.white, fontWeight: '700', textAlign: 'left', fontSize: '20px' }} py={1}>
+            <TypographyCommon style={{ color: colors.text.white, fontWeight: '700', textAlign: 'left' }} py={1}>
                 Tài liệu chia sẻ
             </TypographyCommon>
 
@@ -96,9 +95,9 @@ const GeneralNote = (props: IProps) => {
                     scrollbarWidth: 'none' // Ẩn thanh cuộn trên trình duyệt Firefox
                 }}
             >
-                <Box sx={{ maxHeight: '100%', width: '100%', }} pl={1}>
+                <Box sx={{ maxHeight: '100%', width: '100%', }} px={1} pb={1}>
                     {listDocument?.data?.map((e, index) => {
-                        return <Box mb={1} key={index} sx={{ backgroundColor: colors.background.grey, borderRadius: '5px'}}>
+                        return <Box mb={2} key={index} sx={{ backgroundColor: colors.background.grey, borderRadius: '5px', boxShadow: '0px 0px 6px 1px rgba(255,255,255,0.54)' }}>
                             <Button
                                 sx={{
                                     display: 'flex',
@@ -106,18 +105,24 @@ const GeneralNote = (props: IProps) => {
                                 }}
                                 fullWidth
                                 onClick={() => {
-                                    setOpenDialogViewNote(true)
-                                    setMeetingDocumentId(e?.id)
-                                    setMeetingDocumentName(e?.fileName)
-                                    setLinkFile(e?.filePath)
-                                    refetch({ ...filterDocumentNote, meetingDocumentId: e?.id })
+                                    downloadFile(`${ROOT_URL_ASSET}${e?.filePath}`, e?.fileName)
                                 }}
+                            // onClick={() => {
+                            //     setOpenDialogViewNote(true)
+                            //     setMeetingDocumentId(e?.id)
+                            //     setMeetingDocumentName(e?.fileName)
+                            //     setLinkFile(e?.filePath)
+                            //     refetch({ ...filterDocumentNote, meetingDocumentId: e?.id })
+                            // }}
                             >
-                                <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                        <img src={renderLogo(e?.fileName?.split('.')?.pop() || '')} alt={'logo'} style={{ width: '30px', height: '30px' }} />
+                                <Box sx={{ display: 'flex', flex: 1, alignItems: 'center' }}>
+                                    <img src={renderLogo(e?.fileName?.split('.')?.pop() || '')} alt={'logo'} style={{ width: '50px', height: '50px' }} />
+                                    <Box>
                                         <TypographyCommon pl={1} style={{ textAlign: 'left', color: colors.text.white, fontWeight: '600' }}>
                                             {e?.fileName}
+                                        </TypographyCommon>
+                                        <TypographyCommon pl={1} style={{ textAlign: 'left', color: colors.text.white, fontSize: '14px' }}>
+                                            {`${formatBytes(Number(e?.fileSize || 0))} - ${e?.creator?.fullname}`}
                                         </TypographyCommon>
                                     </Box>
                                 </Box>
@@ -131,34 +136,35 @@ const GeneralNote = (props: IProps) => {
             </Box>
             <Box mb={1} pt={1}>
                 <Box>
-                    <Button fullWidth variant='contained' onClick={() => setOpenDialogUpload(true)} sx={{fontWeight: '600', textTransform: 'none'}}>Thêm tài liệu</Button>
+                    <Button fullWidth variant='contained' onClick={() => setOpenDialogUpload(true)} sx={{ fontWeight: '600', textTransform: 'none' }}>Thêm tài liệu</Button>
                 </Box>
-                <DialogCommon title={'Tải lên tài liệu'} open={openDialogUpload} handleClose={() => setOpenDialogUpload(false)}
+                <DialogCommon 
+                    title={'Tải lên tài liệu'} 
+                    open={openDialogUpload}
+                    handleClose={() => {
+                        setOpenDialogUpload(false)
+                        setFiles(null)
+                    }}
                     content={
-                        <Box sx={{ zIndex: 999999, width: '80vw' }}>
-                            <UploadFile onFileSelected={handleChooseFile} handleClose={() => setOpenDialogUpload(false)} files={files}/>
+                        <Box sx={{ zIndex: 999999, width: '55vw', minHeight: '25vh' }}>
+                            <UploadFile 
+                                onFileSelected={handleChooseFile} 
+                                handleClose={() => {
+                                    setOpenDialogUpload(false)
+                                    setFiles(null)
+                                }} 
+                                files={files} />
                         </Box>
                     } />
             </Box>
         </Box>
 
-
-
-        <ButtonDialog
+        {/* <DialogCommon
+            handleClose={() => setOpenDialogViewNote(false)}
             open={openDialogViewNote}
-            onToggle={(value) => {
-                setOpenDialogViewNote(value)
-            }}
-            text={<></>}
-            content={<Box sx={{ display: 'flex', width: '50vw' }}>
+            title={`Ghi chú của ${meetingDocumentName}`}
+            content={<Box sx={{ display: 'flex', width: '50vw', height: '75vh' }}>
                 <Box sx={{ width: '100%' }}>
-                    <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <TypographyCommon mb={1} sx={{ fontSize: '20px', fontWeight: '600' }}>
-                            {`Ghi chú của ${meetingDocumentName}`}
-                        </TypographyCommon>
-                        <Button color='primary' variant='contained' onClick={() => downloadFile(`${ROOT_URL_ASSET}${linkFile}`, meetingDocumentName)} ><DownloadOutlined /></Button>
-                    </Box>
-                    {/* <Divider /> */}
                     <Box mb={2} mt={2} >
                         {dataDocumentNote?.data?.map((e, index) => {
                             return <TypographyCommon sx={{ fontSize: 16 }} >{`${index + 1}. ${e?.content}`}</TypographyCommon>
@@ -175,20 +181,9 @@ const GeneralNote = (props: IProps) => {
                             <SendIcon />
                         </IconButton>
                     </Box>
-                    {/* <Box sx={{ display: 'flex', justifyContent: 'flex-end' }} >
-                        <Button
-                            variant='contained'
-                            // sx={{backgroundColor: '#1e703b', color: 'white', fontWeight: 'bold'}} 
-                            onClick={() => downloadFile(`${ROOT_URL_ASSET}${linkFile}`, meetingDocumentName)}
-                        >
-                            Tải xuống
-                        </Button>
-
-                    </Box> */}
-
                 </Box>
             </Box>}
-        />
+        /> */}
     </>
 }
 export default GeneralNote
