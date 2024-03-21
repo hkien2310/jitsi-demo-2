@@ -63,7 +63,6 @@ function AutoCompleteField(props: Props) {
   const { t } = useTranslation();
   const [text, setText] = React.useState<string>("");
   const { name, value, onBlur } = field || {};
-  console.log(value, 'valuevalue')
   const { errors, touched } = form || {};
 
   const isTouched = getIn(touched, name);

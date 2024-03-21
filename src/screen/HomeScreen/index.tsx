@@ -5,7 +5,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
@@ -31,7 +31,9 @@ import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
 import AuthServices from "../../services/Auth.services";
 import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
-import AddMeeting from "./AddMetting";
+import AddMeeting, { typeMeetingOptions } from "./AddMetting";
+import DialogCommon from "../../component/dialog";
+// import typeMeetingOptions from "../../../AddMeeting"
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -245,6 +247,7 @@ const HomeScreen = () => {
   }, [data?.data]);
 
   const onAdd = async (value: any) => {
+    console.log("ádasdasd", value,);
     const newValue = {
       id: rows?.length + 1,
       ...value,
@@ -259,18 +262,38 @@ const HomeScreen = () => {
         memberType: "SECRETARY",
       },
     ];
-    const assigned = value.assigned.map((elm: any) => ({
+    const assigned = value?.assigned.map((elm: any) => ({
       userId: elm?.value,
       memberType: "MEMBER",
     }));
+
+    const typeMeeting = typeMeetingOptions?.find((elm: any) => `${elm?.value}` === `${value?.type}`);
+    console.log(typeMeeting, typeMeetingOptions, 'typeMeetingtypeMeeting')
+
     const members = secretary.concat(assigned);
-    const body = {
-      title: value?.name,
-      members,
-      description: value?.description,
-    };
+    // const body = {
+    //   title: value?.name,
+    //   members,
+    //   description: value?.description,
+    //   type: typeMeeting?.label,
+    //   syllabusContent: value?.agenda,
+    //   startTime: value?.startTime,
+    //   endTime: value?.endTime,
+    //   location: value?.location,
+    //   syllabusFile: value?.uploadFile,
+    // };
+    const formData = new FormData();
+    formData.append("title", value?.name);
+    formData.append("members", JSON.stringify(members) || '');
+    formData.append("description", value?.description);
+    formData.append("type", typeMeeting?.value || "");
+    formData.append("syllabusContent", value?.agenda);
+    formData.append("startTime", value?.startTime?.toISOString());
+    formData.append("endTime", value?.endTime?.toISOString());
+    formData.append("location", value?.location);
+    formData.append("syllabusFile", value?.uploadFile || '');
     try {
-      const response = await MeetingServices.createMeeting(body);
+      const response = await MeetingServices.createMeeting(formData);
       if (response?.status === 201 && response?.data) {
         refetch();
         // showSuccess(response?.statusText)
@@ -347,48 +370,72 @@ const HomeScreen = () => {
                       <SearchOutlinedIcon /> Tìm kiếm
                     </ButtonCommon>
                   </Box>
-                  <ButtonDialog
-                    dialogTitle={dataRow ? '' : 'Thêm mới' }
-                    open={open}
-                    additionCloseFunction={() => setDataRow(undefined)}
-                    onToggle={(value) => {
-                      setOpen(value)}}
-                    text={
-                      <ButtonCommon sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }} color="error" variant="contained">
-                        <AddIcon /> Thêm mới cuộc họp
-                      </ButtonCommon>
-                    }
-                    content={<AddMeeting handleCancel={() => setOpen(false)} onAdd={onAdd} data={dataRow} />}
-                  />
+                  <ButtonCommon
+                    sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }}
+                    color="error"
+                    variant="contained"
+                    onClick={() => setOpen(true)}
+                  >
+                    <AddIcon /> Thêm mới cuộc họp
+                  </ButtonCommon>
                 </Box>
               </Box>
-              <DataGrid
-                rows={dataRows}
-                columns={columns}
-                initialState={{
-                  pagination: {
-                    paginationModel: paginationModel,
-                  },
-                }}
-                onPaginationModelChange={(model) => handleChangePage(model?.page)}
-                pageSizeOptions={[5]}
-                checkboxSelection={false}
-                disableRowSelectionOnClick
-                hideFooterPagination={true}
-                sx={{
-                  "& .MuiDataGrid-columnHeaders": {
-                    background: blue["A100"],
-                    color: "white",
-                    "& .MuiDataGrid-columnHeaderTitle": {
-                      fontWeight: "700",
-                    },
-                  },
-                }}
-              />
             </>
           );
         }}
       </Formik>
+      <DataGrid
+        rows={dataRows}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: paginationModel,
+          },
+        }}
+        onPaginationModelChange={(model) => handleChangePage(model?.page)}
+        pageSizeOptions={[5]}
+        checkboxSelection={false}
+        disableRowSelectionOnClick
+        hideFooterPagination={true}
+        sx={{
+          "& .MuiDataGrid-columnHeaders": {
+            background: blue["A100"],
+            color: "white",
+            "& .MuiDataGrid-columnHeaderTitle": {
+              fontWeight: "700",
+            },
+          },
+        }}
+      />
+      <DialogCommon
+        title={dataRow ? "Chi tiết" : "Thêm mới"}
+        open={open}
+        handleClose={() => {
+          setOpen(false);
+          setDataRow(undefined);
+        }}
+        content={
+          <Box sx={{ width: "75vw" }}>
+            <AddMeeting onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
+          </Box>
+        }
+        // footer={
+        //   dataRow ? (
+        //     <Box />
+        //   ) : (
+        //     <Box>
+        //       <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
+        //         <Button variant="outlined" onClick={() => setOpen(false)} sx={{ fontWeight: "600" }}>
+        //           Huỷ
+        //         </Button>
+        //         <Button variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>
+        //           Tạo mới
+        //         </Button>
+        //       </Box>
+        //     </Box>
+        //   )
+        // }
+      />
     </NavigationBar>
   );
 };

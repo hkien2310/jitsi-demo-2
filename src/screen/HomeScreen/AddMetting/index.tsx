@@ -1,84 +1,82 @@
-import { Box, Checkbox, Grid } from "@mui/material";
-import { DateTimeField, LocalizationProvider } from "@mui/x-date-pickers";
+import { Box, Button, Grid } from "@mui/material";
+import { green, indigo } from "@mui/material/colors";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FastField, Field, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useRef } from "react";
 import * as Yup from "yup";
 import AutoCompleteField from "../../../component/Autocomplete";
-import ButtonCommon from "../../../component/Button";
 import TextField from "../../../component/TextField";
+import UploadFile from "../../../component/UploadFile";
+import CheckBoxField from "../../../component/checkBox";
+import DateTimePickerField from "../../../component/dateTime";
+import LabelCommon from "../../../component/label";
+import Tiny from "../../../component/tinyMce";
+import { uploadFile } from "../../../helper/function";
 import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListUser from "../../../hooks/useGetListUser";
 import AuthServices from "../../../services/Auth.services";
-import { error } from "console";
-import Tiny from "../../../component/tinyMce";
-import LabelCommon from "../../../component/label";
-import { indigo } from "@mui/material/colors";
-import DialogCommon from "../../../component/dialog";
-import UploadFile from "../../../component/UploadFile";
-import { uploadFile } from "../../../helper/function";
-
+export const typeMeetingOptions = [
+  {
+    label: "Họp giao ban",
+    value: 1,
+  },
+  {
+    label: "Phiên họp thường trực",
+    value: 2,
+  },
+  {
+    label: "Thảo luận tổ",
+    value: 3,
+  },
+  {
+    label: "Họp thẩm tra",
+    value: 4,
+  },
+  {
+    label: "Họp thường kỳ tháng",
+    value: 5,
+  },
+  {
+    label: "Họp phiên chính thức",
+    value: 6,
+  },
+  {
+    label: "Họp phiên trù bị",
+    value: 7,
+  },
+  {
+    label: "Họp nội dung khác",
+    value: 8,
+  },
+];
 interface IProps {
   onAdd: (value: any) => void;
   data: any;
-  handleCancel: () => void;
+  onClose: () => void;
 }
 
 const validationSchema = () => {
   return Yup.object().shape({
-    name: Yup.string().required("Đây là trường bắt buộc"),
-    description: Yup.string().required("Đây là trường bắt buộc"),
-    assigned: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
-    agenda: Yup.string().required("Đây là trường bắt buộc"),
-    // startTime: Yup.string().required("Đây là trường bắt buộc"),
-    // endTime: Yup.string().required("Đây là trường bắt buộc"),
-    place: Yup.string().required("Đây là trường bắt buộc"),
-    secretary: Yup.string().required("Đây là trường bắt buộc"),
-    type: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
+    // name: Yup.string().required("Đây là trường bắt buộc"),
+    // description: Yup.string().required("Đây là trường bắt buộc"),
+    // assigned: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
+    // agenda: Yup.string().required("Đây là trường bắt buộc"),
+    // // startTime: Yup.string().required("Đây là trường bắt buộc"),
+    // // endTime: Yup.string().required("Đây là trường bắt buộc"),
+    // place: Yup.string().required("Đây là trường bắt buộc"),
+    // secretary: Yup.object().required("Đây là trường bắt buộc"),
+    // type: Yup.string().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
   });
 };
 
 const AddMeeting = (props: IProps) => {
-  const { onAdd, data: dataRow, handleCancel } = props;
+  const { onAdd, data: dataRow, onClose } = props;
   const { filters } = useFiltersHandler({ page: 0 });
   const { data } = useGetListUser(filters);
   const userInfo = AuthServices.getUserLocalStorage();
-  const [checkBoxUploadFile, setCheckBoxUploadFile] = useState(false);
+  const ref = useRef<any>();
 
-  const typeMeetingOptions = [
-    {
-      label: "Họp giao ban",
-      value: 1,
-    },
-    {
-      label: "Phiên họp thường trực",
-      value: 2,
-    },
-    {
-      label: "Thảo luận tổ",
-      value: 3,
-    },
-    {
-      label: "Họp thẩm tra",
-      value: 4,
-    },
-    {
-      label: "Họp thường kỳ tháng",
-      value: 5,
-    },
-    {
-      label: "Họp phiên chính thức",
-      value: 6,
-    },
-    {
-      label: "Họp phiên trù bị",
-      value: 7,
-    },
-    {
-      label: "Họp nội dung khác",
-      value: 8,
-    },
-  ];
   const listOptions = React.useMemo(() => {
     return (
       data?.data?.map((e) => {
@@ -107,17 +105,18 @@ const AddMeeting = (props: IProps) => {
         },
       ];
   const handleChooseFile = async (files: File[] | null) => {
-    if (files) {
-      files?.forEach(async (e) => {
-        await uploadFile({
-          file: e,
-          meetingId: "",
-          // onSuccess: () => {
-          //   refetchListDocument();
-          // },
-        });
-      });
-    }
+    ref?.current?.setFieldValue("uploadFile", files?.[0]);
+    // if (files) {
+    //   files?.forEach(async (e) => {
+    //     await uploadFile({
+    //       file: e,
+    //       meetingId: "",
+    //       // onSuccess: () => {
+    //       //   refetchListDocument();
+    //       // },
+    //     });
+    //   });
+    // }
   };
   const filterSecretary = dataRow
     ? dataRow?.members
@@ -137,10 +136,11 @@ const AddMeeting = (props: IProps) => {
     agenda: "",
     startTime: "",
     endTime: "",
-    place: "",
+    location: "",
     secretary: filterSecretary,
-    type: "",
-    checkBoxUploadFile: false,
+    type: undefined,
+    acceptUploadFile: false,
+    uploadFile: [],
   };
 
   return (
@@ -153,6 +153,7 @@ const AddMeeting = (props: IProps) => {
             onAdd(values);
             help?.resetForm();
           }}
+          innerRef={ref}
           enableReinitialize
         >
           {({ values, setFieldValue, handleSubmit, errors }) => {
@@ -221,43 +222,57 @@ const AddMeeting = (props: IProps) => {
                       <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
                         <LabelCommon label="Chương trình họp" />
                         <Box sx={{ flex: 5 }}>
-                          <Tiny setContent={() => {}} initialValue="" />
-                          <Box>
-                            <Checkbox name="checkBoxUploadFile" defaultChecked color="success" />
-                            Chọn tải file
+                          <Box sx={{ pb: !values?.acceptUploadFile ? 2 : 0 }}>
+                            {!values?.acceptUploadFile ? <FastField component={Tiny} name="agenda" disabled={isDetail} /> : undefined}
                           </Box>
-                          {values?.checkBoxUploadFile ? (
-                            <UploadFile onFileSelected={handleChooseFile} />
-                          ) : undefined}
+                          <Box>
+                            <FastField
+                              disabled={isDetail}
+                              name="acceptUploadFile"
+                              component={CheckBoxField}
+                              label={"Chọn tải file"}
+                              sxContainer={{
+                                gap: "4px",
+                                ".Mui-checked": {
+                                  color: `${green[800]} !important`,
+                                },
+                              }}
+                            />
+                          </Box>
+                          {values?.acceptUploadFile ? <UploadFile onFileSelected={handleChooseFile} /> : undefined}
                         </Box>
                       </Grid>
                       <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
                         <Box sx={{ display: "flex" }}>
                           <LabelCommon label="Thời gian từ" />
                           <FastField
-                            component={DateTimeField}
+                            component={DateTimePickerField}
                             name="startTime"
                             required
                             sx={{ flex: 2, "& div": { borderRadius: "0.5rem" } }}
                             placeholder="Chọn thời gian bắt đầu"
                             disabled={isDetail}
+                            // formatCustom={'YYYY-MM-DD HH:mm:ss'}
+                            isDayjs
                           />
                         </Box>
                         <Box sx={{ display: "flex" }}>
                           <LabelCommon label="Thời gian hết hạn" />
                           <FastField
-                            component={DateTimeField}
+                            component={DateTimePickerField}
+                            isDayjs
                             name="endTime"
                             sx={{ flex: 2, "& div": { borderRadius: "0.5rem" } }}
                             required
                             placeholder="Chọn thời gian kết thúc"
                             disabled={isDetail}
+                            // formatCustom={'YYYY-MM-DD HH:mm:ss'}
                           />
                         </Box>
                       </Grid>
                       <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
                         <LabelCommon label="Địa điểm" />
-                        <FastField sx={{ flex: 5 }} component={TextField} name={"place"} required placeholder="Nhập địa điểm họp" disabled={isDetail} />
+                        <FastField sx={{ flex: 5 }} component={TextField} name={"location"} required placeholder="Nhập địa điểm họp" disabled={isDetail} />
                       </Grid>
 
                       <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
@@ -295,68 +310,30 @@ const AddMeeting = (props: IProps) => {
                       </Grid>
                     </Grid>
                   </Box>
-                  {isDetail ? (
+                  {!isDetail ? (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
+                      <Button variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>
+                        Huỷ
+                      </Button>
+                      <Button variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>
+                        Tạo mới
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Box />
+                  )}
+                  {/* {isDetail ? (
                     <Box />
                   ) : (
                     <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
-                      <Box
-                        sx={{
-                          color: "#E96B58",
-                          border: "1px solid #E96B58",
-                          padding: "10px 24px",
-                          borderRadius: 3,
-                          fontWeight: "600",
-                          boxShadow: 1,
-                          width: 130,
-                          textAlign: "center",
-                        }}
-                        onClick={handleCancel}
-                      >
+                      <Button variant="outlined" onClick={handleCancel} sx={{ fontWeight: "600" }}>
                         Huỷ
-                      </Box>
-                      <Box
-                        sx={{
-                          border: "1px solid #E96B58",
-                          padding: "10px 24px",
-                          borderRadius: 3,
-                          fontWeight: "600",
-                          color: "white",
-                          bgcolor: "#E96B58",
-                          ml: 1,
-                          boxShadow: 1,
-                          width: 130,
-                          alignItems: "center",
-                          textAlign: "center",
-                        }}
-                        onClick={() => handleSubmit()}
-                      >
+                      </Button>
+                      <Button variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>
                         Tạo mới
-                      </Box>
-                      {/* <ButtonCommon
-                        // startIcon={<Add />}
-                        sx={{ alignSelf: "center", padding: "40px auto", color: "rgba(233, 107, 88, 0.5)", border: "1px solid rgba(233, 107, 88, 0.5)" }}
-                        onClick={() => handleSubmit()}
-                        variant="outlined"
-                      >
-                        Huỷ
-                      </ButtonCommon>
-                      <ButtonCommon
-                        // startIcon={<Add />}
-                        sx={{
-                          alignSelf: "center",
-                          color: "white",
-                          padding: "40px auto",
-                          bgcolor: "rgba(233, 107, 88, 0.5)",
-                          border: "1px solid rgba(233, 107, 88, 0.5)",
-                        }}
-                        onClick={() => handleSubmit()}
-                        // color="rgba(233, 107, 88, 0.5)"
-                        variant="outlined"
-                      >
-                        Tạo mới
-                      </ButtonCommon> */}
+                      </Button>
                     </Box>
-                  )}
+                  )} */}
                 </Grid>
               </>
             );
