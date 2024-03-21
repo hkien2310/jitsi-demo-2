@@ -192,12 +192,22 @@ function AutoCompleteField(props: Props) {
             {...params}
             label={label}
             name={name}
-            variant="standard"
+            variant="outlined"
             required={required}
             onBlur={onBlur}
             error={isTouched && Boolean(errorMessage)}
             helperText={isTouched && errorMessage}
             fullWidth
+            sx={{
+              "& div": {
+                borderRadius: "0.5rem",
+              },
+              "& label": {
+                "& .MuiFormLabel-asterisk": {
+                  color: 'red'
+                }
+              }
+            }}
             InputLabelProps={{
               shrink: true,
             }}

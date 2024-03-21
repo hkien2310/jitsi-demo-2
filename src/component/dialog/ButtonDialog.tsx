@@ -23,10 +23,11 @@ interface IProps {
     content: React.ReactNode
     open: boolean
     onToggle: (open: boolean) => void
+    additionCloseFunction?: () => void
 }
 
 export default function ButtonDialog(props: IProps) {
-    const { text, content, open, onToggle } = props
+    const { text, content, open, onToggle, additionCloseFunction } = props
 
     const handleClickOpen = () => {
         onToggle(true);
@@ -34,6 +35,7 @@ export default function ButtonDialog(props: IProps) {
 
     const handleClose = () => {
         onToggle(false);
+        additionCloseFunction && additionCloseFunction()
     };
 
     return (
@@ -42,6 +44,7 @@ export default function ButtonDialog(props: IProps) {
                 {text}
             </Box>
             <Dialog
+                maxWidth={'md'}
                 open={open}
                 TransitionComponent={Transition}
                 keepMounted={false}
@@ -50,7 +53,7 @@ export default function ButtonDialog(props: IProps) {
                 maxWidth={false}
             >
                 {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
-                <DialogContent>
+                <DialogContent >
                     <DialogContentText id="alert-dialog-slide-description" >
                         {content}
                     </DialogContentText>
