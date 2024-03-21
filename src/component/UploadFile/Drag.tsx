@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import React, { useState } from 'react';
 import TypographyCommon from '../Typography';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -78,13 +78,11 @@ const DragAndDrop = (props: IProps) => {
                 borderColor: colors.border.main,
                 backgroundColor: colors.background.dropzone,
                 borderRadius: '5px',
-                paddingTop: '10px',
-                paddingBottom: '10px',
                 strokeDasharray: 100
 
             }}
         >
-            <div className="drag-drop-content">
+            <Button className="drag-drop-content" fullWidth>
                 <input
                     type="file"
                     id="file-input"
@@ -94,14 +92,14 @@ const DragAndDrop = (props: IProps) => {
                 />
                 <label htmlFor="file-input">
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <CloudUploadIcon style={{ width: '50px', height: '50px', alignSelf: 'center', marginBottom: '10px' }} />
+                        <CloudUploadIcon style={{ width: '50px', height: '50px', alignSelf: 'center', color: colors.text.primary }} />
                         <TypographyCommon sx={{ textAlign: 'center' }}>
                             {/* Kéo và thả file hoặc&nbsp; */}
-                            <span className="browse-link">Chọn tài liệu</span>
+                            <span className="browse-link" style={{fontWeight: 600, textTransform: 'none'}}>Chọn tài liệu</span>
                         </TypographyCommon>
                     </Box>
                 </label>
-            </div>
+            </Button>
         </div>
     );
 };

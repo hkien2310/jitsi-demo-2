@@ -39,7 +39,7 @@ export const uploadFile = async (props: IUploadFile) => {
         onSuccess?.()
     } catch (error: any) {
         console.log('Failed to upload file:', error?.response?.data?.message);
-        alert( `Failed to upload file ${error?.response?.data?.message || ''}`);
+        alert(`Failed to upload file ${error?.response?.data?.message || ''}`);
         onFailed?.()
     }
 };
@@ -47,24 +47,36 @@ export const uploadFile = async (props: IUploadFile) => {
 
 export const downloadFile = (url: string, filename: string) => {
     fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to download file');
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode?.removeChild(link);
-      })
-      .catch(error => {
-        console.error('Error downloading file:', error);
-        alert('Failed to download file');
-      });
-  };
-  
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to download file');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode?.removeChild(link);
+        })
+        .catch(error => {
+            console.error('Error downloading file:', error);
+            alert('Failed to download file');
+        });
+};
+
+
+export function formatBytes(bytes: number, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}

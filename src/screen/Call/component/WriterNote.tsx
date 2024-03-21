@@ -40,12 +40,11 @@ const WriterNote = (props: IProps) => {
     // render
     return <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
 
-        <TypographyCommon pb={1} style={{ color: colors.text.white, fontSize: '20px', fontWeight: '700', textAlign: 'left' }} py={1}>
+        <TypographyCommon pb={1} style={{ color: colors.text.white, fontWeight: '700', textAlign: 'left' }} py={1}>
             Ghi chú của thư ký
         </TypographyCommon>
         {/* <Divider /> */}
         <Box
-            pt={1}
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
