@@ -63,14 +63,15 @@ const GeneralNote = (props: IProps) => {
                         onSuccess: () => {
                             setFiles((prev) => ([...(prev || []), e]))
                         }
+                    }).finally(() => {
+                        refetchListDocument()
                     })
                 })
+
             }
         } catch {
 
         } finally {
-            refetchListDocument()
-            console.log('asasasas')
         }
        
     }

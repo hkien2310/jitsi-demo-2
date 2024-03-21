@@ -7,6 +7,7 @@ import { ImageSource } from '../../assets/Image';
 
 interface IProps {
     onFileSelected?: (files: File[] | null) => void
+    multiple?: boolean
 }
 
 const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
@@ -30,7 +31,7 @@ export const renderLogo = (type: string) => {
 }
 
 const DragAndDrop = (props: IProps) => {
-    const { onFileSelected } = props
+    const { onFileSelected, multiple = true } = props
     const [dragging, setDragging] = useState<boolean>(false);
 
     const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
@@ -86,6 +87,7 @@ const DragAndDrop = (props: IProps) => {
                 <input
                     type="file"
                     id="file-input"
+                    multiple={multiple}
                     style={{ display: 'none' }}
                     onChange={handleFileInput}
                 />
@@ -94,7 +96,7 @@ const DragAndDrop = (props: IProps) => {
                         <CloudUploadIcon style={{ width: '50px', height: '50px', alignSelf: 'center', color: colors.text.primary }} />
                         <TypographyCommon sx={{ textAlign: 'center' }}>
                             {/* Kéo và thả file hoặc&nbsp; */}
-                            <span className="browse-link" style={{fontWeight: 600, textTransform: 'none'}}>Chọn tài liệu</span>
+                            <span className="browse-link" style={{ fontWeight: 600, textTransform: 'none' }}>Chọn tài liệu</span>
                         </TypographyCommon>
                     </Box>
                 </label>
