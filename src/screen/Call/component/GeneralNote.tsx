@@ -79,7 +79,7 @@ const GeneralNote = (props: IProps) => {
 
     return <>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-            <TypographyCommon style={{ color: colors.text.white,fontSize: '20px', fontWeight: '700', textAlign: 'left', textTransform: 'uppercase' }} py={1}>
+            <TypographyCommon style={{ color: colors.text.white, fontWeight: '700', textAlign: 'left', fontSize: '20px' }} py={1}>
                 Tài liệu chia sẻ
             </TypographyCommon>
 
@@ -131,7 +131,7 @@ const GeneralNote = (props: IProps) => {
             </Box>
             <Box mb={1} pt={1}>
                 <Box>
-                    <Button fullWidth variant='contained' onClick={() => setOpenDialogUpload(true)} sx={{fontWeight: '600'}}>Thêm tài liệu</Button>
+                    <Button fullWidth variant='contained' onClick={() => setOpenDialogUpload(true)} sx={{fontWeight: '600', textTransform: 'none'}}>Thêm tài liệu</Button>
                 </Box>
                 <DialogCommon title={'Tải lên tài liệu'} open={openDialogUpload} handleClose={() => setOpenDialogUpload(false)}
                     content={
