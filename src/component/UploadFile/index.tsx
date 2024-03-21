@@ -9,10 +9,11 @@ interface IProps {
     onFileSelected: (files: File[] | null) => void
     handleClose: () => void
     files: File[] | null
+    multiple?: boolean
 }
 
 const UploadFile = (props: IProps) => {
-    const { onFileSelected, handleClose, files } = props
+    const { onFileSelected, handleClose, files, multiple } = props
 
 
     const fileChange = (e: File[] | null) => {
@@ -46,7 +47,7 @@ const UploadFile = (props: IProps) => {
             </TypographyCommon> */}
 
             <Box py={1}>
-                <DragAndDrop onFileSelected={fileChange} />
+                <DragAndDrop onFileSelected={fileChange} multiple={multiple}/>
             </Box>
             <Box p={2} sx={{ border: `2px solid ${colors.border.main}`, borderRadius: '5px' }}>
                 <TypographyCommon sx={{ fontWeight: 600, display: 'flex' }}>
