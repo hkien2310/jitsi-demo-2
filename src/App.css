@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  font-family: "Noto Sans Display", sans-serif !important;
+  .MuiDataGrid-root {
+    font-family: "Noto Sans Display", sans-serif !important;
+
+  }
 }
 
 .App-logo {
@@ -35,4 +40,7 @@
   to {
     transform: rotate(360deg);
   }
+}
+body{
+  font-family: "Noto Sans Display", sans-serif !important;
 }

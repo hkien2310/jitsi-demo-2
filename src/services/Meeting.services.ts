@@ -9,7 +9,11 @@ class MeetingServices {
     // return httpServices.get(`${GET_LIST_MEET}`);
   };
   createMeeting(body: any) {
-    return httpServices.post(`${CREATE_LIST_MEET}`, body);
+    return httpServices.post(`${CREATE_LIST_MEET}`, body, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+    });
   };
   getListMeetingNote(body: IRequestGetListMeetingNote) {
     return httpServices.get(`${GET_LIST_MEETING_NOTE}?${queryString.stringify(body)}`);

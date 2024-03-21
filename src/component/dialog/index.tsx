@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Slide, makeStyles } from "@mui/material"
+import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Slide } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React from "react";
 import { IconsSource } from "../../const/icons";
@@ -9,6 +9,7 @@ interface IProps {
     handleClose: () => void
     title?: string | React.ReactNode
     content: string | React.ReactNode
+    footer?: React.ReactNode
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -21,7 +22,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const DialogCommon = (props: IProps) => {
-    const { open, handleClose, title, content } = props
+    const { open, handleClose, title, content, footer } = props
 
     return <Dialog
         open={open}
@@ -50,6 +51,9 @@ const DialogCommon = (props: IProps) => {
             {content}
             {/* </DialogContentText> */}
         </DialogContent>
+        <DialogActions>
+            {footer && footer}
+        </DialogActions>
     </Dialog>
 }
 
