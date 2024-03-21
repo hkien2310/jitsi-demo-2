@@ -123,25 +123,6 @@ const HomeScreen = () => {
       flex: 1,
       editable: false,
       sortable: false,
-      // renderCell: ({ row }) => {
-      //   return (
-      //     <Box style={{ display: "flex", flexDirection: "row", alignItems: "center",  }}>
-      //       <Box
-      //         p={1}
-      //       // sx={{  borderRadius: "10px", width: 100 }}
-      //       // onClick={() => {
-      //       //   const body = {
-      //       //     room: row?.id,
-      //       //     roomName: row?.name,
-      //       //   };
-      //       //   navigate(`/call?${queryString.stringify(body)}`);
-      //       // }}
-      //       >
-      //         {row.description}
-      //       </Box>
-      //     </Box>
-      //   );
-      // },
     },
     {
       field: "decentralize",
@@ -247,7 +228,6 @@ const HomeScreen = () => {
   }, [data?.data]);
 
   const onAdd = async (value: any) => {
-    console.log("ádasdasd", value,);
     const newValue = {
       id: rows?.length + 1,
       ...value,
@@ -255,54 +235,6 @@ const HomeScreen = () => {
     const result = [...rows, newValue];
     setRows(result);
     setOpen(false);
-
-    const secretary = [
-      {
-        userId: value?.secretary.value,
-        memberType: "SECRETARY",
-      },
-    ];
-    const assigned = value?.assigned.map((elm: any) => ({
-      userId: elm?.value,
-      memberType: "MEMBER",
-    }));
-
-    const typeMeeting = typeMeetingOptions?.find((elm: any) => `${elm?.value}` === `${value?.type}`);
-    console.log(typeMeeting, typeMeetingOptions, 'typeMeetingtypeMeeting')
-
-    const members = secretary.concat(assigned);
-    // const body = {
-    //   title: value?.name,
-    //   members,
-    //   description: value?.description,
-    //   type: typeMeeting?.label,
-    //   syllabusContent: value?.agenda,
-    //   startTime: value?.startTime,
-    //   endTime: value?.endTime,
-    //   location: value?.location,
-    //   syllabusFile: value?.uploadFile,
-    // };
-    const formData = new FormData();
-    formData.append("title", value?.name);
-    members?.forEach((e) => {
-      formData.append("members", JSON.stringify(e));
-    })
-    formData.append("description", value?.description);
-    formData.append("type", typeMeeting?.value || "");
-    formData.append("syllabusContent", value?.agenda);
-    formData.append("startTime", value?.startTime?.toISOString());
-    formData.append("endTime", value?.endTime?.toISOString());
-    formData.append("location", value?.location);
-    formData.append("syllabusFile", value?.uploadFile || '');
-    try {
-      const response = await MeetingServices.createMeeting(formData);
-      if (response?.status === 201 && response?.data) {
-        refetch();
-        // showSuccess(response?.statusText)
-      }
-    } catch (error: any) {
-      showError(error);
-    }
   };
 
   const Transition = React.forwardRef(function Transition(
@@ -418,25 +350,9 @@ const HomeScreen = () => {
         }}
         content={
           <Box sx={{ width: "75vw" }}>
-            <AddMeeting onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
+            <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
           </Box>
         }
-        // footer={
-        //   dataRow ? (
-        //     <Box />
-        //   ) : (
-        //     <Box>
-        //       <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
-        //         <Button variant="outlined" onClick={() => setOpen(false)} sx={{ fontWeight: "600" }}>
-        //           Huỷ
-        //         </Button>
-        //         <Button variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>
-        //           Tạo mới
-        //         </Button>
-        //       </Box>
-        //     </Box>
-        //   )
-        // }
       />
     </NavigationBar>
   );
