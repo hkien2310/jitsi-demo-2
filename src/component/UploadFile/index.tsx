@@ -7,7 +7,7 @@ import { formatBytes } from '../../helper/function';
 
 interface IProps {
     onFileSelected: (files: File[] | null) => void
-    handleClose: () => void
+    handleClose?: () => void
     files: File[] | null
     multiple?: boolean
 }
@@ -54,7 +54,7 @@ const UploadFile = (props: IProps) => {
                     Danh sách tài liệu đã tải lên <TypographyCommon ml={1} style={{ color: colors.text.primary, fontWeight: 600 }}>{`(${files?.length || 0})`}</TypographyCommon>
                 </TypographyCommon>
                 <Grid container spacing={1}>
-                    {files?.map((e) => {
+                    {files && files?.length > 0 ? files?.map((e) => {
                         return <Grid item xs={12} md={6} lg={4} mt={1} p={1} key={e?.lastModified} >
                             <Box p={1} sx={{ display: 'flex', alignItems: 'center', border: `1px solid ${colors.border.main}`, borderRadius: '5px' }}>
                                 <img src={renderLogo(e?.name?.split('.')?.pop() || '')} alt={'logo'} style={{ width: '50px', height: '50px' }} />
@@ -68,7 +68,7 @@ const UploadFile = (props: IProps) => {
                                 </Box>
                             </Box>
                         </Grid>
-                    })}
+                    }) : <></>}
                 </Grid>
                 {/* {(!files) || files?.length === 0 ?
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', border: `1px solid ${colors.border.main}`, borderRadius: '5px' }} p={2}>

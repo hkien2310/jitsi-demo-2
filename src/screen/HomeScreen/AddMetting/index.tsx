@@ -140,7 +140,7 @@ const AddMeeting = (props: IProps) => {
     secretary: filterSecretary,
     type: undefined,
     acceptUploadFile: false,
-    uploadFile: [],
+    uploadFile: null,
   };
 
   return (
