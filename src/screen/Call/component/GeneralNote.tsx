@@ -13,11 +13,13 @@ import useGetListDocument from '../../../hooks/useGetListDocument';
 import useGetListDocumentNote from '../../../hooks/useGetListDocumentNote';
 import { IAddDocumentNote } from '../../../interface/document';
 import DocumentServices from '../../../services/Document.services';
-import DragAndDrop from '../../../component/UploadFile/Drag';
+import DragAndDrop, { renderLogo } from '../../../component/UploadFile/Drag';
 import DropzoneDialogExample from '../../../component/UploadFile/DropZoneDialog';
 import DialogCommon from '../../../component/dialog';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { DownloadOutlined } from '@mui/icons-material';
+import { colors } from '../../../const/colors';
+import { IconsSource } from '../../../const/icons';
 
 interface IProps {
     meetingId: any
@@ -75,85 +77,50 @@ const GeneralNote = (props: IProps) => {
 
     return <>
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
-            <TypographyCommon pb={1} style={{ fontSize: '20px', fontWeight: 'bold', textAlign: 'left', color: '#5c5c5c', textTransform: 'uppercase' }} py={1}>
+            <TypographyCommon style={{ color: colors.text.white,fontSize: '20px', fontWeight: '700', textAlign: 'left', textTransform: 'uppercase' }} py={1}>
                 Tài liệu chia sẻ
             </TypographyCommon>
-            <Divider />
 
-            <Box sx={{
-                display: 'flex',
-                overflow: 'scroll',
-                width: '100%',
-                height: '100%',
-                '&::-webkit-scrollbar': {
-                    display: 'none' // Ẩn thanh cuộn trên trình duyệt Chrome
-                },
-                '-ms-overflow-style': 'none', // Ẩn thanh cuộn trên trình duyệt Edge
-                scrollbarWidth: 'none' // Ẩn thanh cuộn trên trình duyệt Firefox
-            }}
+            <Box
+                sx={{
+                    display: 'flex',
+                    overflow: 'scroll',
+                    width: '100%',
+                    height: '100%',
+                    '&::-webkit-scrollbar': {
+                        display: 'none' // Ẩn thanh cuộn trên trình duyệt Chrome
+                    },
+                    '-ms-overflow-style': 'none', // Ẩn thanh cuộn trên trình duyệt Edge
+                    scrollbarWidth: 'none' // Ẩn thanh cuộn trên trình duyệt Firefox
+                }}
             >
-                <Box sx={{ maxHeight: '100%', width: '100%', }}>
+                <Box sx={{ maxHeight: '100%', width: '100%', }} pl={1}>
                     {listDocument?.data?.map((e, index) => {
-                        return <Button sx={{
-                            display: 'flex',
-                            textTransform: 'none'
-                        }}
-                        fullWidth
-                            onClick={() => {
-                                setOpenDialogViewNote(true)
-                                setMeetingDocumentId(e?.id)
-                                setMeetingDocumentName(e?.fileName)
-                                setLinkFile(e?.filePath)
-                                refetch({ ...filterDocumentNote, meetingDocumentId: e?.id })
-                            }}>
-                            <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <AttachmentIcon style={{ height: '30px', width: '30px' }} />
-                                    <TypographyCommon pl={1} sx={{ textAlign: 'left' }}>
-                                        {e?.fileName}
-                                    </TypographyCommon>
+                        return <Box mb={1} key={index} sx={{ backgroundColor: colors.background.grey, borderRadius: '5px'}}>
+                            <Button
+                                sx={{
+                                    display: 'flex',
+                                    textTransform: 'none'
+                                }}
+                                fullWidth
+                                onClick={() => {
+                                    setOpenDialogViewNote(true)
+                                    setMeetingDocumentId(e?.id)
+                                    setMeetingDocumentName(e?.fileName)
+                                    setLinkFile(e?.filePath)
+                                    refetch({ ...filterDocumentNote, meetingDocumentId: e?.id })
+                                }}
+                            >
+                                <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <img src={renderLogo(e?.fileName?.split('.')?.pop() || '')} alt={'logo'} style={{ width: '30px', height: '30px' }} />
+                                        <TypographyCommon pl={1} style={{ textAlign: 'left', color: colors.text.white, fontWeight: '600' }}>
+                                            {e?.fileName}
+                                        </TypographyCommon>
+                                    </Box>
                                 </Box>
-                                <InfoOutlinedIcon />
-                                {/* <Button>
-                                        Xem chi tiết
-                                    </Button> */}
-                            </Box>
-                        </Button>
-                        // return <Box key={index} sx={{
-                        //     width: '100%',
-                        //     cursor: 'pointer',
-                        //     "& :hover ": {
-                        //         borderRadius: '5px',
-                        //         backgroundColor: "#d1d1d1"
-                        //     }
-                        // }}>
-                        //     <Box
-                        //         p={1}
-                        //         sx={{
-                        //             display: 'flex',
-                        //         }}
-                        //         onClick={() => {
-                        //             setOpenDialogViewNote(true)
-                        //             setMeetingDocumentId(e?.id)
-                        //             setMeetingDocumentName(e?.fileName)
-                        //             setLinkFile(e?.filePath)
-                        //             refetch({ ...filterDocumentNote, meetingDocumentId: e?.id })
-                        //         }}>
-                        //         <Box sx={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'space-between', }}>
-                        //             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        //                 <AttachmentIcon style={{ height: '30px', width: '30px' }} />
-                        //                 <TypographyCommon pl={1} sx={{ textAlign: 'left' }}>
-                        //                     {e?.fileName}
-                        //                 </TypographyCommon>
-                        //             </Box>
-                        //             <InfoOutlinedIcon />
-                        //             {/* <Button>
-                        //                 Xem chi tiết
-                        //             </Button> */}
-                        //         </Box>
-                        //     </Box>
-                        //     {/* <Divider /> */}
-                        // </Box>
+                            </Button>
+                        </Box>
                     })}
                 </Box>
 
@@ -162,11 +129,11 @@ const GeneralNote = (props: IProps) => {
             </Box>
             <Box mb={1} pt={1}>
                 <Box>
-                    <Button fullWidth variant='contained' onClick={() => setOpenDialogUpload(true)}>Thêm tài liệu</Button>
+                    <Button fullWidth variant='contained' onClick={() => setOpenDialogUpload(true)} sx={{fontWeight: '600'}}>Thêm tài liệu</Button>
                 </Box>
-                <DialogCommon open={openDialogUpload} handleClose={() => setOpenDialogUpload(false)}
+                <DialogCommon title={'Tải lên tài liệu'} open={openDialogUpload} handleClose={() => setOpenDialogUpload(false)}
                     content={
-                        <Box sx={{ zIndex: 999999 }}>
+                        <Box sx={{ zIndex: 999999, width: '80vw' }}>
                             <UploadFile onFileSelected={handleChooseFile} handleClose={() => setOpenDialogUpload(false)} />
                         </Box>
                     } />
@@ -181,10 +148,10 @@ const GeneralNote = (props: IProps) => {
                 setOpenDialogViewNote(value)
             }}
             text={<></>}
-            content={<Box sx={{ display: 'flex', minWidth: '500px' }}>
+            content={<Box sx={{ display: 'flex', width: '50vw' }}>
                 <Box sx={{ width: '100%' }}>
                     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <TypographyCommon mb={1} sx={{ fontSize: '20px' }}>
+                        <TypographyCommon mb={1} sx={{ fontSize: '20px', fontWeight: '600' }}>
                             {`Ghi chú của ${meetingDocumentName}`}
                         </TypographyCommon>
                         <Button color='primary' variant='contained' onClick={() => downloadFile(`${ROOT_URL_ASSET}${linkFile}`, meetingDocumentName)} ><DownloadOutlined /></Button>
