@@ -2,7 +2,7 @@ import { Box, Checkbox, Grid } from "@mui/material";
 import { DateTimeField, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FastField, Field, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import AutoCompleteField from "../../../component/Autocomplete";
 import ButtonCommon from "../../../component/Button";
@@ -14,6 +14,9 @@ import { error } from "console";
 import Tiny from "../../../component/tinyMce";
 import LabelCommon from "../../../component/label";
 import { indigo } from "@mui/material/colors";
+import DialogCommon from "../../../component/dialog";
+import UploadFile from "../../../component/UploadFile";
+import { uploadFile } from "../../../helper/function";
 
 interface IProps {
   onAdd: (value: any) => void;
@@ -40,6 +43,7 @@ const AddMeeting = (props: IProps) => {
   const { filters } = useFiltersHandler({ page: 0 });
   const { data } = useGetListUser(filters);
   const userInfo = AuthServices.getUserLocalStorage();
+  const [checkBoxUploadFile, setCheckBoxUploadFile] = useState(false);
 
   const typeMeetingOptions = [
     {
@@ -102,7 +106,19 @@ const AddMeeting = (props: IProps) => {
           label: userInfo?.fullname,
         },
       ];
-
+  const handleChooseFile = async (files: File[] | null) => {
+    if (files) {
+      files?.forEach(async (e) => {
+        await uploadFile({
+          file: e,
+          meetingId: "",
+          // onSuccess: () => {
+          //   refetchListDocument();
+          // },
+        });
+      });
+    }
+  };
   const filterSecretary = dataRow
     ? dataRow?.members
         .filter((elm: any) => elm?.memberType === "SECRETARY")
@@ -124,6 +140,7 @@ const AddMeeting = (props: IProps) => {
     place: "",
     secretary: filterSecretary,
     type: "",
+    checkBoxUploadFile: false,
   };
 
   return (
@@ -206,9 +223,12 @@ const AddMeeting = (props: IProps) => {
                         <Box sx={{ flex: 5 }}>
                           <Tiny setContent={() => {}} initialValue="" />
                           <Box>
-                            <Checkbox defaultChecked color="success" />
+                            <Checkbox name="checkBoxUploadFile" defaultChecked color="success" />
                             Chọn tải file
                           </Box>
+                          {values?.checkBoxUploadFile ? (
+                            <UploadFile onFileSelected={handleChooseFile} />
+                          ) : undefined}
                         </Box>
                       </Grid>
                       <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>

@@ -6,7 +6,7 @@ import { colors } from '../../const/colors';
 
 interface IProps {
     onFileSelected: (files: File[] | null) => void
-    handleClose: () => void
+    handleClose?: () => void
 }
 
 const UploadFile = (props: IProps) => {
