@@ -1,6 +1,7 @@
 import { Box, Divider } from '@mui/material';
 import GeneralNote from './GeneralNote';
 import WriterNote from './WriterNote';
+import { colors } from '../../../const/colors';
 
 interface IProps {
     meetingId: any
@@ -11,7 +12,7 @@ const DocumentShow = (props: IProps) => {
     const { meetingId, isSecretary } = props
 
 
-    return <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }} px={2}>
+    return <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#040404' }} px={2}>
         <Box sx={{ display: 'flex', flexDirection: 'column', height: isSecretary ? '50%' : '100%' }}>
             <GeneralNote meetingId={meetingId} />
         </Box>

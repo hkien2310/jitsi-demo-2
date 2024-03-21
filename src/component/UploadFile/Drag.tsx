@@ -2,9 +2,31 @@ import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import TypographyCommon from '../Typography';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { colors } from '../../const/colors';
+import { ImageSource } from '../../assets/Image';
 
 interface IProps {
     onFileSelected?: (files: File[] | null) => void
+}
+
+const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg'];
+const wordExtensions = ['doc', 'docx', 'rtf'];
+const fileExtensions = ['pdf', 'doc', 'docx', 'rtf'];
+const excelExtensions = ['xlsx', 'xls', 'csv', 'ods', 'xlsm', 'xlsb'];
+
+
+export const renderLogo = (type: string) => {
+    if (imageExtensions?.includes(type)) {
+        return ImageSource.imgLogo
+    } else if (wordExtensions?.includes(type)) {
+        return ImageSource.wordLogo
+    } else if (fileExtensions?.includes(type)) {
+        return ImageSource.pdfLogo
+    } else if (excelExtensions?.includes(type)) {
+        return ImageSource.xslLogo
+    } else {
+        return ImageSource.otherLogo
+    }
 }
 
 const DragAndDrop = (props: IProps) => {
@@ -42,6 +64,8 @@ const DragAndDrop = (props: IProps) => {
         }
     };
 
+
+
     return (
         <div
             className={`drag-drop-container ${dragging ? 'dragging' : ''}`}
@@ -50,10 +74,14 @@ const DragAndDrop = (props: IProps) => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             style={{
-                border: '1px dashed',
+                border: `dashed`,
+                borderColor: colors.border.main,
+                backgroundColor: colors.background.dropzone,
                 borderRadius: '5px',
                 paddingTop: '10px',
                 paddingBottom: '10px',
+                strokeDasharray: 100
+
             }}
         >
             <div className="drag-drop-content">
@@ -66,7 +94,7 @@ const DragAndDrop = (props: IProps) => {
                 />
                 <label htmlFor="file-input">
                     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <CloudUploadIcon style={{ width: '50px', height: '50px', alignSelf: 'center', marginBottom: '10px' }}/>
+                        <CloudUploadIcon style={{ width: '50px', height: '50px', alignSelf: 'center', marginBottom: '10px' }} />
                         <TypographyCommon sx={{ textAlign: 'center' }}>
                             {/* Kéo và thả file hoặc&nbsp; */}
                             <span className="browse-link">Chọn tài liệu</span>
