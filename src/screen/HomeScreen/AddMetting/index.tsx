@@ -16,6 +16,8 @@ import { uploadFile } from "../../../helper/function";
 import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListUser from "../../../hooks/useGetListUser";
 import AuthServices from "../../../services/Auth.services";
+import MeetingServices from "../../../services/Meeting.services";
+import { showError } from "../../../helper/toast";
 export const typeMeetingOptions = [
   {
     label: "Họp giao ban",
@@ -51,6 +53,7 @@ export const typeMeetingOptions = [
   },
 ];
 interface IProps {
+  refetchList: () => void;
   onAdd: (value: any) => void;
   data: any;
   onClose: () => void;
@@ -58,20 +61,20 @@ interface IProps {
 
 const validationSchema = () => {
   return Yup.object().shape({
-    // name: Yup.string().required("Đây là trường bắt buộc"),
-    // description: Yup.string().required("Đây là trường bắt buộc"),
-    // assigned: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
-    // agenda: Yup.string().required("Đây là trường bắt buộc"),
-    // // startTime: Yup.string().required("Đây là trường bắt buộc"),
-    // // endTime: Yup.string().required("Đây là trường bắt buộc"),
-    // place: Yup.string().required("Đây là trường bắt buộc"),
-    // secretary: Yup.object().required("Đây là trường bắt buộc"),
-    // type: Yup.string().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
+    name: Yup.string().required("Đây là trường bắt buộc"),
+    description: Yup.string().required("Đây là trường bắt buộc"),
+    assigned: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
+    agenda: Yup.string().required("Đây là trường bắt buộc"),
+    // startTime: Yup.string().required("Đây là trường bắt buộc"),
+    // endTime: Yup.string().required("Đây là trường bắt buộc"),
+    place: Yup.string().required("Đây là trường bắt buộc"),
+    secretary: Yup.object().required("Đây là trường bắt buộc"),
+    type: Yup.string().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
   });
 };
 
 const AddMeeting = (props: IProps) => {
-  const { onAdd, data: dataRow, onClose } = props;
+  const { refetchList, onAdd, data: dataRow, onClose } = props;
   const { filters } = useFiltersHandler({ page: 0 });
   const { data } = useGetListUser(filters);
   const userInfo = AuthServices.getUserLocalStorage();
@@ -91,8 +94,8 @@ const AddMeeting = (props: IProps) => {
   const isDetail = Boolean(dataRow);
   const filterMember = dataRow
     ? dataRow?.members
-        .filter((elm) => elm?.memberType !== "SECRETARY")
-        .map((e) => {
+        .filter((elm: any) => elm?.memberType !== "SECRETARY")
+        .map((e: any) => {
           return {
             label: e?.user.fullname,
             value: e?.user.id,
@@ -149,9 +152,56 @@ const AddMeeting = (props: IProps) => {
         <Formik
           initialValues={initial}
           validationSchema={validationSchema}
-          onSubmit={(values, help) => {
+          onSubmit={async (values, help) => {
             onAdd(values);
             help?.resetForm();
+            const secretary = [
+              {
+                userId: values?.secretary.value,
+                memberType: "SECRETARY",
+              },
+            ];
+            const assigned = values?.assigned.map((elm: any) => ({
+              userId: elm?.value,
+              memberType: "MEMBER",
+            }));
+
+            const typeMeeting = typeMeetingOptions?.find((elm: any) => `${elm?.value}` === `${values?.type}`);
+
+            const members = secretary.concat(assigned);
+            // const body = {
+            //   title: value?.name,
+            //   members,
+            //   description: value?.description,
+            //   type: typeMeeting?.label,
+            //   syllabusContent: value?.agenda,
+            //   startTime: value?.startTime,
+            //   endTime: value?.endTime,
+            //   location: value?.location,
+            //   syllabusFile: value?.uploadFile,
+            // };
+            const formData = new FormData();
+            formData.append("title", values?.name);
+            members?.forEach((e, index) => {
+              formData.append("members[" + index + "].id", e.userId);
+              formData.append("members[" + index + "].memberType", e.memberType);
+            });
+            formData.append("description", values?.description);
+            formData.append("type", typeMeeting?.value || "");
+            formData.append("syllabusContent", values?.agenda);
+            formData.append("startTime", values?.startTime?.toISOString());
+            formData.append("endTime", values?.endTime?.toISOString());
+            formData.append("location", values?.location);
+            formData.append("syllabusFile", values?.uploadFile || "");
+            try {
+              const response = await MeetingServices.createMeeting(formData);
+              if (response?.status === 201 && response?.data) {
+                refetchList();
+                // showSuccess(response?.statusText)
+              }
+            } catch (error: any) {
+              showError(error);
+            }
           }}
           innerRef={ref}
           enableReinitialize
@@ -322,18 +372,6 @@ const AddMeeting = (props: IProps) => {
                   ) : (
                     <Box />
                   )}
-                  {/* {isDetail ? (
-                    <Box />
-                  ) : (
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
-                      <Button variant="outlined" onClick={handleCancel} sx={{ fontWeight: "600" }}>
-                        Huỷ
-                      </Button>
-                      <Button variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>
-                        Tạo mới
-                      </Button>
-                    </Box>
-                  )} */}
                 </Grid>
               </>
             );
