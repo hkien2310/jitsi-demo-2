@@ -86,7 +86,6 @@ const DragAndDrop = (props: IProps) => {
                 <input
                     type="file"
                     id="file-input"
-                    multiple
                     style={{ display: 'none' }}
                     onChange={handleFileInput}
                 />
