@@ -40,12 +40,11 @@ const WriterNote = (props: IProps) => {
     // render
     return <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
 
-        <TypographyCommon pb={1} style={{ color: colors.text.white, fontSize: '20px', fontWeight: '700', textAlign: 'left', textTransform: 'uppercase' }} py={1}>
+        <TypographyCommon pb={1} style={{ color: colors.text.white, fontWeight: '700', textAlign: 'left' }} py={1}>
             Ghi chú của thư ký
         </TypographyCommon>
         {/* <Divider /> */}
         <Box
-            pt={1}
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -84,8 +83,8 @@ const WriterNote = (props: IProps) => {
                     }}
                 />
                 <Box pl={1}>
-                    <Button onClick={handleWriterAddNote} style={{ backgroundColor: colors.background.grey2, height: '56px', width: '56px'}}>
-                        <SendIcon style={{ color: colors.background.grey }} />
+                    <Button onClick={handleWriterAddNote} variant='contained' style={{ height: '56px', width: '56px'}}>
+                        <SendIcon style={{ color: 'white' }} />
                     </Button>
                 </Box>
             </Box>

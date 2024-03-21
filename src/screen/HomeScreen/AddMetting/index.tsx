@@ -239,7 +239,7 @@ const AddMeeting = (props: IProps) => {
                               }}
                             />
                           </Box>
-                          {values?.acceptUploadFile ? <UploadFile onFileSelected={handleChooseFile} /> : undefined}
+                          {values?.acceptUploadFile ? <UploadFile onFileSelected={handleChooseFile} files={[values.uploadFile]}/> : undefined}
                         </Box>
                       </Grid>
                       <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>

@@ -284,7 +284,9 @@ const HomeScreen = () => {
     // };
     const formData = new FormData();
     formData.append("title", value?.name);
-    formData.append("members", JSON.stringify(members) || '');
+    members?.forEach((e) => {
+      formData.append("members", JSON.stringify(e));
+    })
     formData.append("description", value?.description);
     formData.append("type", typeMeeting?.value || "");
     formData.append("syllabusContent", value?.agenda);
