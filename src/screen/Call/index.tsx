@@ -1,16 +1,16 @@
-import React, {useRef} from 'react'
 import { JitsiMeeting } from '@jitsi/react-sdk';
-import { useLocation } from 'react-router-dom';
-import { searchParamsToObject } from '../../helper/function';
 import { Box, Grid } from '@mui/material';
-import DocumentShow from './component/DocumentShow';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { searchParamsToObject } from '../../helper/function';
 import AuthServices from '../../services/Auth.services';
+import DocumentShow from './component/DocumentShow';
 
 export interface IParamsCall {
     room: string
     roomName: string
     email?: string
-    idRoleSecretary?: string 
+    idRoleSecretary?: string
     meetingId?: string
 }
 
@@ -28,6 +28,7 @@ const CallScreen = () => {
     const location = useLocation();
     // const apiRef = useRef();
     const [api, setApi] = React.useState(null);
+    const navigate = useNavigate()
 
 
     const search = searchParamsToObject(location?.search || '')
@@ -71,7 +72,7 @@ const CallScreen = () => {
     //   }, [api]);
 
 
-    return <Box sx={{ width: '100vw', height: '100vh' }}>
+    return <Box sx={{ width: '100vw', height: '100vh', background: 'black' }}>
         <Grid container>
             <Grid item xs={12} md={9}>
                 <JitsiMeeting
@@ -89,9 +90,9 @@ const CallScreen = () => {
                     }}
                     lang={'vi'}
                     onApiReady={externalApi => handleApiReady(externalApi)}
-                
+
                     // @ts-ignore
-                    // onReadyToClose={() => apiRef.current?.executeCommand?.('toggleChat')}
+                    onReadyToClose={() => navigate('/')}
                     getIFrameRef={handleJitsiIFrameRef1}
                 />
             </Grid>

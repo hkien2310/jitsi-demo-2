@@ -38,8 +38,8 @@ export const uploadFile = async (props: IUploadFile) => {
 
         onSuccess?.()
     } catch (error: any) {
-        console.log('Failed to download file:', error?.response?.data?.message);
-        alert( `Failed to download file ${error?.response?.data?.message || ''}`);
+        console.log('Failed to upload file:', error?.response?.data?.message);
+        alert( `Failed to upload file ${error?.response?.data?.message || ''}`);
         onFailed?.()
     }
 };

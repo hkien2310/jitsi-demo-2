@@ -36,6 +36,7 @@ const GeneralNote = (props: IProps) => {
     const [meetingDocumentName, setMeetingDocumentName] = useState<any>()
     const [linkFile, setLinkFile] = useState<any>('')
     const [noteMemberTemp, setNoteMemberTemp] = useState<string>('');
+    const [files, setFiles] = useState<File[] | null>(null)
 
 
     // data
@@ -68,6 +69,7 @@ const GeneralNote = (props: IProps) => {
                     meetingId: meetingId,
                     onSuccess: () => {
                         refetchListDocument()
+                        setFiles(files)
                     }
                 })
             })
@@ -134,7 +136,7 @@ const GeneralNote = (props: IProps) => {
                 <DialogCommon title={'Tải lên tài liệu'} open={openDialogUpload} handleClose={() => setOpenDialogUpload(false)}
                     content={
                         <Box sx={{ zIndex: 999999, width: '80vw' }}>
-                            <UploadFile onFileSelected={handleChooseFile} handleClose={() => setOpenDialogUpload(false)} />
+                            <UploadFile onFileSelected={handleChooseFile} handleClose={() => setOpenDialogUpload(false)} files={files}/>
                         </Box>
                     } />
             </Box>

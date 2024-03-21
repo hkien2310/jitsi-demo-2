@@ -7,22 +7,17 @@ import { colors } from '../../const/colors';
 interface IProps {
     onFileSelected: (files: File[] | null) => void
     handleClose: () => void
+    files: File[] | null
 }
 
 const UploadFile = (props: IProps) => {
-    const { onFileSelected, handleClose } = props
+    const { onFileSelected, handleClose, files } = props
 
-    const [files, setFiles] = useState<File[] | null>(null)
 
     const fileChange = (e: File[] | null) => {
         if (e) {
             const listFile = Array.from(e)
-            setFiles((prev) => {
-                if(prev) {
-                    return [...(prev), ...listFile]
-                }
-                return listFile
-            })
+           
             onFileSelected(listFile)
         }
     }
