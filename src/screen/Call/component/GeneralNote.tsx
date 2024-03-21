@@ -97,7 +97,7 @@ const GeneralNote = (props: IProps) => {
             >
                 <Box sx={{ maxHeight: '100%', width: '100%', }} px={1} pb={1}>
                     {listDocument?.data?.map((e, index) => {
-                        return <Box mb={2} key={index} sx={{ backgroundColor: colors.background.grey, borderRadius: '5px', boxShadow: '0px 0px 6px 1px rgba(255,255,255,0.54)' }}>
+                        return <Box mt={2} key={index} sx={{ backgroundColor: colors.background.grey, borderRadius: '5px', boxShadow: '0px 0px 6px 1px rgba(255,255,255,0.54)' }}>
                             <Button
                                 sx={{
                                     display: 'flex',
