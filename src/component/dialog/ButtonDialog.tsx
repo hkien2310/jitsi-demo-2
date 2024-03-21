@@ -47,6 +47,7 @@ export default function ButtonDialog(props: IProps) {
                 keepMounted={false}
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
+                maxWidth={false}
             >
                 {/* <DialogTitle>{"Use Google's location service?"}</DialogTitle> */}
                 <DialogContent>
