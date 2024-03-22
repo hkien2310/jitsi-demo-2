@@ -77,6 +77,7 @@ const LoginScreen = () => {
                                                 component={TextField}
                                                 id={"password"}
                                                 name={"password"}
+                                                type={'password'}
                                                 required
                                                 InputLabelProps={{
                                                     shrink: true,

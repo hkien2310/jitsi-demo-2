@@ -55,7 +55,7 @@ const HomeScreen = () => {
 
   const { filters, handleChangePage } = useFiltersHandler({ page: 0, perPage: 10 });
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
-  const { data: dataListMeetingNote, refetch: refetchMeetingNote } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
+  const { data: dataListMeetingNote, refetch: refetchMeetingNote, setData: setNoteData } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
   const { data, refetch } = useGetListMeeting(filters);
 
   // const useGetListMeetingNote
@@ -112,6 +112,7 @@ const HomeScreen = () => {
 
   const handleCloseDialogViewNote = () => {
     setNoteViewOpen(false);
+    setNoteData(undefined)
   };
 
   const openDetail = (row: any) => {
@@ -241,6 +242,9 @@ const HomeScreen = () => {
         if (isDisabled)
           return (
             <>
+            <TooltipButton title="Chi tiết" onClick={() => openDetail(row)}>
+              <InfoOutlined color="info" />
+            </TooltipButton>
               <TooltipButton
                 title={"Ghi chú cuộc họp"}
                 onClick={() => {
@@ -316,12 +320,12 @@ const HomeScreen = () => {
 
   const renderListNote = () => {
     return (
-      <Box>
-        <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>Ghi chú của cuộc họp</Box>
+      <Box width={'50vw'}>
+        {/* <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>Ghi chú của cuộc họp</Box> */}
         <Box>
           {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ? (
             dataListMeetingNote?.data?.map((e, index) => {
-              return <Box key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>;
+              return <Box pb={1} key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>;
             })
           ) : (
             <Box>Cuộc họp này chưa có ghi chú</Box>
@@ -349,17 +353,14 @@ const HomeScreen = () => {
             <>
               <Box sx={{ display: "flex" }}>
                 {noteViewOpen && (
-                  <Dialog
+                  <DialogCommon
                     open={noteViewOpen}
-                    TransitionComponent={Transition}
-                    keepMounted={false}
-                    onClose={handleCloseDialogViewNote}
+                    title={'Ghi chú của cuộc họp'}
+                    handleClose={handleCloseDialogViewNote}
                     aria-describedby="alert-dialog-slide-description"
-                  >
-                    <DialogContent>
-                      <DialogContentText id="alert-dialog-slide-description">{renderListNote()}</DialogContentText>
-                    </DialogContent>
-                  </Dialog>
+                    content={renderListNote()}
+                  />
+
                 )}
                 <Box sx={{ justifyContent: "space-between", flex: 1, display: "flex" }} mb={2}>
                   <Box>
@@ -422,57 +423,64 @@ const HomeScreen = () => {
           },
         }}
       />
-      <DialogCommon
-        title={dataRow ? "Chi tiết" : "Thêm mới"}
-        open={open}
-        handleClose={() => {
-          setOpen(false);
-          setDataRow(undefined);
-        }}
-        content={
-          <Box sx={{ width: "75vw" }}>
-            <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
-          </Box>
-        }
-      />
-      <DialogConfirm
-        handleClose={() => {
-          setConfirmDelete(false);
-        }}
-        title="Bạn chắc chắn muốn xoá phiên họp này?"
-        open={confirmDelete}
-        icon={<DeleteForeverIcon color="error" />}
-        children={
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
-            <Button variant="outlined" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550" }} color="error">
-              Huỷ bỏ
-            </Button>
-            <Button variant="contained" onClick={handleConfirmDelete} sx={{ fontWeight: "550", ml: 1 }} color="error">
-              Đồng ý
-            </Button>
-          </Box>
-        }
-        bgcolor={red[100]}
-      />
-      <DialogConfirm
-        handleClose={() => {
-          setConfirmComplete(false);
-        }}
-        title="Bạn chắc chắn muốn hoàn thành?"
-        open={confirmComplete}
-        icon={<TaskAltOutlinedIcon color="success" />}
-        children={
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
-            <Button variant="outlined" onClick={() => setConfirmComplete(false)} sx={{ fontWeight: "550" }} color="success">
-              Huỷ bỏ
-            </Button>
-            <Button variant="contained" onClick={handleConfirmComplete} sx={{ fontWeight: "550", ml: 1 }} color="success">
-              Đồng ý
-            </Button>
-          </Box>
-        }
-        bgcolor={green[100]}
-      />
+      {open &&
+        <DialogCommon
+          title={dataRow ? "Chi tiết" : "Thêm mới"}
+          open={open}
+          handleClose={() => {
+            setOpen(false);
+            setDataRow(undefined);
+          }}
+          content={
+            <Box sx={{ width: "75vw" }}>
+              <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
+            </Box>
+          }
+        />
+      }
+      {confirmDelete &&
+        <DialogConfirm
+          handleClose={() => {
+            setConfirmDelete(false);
+          }}
+          title="Bạn chắc chắn muốn xoá phiên họp này?"
+          open={confirmDelete}
+          icon={<DeleteForeverIcon color="error" />}
+          children={
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
+              <Button variant="outlined" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550" }} color="error">
+                Huỷ bỏ
+              </Button>
+              <Button variant="contained" onClick={handleConfirmDelete} sx={{ fontWeight: "550", ml: 1 }} color="error">
+                Đồng ý
+              </Button>
+            </Box>
+          }
+          bgcolor={red[100]}
+        />
+      }
+      {
+        confirmComplete &&
+        <DialogConfirm
+          handleClose={() => {
+            setConfirmComplete(false);
+          }}
+          title="Bạn chắc chắn muốn hoàn thành?"
+          open={confirmComplete}
+          icon={<TaskAltOutlinedIcon color="success" />}
+          children={
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
+              <Button variant="outlined" onClick={() => setConfirmComplete(false)} sx={{ fontWeight: "550" }} color="success">
+                Huỷ bỏ
+              </Button>
+              <Button variant="contained" onClick={handleConfirmComplete} sx={{ fontWeight: "550", ml: 1 }} color="success">
+                Đồng ý
+              </Button>
+            </Box>
+          }
+          bgcolor={green[100]}
+        />
+      }
     </NavigationBar>
   );
 };

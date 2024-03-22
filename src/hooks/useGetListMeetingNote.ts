@@ -96,6 +96,7 @@ const useGetListMeetingNote = (
         save(refetchKey, refetch);
     }, [save, refetchKey, refetch]);
 
+
     //* Refetch with changing loading state
     const refetchWithLoading = useCallback(
         async (shouldSetData: boolean) => {

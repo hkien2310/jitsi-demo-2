@@ -134,7 +134,7 @@ const TextField = ({
           </InputAdornment>
         ) : type === "password" ? (
           <InputAdornment position="end">
-            <IconButton onClick={setShowPassword((prev) => !prev)} onMouseDown={handleMouseDown} edge="end">
+            <IconButton onClick={() => setShowPassword((prev) => !prev)} onMouseDown={handleMouseDown} edge="end">
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
           </InputAdornment>
