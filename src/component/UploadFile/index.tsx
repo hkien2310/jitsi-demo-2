@@ -56,7 +56,7 @@ const UploadFile = (props: IProps) => {
                 <Grid container spacing={1}>
                     {files && files?.length > 0 ? files?.map((e) => {
                         return <Grid item sm={12} md={6} mt={1} p={1} key={e?.lastModified} >
-                            <Box p={1} sx={{ display: 'flex', alignItems: 'center', border: `1px solid ${colors.border.main}`, borderRadius: '5px' }}>
+                            <Box p={1} sx={{ display: 'flex', alignItems: 'flex-start', border: `1px solid ${colors.border.main}`, borderRadius: '5px' }}>
                                 <img src={renderLogo(e?.name?.split('.')?.pop() || '')} alt={'logo'} style={{ width: '50px', height: '50px' }} />
                                 <Box>
                                     <TypographyCommon pl={1} style={{ fontWeight: 500 }}>
