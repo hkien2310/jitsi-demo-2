@@ -37,6 +37,8 @@ import DialogConfirm from "../../component/dialog/DialogConfirm";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red, green } from "@mui/material/colors";
 import dayjs from "dayjs";
+import { renderSTT } from "../../helper/function";
+// import typeMeetingOptions from "../../../AddMeeting"
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -119,12 +121,12 @@ const HomeScreen = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "id",
+      field: "stt",
       headerName: "STT",
       width: 90,
-      renderCell: (row) => {
-        return <>{row.id}</>;
-      },
+      // renderCell: (row) => {
+      //   return <>{row.id}</>;
+      // },
     },
     {
       field: "title",
@@ -274,8 +276,8 @@ const HomeScreen = () => {
   ];
 
   const dataRows = React.useMemo(() => {
-    return data?.data || [];
-  }, [data?.data]);
+    return data?.data?.map((e, index) => ({...e, stt: renderSTT(index, filters.page, filters.page_size)})) || [];
+  }, [data?.data, filters.page, filters.page_size]);
 
   const onAdd = async (value: any) => {
     const newValue = {
@@ -379,7 +381,7 @@ const HomeScreen = () => {
         }}
       </Formik>
       <DataGrid
-        rows={dataRows}
+        rows={(dataRows)}
         columns={columns}
         initialState={{
           pagination: {
