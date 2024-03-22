@@ -83,7 +83,7 @@ const DragAndDrop = (props: IProps) => {
 
             }}
         >
-            <Button className="drag-drop-content" fullWidth>
+            <Box className="drag-drop-content" p={2}>
                 <input
                     type="file"
                     id="file-input"
@@ -100,7 +100,7 @@ const DragAndDrop = (props: IProps) => {
                         </TypographyCommon>
                     </Box>
                 </label>
-            </Button>
+            </Box>
         </div>
     );
 };
