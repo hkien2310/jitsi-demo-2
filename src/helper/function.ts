@@ -85,6 +85,6 @@ export const renderSTT = (index: number, page: number, pagesize: number) => {
     if (page === 0) {
         return index + 1
     } else {
-        return (page - 1) * pagesize + (index + 1)
+        return (Number(page)) * Number(pagesize) + (Number(index) + 1)
     }
 }
