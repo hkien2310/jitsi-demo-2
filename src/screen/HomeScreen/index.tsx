@@ -15,7 +15,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { FastField, Formik } from "formik";
 import queryString from "query-string";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonCommon from "../../component/Button";
 import NavigationBar from "../../component/NavigationBar";
@@ -33,30 +33,36 @@ import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
 import AddMeeting, { typeMeetingOptions } from "./AddMetting";
 import DialogCommon from "../../component/dialog";
-// import typeMeetingOptions from "../../../AddMeeting"
+import DialogConfirm from "../../component/dialog/DialogConfirm";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { red, green } from "@mui/material/colors";
+import dayjs from "dayjs";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
+  const deleteRef = useRef();
+  const completeRef = useRef();
 
   const [open, setOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirmComplete, setConfirmComplete] = useState(false);
   const [dataRow, setDataRow] = useState();
   const [noteViewOpen, setNoteViewOpen] = useState(false);
+  const refFormik = useRef<any>(null);
   const userInfo = AuthServices.getUserLocalStorage();
 
-  const { filters, handleChangePage } = useFiltersHandler({ page: 0 });
-
+  const { filters, handleChangePage } = useFiltersHandler({ page: 0, perPage: 10 });
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
   const { data: dataListMeetingNote, refetch: refetchMeetingNote } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
+  const { data, refetch } = useGetListMeeting(filters);
 
   // const useGetListMeetingNote
   const paginationModel = React.useMemo(() => {
     return {
-      // pageSize: filters?.,
+      pageSize: filters?.perPage,
       page: filters?.page,
     };
   }, [filters]);
-
-  const { data, refetch } = useGetListMeeting(filters);
 
   const save = useSave();
   const rows = useGet(cacheKeys.DEMO_LIST);
@@ -64,28 +70,38 @@ const HomeScreen = () => {
   const setRows = (value: any[]) => {
     save(cacheKeys.DEMO_LIST, value);
   };
-  const handleDelete = async (row: any) => {
-    // const newValue = rows?.filter((item: any) => item.id !== row.id);
-    // setRows(newValue);
+  const handleConfirmDelete = async () => {
     try {
-      await MeetingServices.deleteMeeting(row.id);
+      await MeetingServices.deleteMeeting(deleteRef.current?.id);
+      setConfirmDelete(false);
       refetch();
     } catch (error: any) {
       showError(error);
     }
   };
-  const handleComplete = async (row: any) => {
+  const handleDelete = async (row: any) => {
+    deleteRef.current = row;
+    // const newValue = rows?.filter((item: any) => item.id !== row.id);
+    // setRows(newValue);
+    setConfirmDelete(true);
+  };
+  const handleConfirmComplete = async () => {
     const body = {
       status: "FINISHED",
     };
     try {
-      const response = await MeetingServices.updateMeeting(row.id, body);
+      const response = await MeetingServices.updateMeeting(completeRef.current?.id, body);
       if (response?.data) {
+        setConfirmComplete(false);
         refetch();
       }
     } catch (error: any) {
       showError(error);
     }
+  };
+  const handleComplete = async (row: any) => {
+    completeRef.current = row;
+    setConfirmComplete(true);
   };
 
   const handleClickOpenDialogViewNote = () => {
@@ -136,13 +152,46 @@ const HomeScreen = () => {
         return <Box p={1}>{stringMember}</Box>;
       },
     },
-    // {
-    //   field: 'time',
-    //   headerName: 'Thời gian bắt đầu',
-    //   width: 200,
-    //   editable: false,
-    //   sortable: false,
-    // },
+    {
+      field: "type",
+      headerName: "Loại phiên họp",
+      flex: 1,
+      editable: false,
+      sortable: false,
+      renderCell: ({ row }) => {
+        const type = typeMeetingOptions.find((e) => row.type === e.value)?.label;
+        return <Box p={1}>{type}</Box>;
+      },
+    },
+    {
+      field: "startTime",
+      headerName: "Thời gian từ",
+      width: 200,
+      editable: false,
+      sortable: false,
+      renderCell: ({ row }) => {
+        const from = dayjs(row.startTime).format("LLLL"); // '25/01/2019'
+        return <Box p={1}>{from}</Box>;
+      },
+    },
+    {
+      field: "endTime",
+      headerName: "Thời gian hết hạn",
+      width: 200,
+      editable: false,
+      sortable: false,
+      renderCell: ({ row }) => {
+        const endTime = dayjs(row?.endTime).format("LLLL"); // '25/01/2019'
+        return <Box p={1}>{endTime}</Box>;
+      },
+    },
+    {
+      field: "location",
+      headerName: "Địa điểm",
+      width: 200,
+      editable: false,
+      sortable: false,
+    },
     {
       field: "status",
       headerName: "Trạng thái",
@@ -162,9 +211,10 @@ const HomeScreen = () => {
           FINISHED: "#28a745",
         };
         return (
-          <Box p={1} sx={{ color: meetingColorStatus[`${row.status}`] }}>
-            {meetingStatus[`${row.status}`]}
-          </Box>
+          <Button variant="outlined" sx={{ width: 200, borderRadius: 50, border: `1px solid ${meetingColorStatus[`${row.status}`]}`, color: meetingColorStatus[`${row.status}`] }} >{meetingStatus[`${row.status}`]}</Button>
+          // <Box p={1} sx={{ color: meetingColorStatus[`${row.status}`] }}>
+          //   {meetingStatus[`${row.status}`]}
+          // </Box>
         );
       },
     },
@@ -266,10 +316,15 @@ const HomeScreen = () => {
   return (
     <NavigationBar>
       <Formik
+        innerRef={refFormik}
         initialValues={{
           search: "",
         }}
-        onSubmit={() => {}}
+        onSubmit={(values) => {
+          if (values.search) {
+            refetch({ ...filters, textSearch: refFormik?.current?.values?.search });
+          }
+        }}
       >
         {({ handleSubmit }) => {
           return (
@@ -300,7 +355,12 @@ const HomeScreen = () => {
                       placeholder="Nhập tên cuộc họp"
                       fullWidth
                     />
-                    <ButtonCommon sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }} color="info" variant="contained">
+                    <ButtonCommon
+                      sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }}
+                      color="info"
+                      variant="contained"
+                      onClick={() => handleSubmit()}
+                    >
                       <SearchOutlinedIcon /> Tìm kiếm
                     </ButtonCommon>
                   </Box>
@@ -326,11 +386,14 @@ const HomeScreen = () => {
             paginationModel: paginationModel,
           },
         }}
+        paginationMode="server"
+        sortingMode="server"
+        rowCount={data?.total || 0}
         onPaginationModelChange={(model) => handleChangePage(model?.page)}
         pageSizeOptions={[5]}
         checkboxSelection={false}
         disableRowSelectionOnClick
-        hideFooterPagination={true}
+        // hideFooterPagination={true}
         sx={{
           "& .MuiDataGrid-columnHeaders": {
             background: blue["A100"],
@@ -353,6 +416,44 @@ const HomeScreen = () => {
             <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
           </Box>
         }
+      />
+      <DialogConfirm
+        handleClose={() => {
+          setConfirmDelete(false);
+        }}
+        title="Bạn chắc chắn muốn xoá phiên họp này?"
+        open={confirmDelete}
+        icon={<DeleteForeverIcon color="error" />}
+        children={
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
+            <Button variant="outlined" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550" }} color="error">
+              Huỷ bỏ
+            </Button>
+            <Button variant="contained" onClick={handleConfirmDelete} sx={{ fontWeight: "550", ml: 1 }} color="error">
+              Đồng ý
+            </Button>
+          </Box>
+        }
+        bgcolor={red[100]}
+      />
+      <DialogConfirm
+        handleClose={() => {
+          setConfirmComplete(false);
+        }}
+        title="Bạn chắc chắn muốn hoàn thành?"
+        open={confirmComplete}
+        icon={<TaskAltOutlinedIcon color="success" />}
+        children={
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
+            <Button variant="outlined" onClick={() => setConfirmComplete(false)} sx={{ fontWeight: "550" }} color="success">
+              Huỷ bỏ
+            </Button>
+            <Button variant="contained" onClick={handleConfirmComplete} sx={{ fontWeight: "550", ml: 1 }} color="success">
+              Đồng ý
+            </Button>
+          </Box>
+        }
+        bgcolor={green[100]}
       />
     </NavigationBar>
   );

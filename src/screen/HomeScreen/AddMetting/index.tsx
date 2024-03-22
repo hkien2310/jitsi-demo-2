@@ -6,50 +6,50 @@ import { FastField, Field, Formik } from "formik";
 import React, { useRef } from "react";
 import * as Yup from "yup";
 import AutoCompleteField from "../../../component/Autocomplete";
+import SelectField from "../../../component/Select";
 import TextField from "../../../component/TextField";
 import UploadFile from "../../../component/UploadFile";
 import CheckBoxField from "../../../component/checkBox";
 import DateTimePickerField from "../../../component/dateTime";
 import LabelCommon from "../../../component/label";
 import Tiny from "../../../component/tinyMce";
-import { uploadFile } from "../../../helper/function";
+import { showError } from "../../../helper/toast";
 import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListUser from "../../../hooks/useGetListUser";
 import AuthServices from "../../../services/Auth.services";
 import MeetingServices from "../../../services/Meeting.services";
-import { showError } from "../../../helper/toast";
 export const typeMeetingOptions = [
   {
     label: "Họp giao ban",
-    value: 1,
+    value: '1',
   },
   {
     label: "Phiên họp thường trực",
-    value: 2,
+    value: '2',
   },
   {
     label: "Thảo luận tổ",
-    value: 3,
+    value: '3',
   },
   {
     label: "Họp thẩm tra",
-    value: 4,
+    value: '4',
   },
   {
     label: "Họp thường kỳ tháng",
-    value: 5,
+    value: '5',
   },
   {
     label: "Họp phiên chính thức",
-    value: 6,
+    value: '6',
   },
   {
     label: "Họp phiên trù bị",
-    value: 7,
+    value: '7',
   },
   {
     label: "Họp nội dung khác",
-    value: 8,
+    value: '8',
   },
 ];
 interface IProps {
@@ -64,10 +64,10 @@ const validationSchema = () => {
     name: Yup.string().required("Đây là trường bắt buộc"),
     description: Yup.string().required("Đây là trường bắt buộc"),
     assigned: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
-    agenda: Yup.string().required("Đây là trường bắt buộc"),
+    // agenda: Yup.string().required("Đây là trường bắt buộc"),
     // startTime: Yup.string().required("Đây là trường bắt buộc"),
     // endTime: Yup.string().required("Đây là trường bắt buộc"),
-    place: Yup.string().required("Đây là trường bắt buộc"),
+    location: Yup.string().required("Đây là trường bắt buộc"),
     secretary: Yup.object().required("Đây là trường bắt buộc"),
     type: Yup.string().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
   });
@@ -131,28 +131,35 @@ const AddMeeting = (props: IProps) => {
           };
         })?.[0]
     : "";
-  const initial = {
+  
+  const file = {
+    name: dataRow?.syllabusFileName,
+    size: dataRow?.syllabusFileSize,
+  } 
+  const initial: any = {
     name: dataRow?.title,
     status: 1,
     description: dataRow?.description,
     assigned: filterMember,
-    agenda: "",
-    startTime: "",
-    endTime: "",
-    location: "",
+    agenda: dataRow?.syllabusContent || '',
+    startTime: dataRow?.startTime,
+    endTime: dataRow?.endTime,
+    location: dataRow?.location,
     secretary: filterSecretary,
-    type: undefined,
-    acceptUploadFile: false,
-    uploadFile: null,
+    type: dataRow?.type || "",
+    acceptUploadFile: Boolean(dataRow?.syllabusFileName) || false,
+    uploadFile: dataRow ? file : null,
   };
-
+  console.log(dataRow, 'dataRow')
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Formik
           initialValues={initial}
           validationSchema={validationSchema}
+          
           onSubmit={async (values, help) => {
+            alert("133");
             onAdd(values);
             help?.resetForm();
             const secretary = [
@@ -188,7 +195,7 @@ const AddMeeting = (props: IProps) => {
             });
             formData.append("description", values?.description);
             formData.append("type", typeMeeting?.value || "");
-            formData.append("syllabusContent", values?.agenda);
+            formData.append("syllabusContent", values?.agenda || '');
             formData.append("startTime", values?.startTime?.toISOString());
             formData.append("endTime", values?.endTime?.toISOString());
             formData.append("location", values?.location);
@@ -207,6 +214,8 @@ const AddMeeting = (props: IProps) => {
           enableReinitialize
         >
           {({ values, setFieldValue, handleSubmit, errors }) => {
+            console.log("error__", values);
+
             return (
               <>
                 <Grid container spacing={2}>
@@ -253,7 +262,7 @@ const AddMeeting = (props: IProps) => {
                       <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
                         <LabelCommon label="Loại phiên họp" />
                         <Box sx={{ flex: 5 }}>
-                          <FastField options={typeMeetingOptions} component={AutoCompleteField} name={"type"} required disabled={isDetail} />
+                          <FastField options={typeMeetingOptions} component={SelectField} name={"type"} required disabled={isDetail} />
                         </Box>
                       </Grid>
                       <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
@@ -289,7 +298,7 @@ const AddMeeting = (props: IProps) => {
                               }}
                             />
                           </Box>
-                          {values?.acceptUploadFile ? <UploadFile onFileSelected={handleChooseFile} files={[values.uploadFile]} multiple={false}/> : undefined}
+                          {values?.acceptUploadFile ? <UploadFile hideUpload={Boolean(dataRow)} onFileSelected={handleChooseFile} files={values.uploadFile ? [values.uploadFile] :[]} multiple={false} /> : undefined}
                         </Box>
                       </Grid>
                       <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
