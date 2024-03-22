@@ -159,7 +159,6 @@ const AddMeeting = (props: IProps) => {
           validationSchema={validationSchema}
           
           onSubmit={async (values, help) => {
-            alert("133");
             onAdd(values);
             help?.resetForm();
             const secretary = [
@@ -176,22 +175,11 @@ const AddMeeting = (props: IProps) => {
             const typeMeeting = typeMeetingOptions?.find((elm: any) => `${elm?.value}` === `${values?.type}`);
 
             const members = secretary.concat(assigned);
-            // const body = {
-            //   title: value?.name,
-            //   members,
-            //   description: value?.description,
-            //   type: typeMeeting?.label,
-            //   syllabusContent: value?.agenda,
-            //   startTime: value?.startTime,
-            //   endTime: value?.endTime,
-            //   location: value?.location,
-            //   syllabusFile: value?.uploadFile,
-            // };
             const formData = new FormData();
             formData.append("title", values?.name);
             members?.forEach((e, index) => {
-              formData.append("members[" + index + "].id", e.userId);
-              formData.append("members[" + index + "].memberType", e.memberType);
+              formData.append("members", JSON.stringify(e));
+              // formData.append("members[" + index + "].memberType", e.memberType);
             });
             formData.append("description", values?.description);
             formData.append("type", typeMeeting?.value || "");

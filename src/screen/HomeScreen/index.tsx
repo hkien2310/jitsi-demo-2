@@ -35,7 +35,7 @@ import AddMeeting, { typeMeetingOptions } from "./AddMetting";
 import DialogCommon from "../../component/dialog";
 import DialogConfirm from "../../component/dialog/DialogConfirm";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { red, green } from "@mui/material/colors";
+import { red, green, yellow } from "@mui/material/colors";
 import dayjs from "dayjs";
 import { renderSTT } from "../../helper/function";
 // import typeMeetingOptions from "../../../AddMeeting"
@@ -208,12 +208,23 @@ const HomeScreen = () => {
           FINISHED: "Hoàn thành",
         };
         const meetingColorStatus: { [key: string]: string } = {
-          WAITING: "#ffc107",
+          WAITING: yellow[800],
           IN_MEETING: "#007bff",
-          FINISHED: "#28a745",
+          FINISHED: green[800],
         };
         return (
-          <Button variant="outlined" sx={{ width: 200, borderRadius: 50, border: `1px solid ${meetingColorStatus[`${row.status}`]}`, color: meetingColorStatus[`${row.status}`] }} >{meetingStatus[`${row.status}`]}</Button>
+          <Button
+            variant="outlined"
+            sx={{
+              width: 200,
+              borderRadius: 50,
+              border: `1px solid ${meetingColorStatus[`${row.status}`]}`,
+              color: meetingColorStatus[`${row.status}`],
+              textTransform: "unset",
+            }}
+          >
+            {meetingStatus[`${row.status}`]}
+          </Button>
           // <Box p={1} sx={{ color: meetingColorStatus[`${row.status}`] }}>
           //   {meetingStatus[`${row.status}`]}
           // </Box>
@@ -229,15 +240,20 @@ const HomeScreen = () => {
         const isDisabled = row.status === "FINISHED";
         if (isDisabled)
           return (
-            <TooltipButton
-              title={"Ghi chú cuộc họp"}
-              onClick={() => {
-                handleClickOpenDialogViewNote();
-                refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id });
-              }}
-            >
-              <DescriptionOutlinedIcon color="inherit" />
-            </TooltipButton>
+            <>
+              <TooltipButton
+                title={"Ghi chú cuộc họp"}
+                onClick={() => {
+                  handleClickOpenDialogViewNote();
+                  refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id });
+                }}
+              >
+                <DescriptionOutlinedIcon color="inherit" />
+              </TooltipButton>
+              <TooltipButton title="Xoá" onClick={() => handleDelete(row)}>
+                <DeleteOutlineOutlinedIcon color="error" />
+              </TooltipButton>
+            </>
           );
         return (
           <Box style={{ display: "flex", flexDirection: "row" }}>
@@ -276,8 +292,8 @@ const HomeScreen = () => {
   ];
 
   const dataRows = React.useMemo(() => {
-    return data?.data?.map((e, index) => ({...e, stt: renderSTT(index, filters.page, filters.page_size)})) || [];
-  }, [data?.data, filters.page, filters.page_size]);
+    return data?.data?.map((e, index) => ({ ...e, stt: renderSTT(index, filters.page, filters.perPage) })) || [];
+  }, [data?.data, filters.page, filters.perPage]);
 
   const onAdd = async (value: any) => {
     const newValue = {
@@ -381,7 +397,7 @@ const HomeScreen = () => {
         }}
       </Formik>
       <DataGrid
-        rows={(dataRows)}
+        rows={dataRows}
         columns={columns}
         initialState={{
           pagination: {
