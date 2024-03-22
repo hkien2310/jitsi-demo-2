@@ -34,7 +34,7 @@ class Services {
     //! Interceptor request
     this.axios.interceptors.request.use(
       function (config) {
-        console.log(config, "config");
+        // console.log(config, "config");
         const token = AuthServices.getToken();
         if (config.headers) {
           config.headers[`Authorization`] = `Bearer ${token}`;

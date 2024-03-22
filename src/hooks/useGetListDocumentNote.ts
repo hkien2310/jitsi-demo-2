@@ -26,7 +26,7 @@ const useGetListDocumentNote = (
 ) => {
     //! State
     const { isTrigger = true, refetchKey = "" } = options;
-    console.log(filters, 'filtersfilters')
+    // console.log(filters, 'filtersfilters')
     const save = useSave();
     const [data, setData] = useState<IResponseDocumentNote>();
     const [isLoading, setLoading] = useState(false);
@@ -80,7 +80,7 @@ const useGetListDocumentNote = (
 
     //* Refetch implicity (without changing loading state)
     const refetch = useCallback(async (filters: IRequestGetListDocumentNote) => {
-        console.log(filters, 'filtersfiltersfilters')
+        // console.log(filters, 'filtersfiltersfilters')
         try {
             setRefetching(true);
             const nextFilters = parseRequest(filters);

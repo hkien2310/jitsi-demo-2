@@ -27,7 +27,7 @@ function TinyMce({
   const [isFocus, setFocus] = useState<Boolean>(false);
 
   const onEditorChange = (val: string) => {
-    console.log("val", val);
+    // console.log("val", val);
     onChange &&
       onChange({
         target: {

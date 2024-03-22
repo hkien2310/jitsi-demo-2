@@ -150,7 +150,7 @@ const AddMeeting = (props: IProps) => {
     acceptUploadFile: Boolean(dataRow?.syllabusFileName) || false,
     uploadFile: dataRow ? file : null,
   };
-  console.log(dataRow, 'dataRow')
+  // console.log(dataRow, 'dataRow')
   return (
     <Box>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -202,7 +202,7 @@ const AddMeeting = (props: IProps) => {
           enableReinitialize
         >
           {({ values, setFieldValue, handleSubmit, errors }) => {
-            console.log("error__", values);
+            // console.log("error__", values);
 
             return (
               <>
