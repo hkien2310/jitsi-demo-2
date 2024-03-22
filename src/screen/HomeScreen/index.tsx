@@ -168,7 +168,7 @@ const HomeScreen = () => {
     {
       field: "startTime",
       headerName: "Thời gian từ",
-      width: 200,
+      width: 300,
       editable: false,
       sortable: false,
       renderCell: ({ row }) => {
@@ -179,7 +179,7 @@ const HomeScreen = () => {
     {
       field: "endTime",
       headerName: "Thời gian hết hạn",
-      width: 200,
+      width: 300,
       editable: false,
       sortable: false,
       renderCell: ({ row }) => {
