@@ -80,3 +80,11 @@ export function formatBytes(bytes: number, decimals = 2) {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
+
+export const renderSTT = (index: number, page: number, pagesize: number) => {
+    if (page === 0) {
+        return index + 1
+    } else {
+        return (page - 1) * pagesize + (index + 1)
+    }
+}
