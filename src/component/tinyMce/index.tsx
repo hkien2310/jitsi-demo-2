@@ -60,7 +60,7 @@ function TinyMce({
           onFocusIn={() => setFocus(true)}
           onFocusOut={() => setFocus(false)}
           name={name}
-          apiKey={`0l9ca7pyz0qyliy0v9mmkfl2cz69uodvc8l6md8o4cnf6rnc`}
+          apiKey={`5mol7vhovgn0ilayv88c5yyaa5u5nu3na5co5pushdwrspem`}
           initialValue={initialValue}
           value={value}
           init={{
