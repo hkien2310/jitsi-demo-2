@@ -40,7 +40,6 @@ const useGetListMeeting = (
         if (!isTrigger) {
             return;
         }
-
         return new Promise((resolve, reject) => {
             (async () => {
                 try {
@@ -78,10 +77,10 @@ const useGetListMeeting = (
     );
 
     //* Refetch implicity (without changing loading state)
-    const refetch = useCallback(async () => {
+    const refetch = useCallback(async (filter?: IRequestGetListMeeting) => {
         try {
             setRefetching(true);
-            const nextFilters = parseRequest(filters);
+            const nextFilters = parseRequest(filter ? filter : filters );
             const response = await MeetingServices.getListMeeting(nextFilters);
             checkConditionPass(response);
             setRefetching(false);
