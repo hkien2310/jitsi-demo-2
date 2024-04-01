@@ -15,6 +15,7 @@ import login from './source/login.svg'
 import notification from './source/notification.svg'
 import searchNormal from './source/search-normal.svg'
 import warning from './source/warning.svg'
+import warningDelete from './source/warning_delete.png'
 import note from './source/note-text.svg'
 import appLogo from './source/app-logo.png'
 
@@ -39,5 +40,6 @@ export const ImageSource = {
     notification,
     searchNormal,
     warning,
+    warningDelete,
     note,
 }
