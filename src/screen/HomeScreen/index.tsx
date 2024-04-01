@@ -202,9 +202,9 @@ const HomeScreen = () => {
           status: '',
         }}
         onSubmit={(values) => {
-          if (values.search) {
-            refetch({ ...filters, textSearch: refFormik?.current?.values?.search });
-          }
+          // if (values.search || values.status ) {
+          refetch({ ...filters, textSearch: refFormik?.current?.values?.search, status: values.status ? [values.status] : undefined });
+          // }
         }}
       >
         {({ values, setFieldValue, handleSubmit }) => {
@@ -222,10 +222,10 @@ const HomeScreen = () => {
 
                 )}
                 <Box sx={{ justifyContent: "space-between", flex: 1, display: "flex" }} mb={2}>
-                  <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <FastField
                       style={{ width: 400 }}
-                      size="small"
+                      size="medium"
                       id={"search"}
                       component={TextField}
                       name={"search"}
@@ -234,18 +234,25 @@ const HomeScreen = () => {
                       fullWidth
                     />
                     <ButtonCommon
-                      sx={{ padding: 1, minWidth: "auto", marginLeft: 1, backgroundColor: colors.background.secondary, borderRadius: '8px' }}
+                      sx={{ padding: 1, minWidth: "auto", marginLeft: 1, backgroundColor: colors.background.secondary, borderRadius: '8px', height: '56px', width: '56px' }}
                       variant="contained"
                       onClick={() => handleSubmit()}
                     >
-                      <img src={ImageSource.searchIcon} style={{ width: '24px', height: '24px' }} alt={''} />
+                      <img src={ImageSource.searchIcon} style={{ width: '28px', height: '28px' }} alt={''} />
                       {/* <SearchOutlinedIcon /> Tìm kiếm */}
                     </ButtonCommon>
-
-                    <StatusSelect />
+                    <Box ml={3} sx={{ height: '100%' }}>
+                      <StatusSelect value={values.status as EnumMeetingStatus} onChange={(value) => {
+                        setFieldValue('status', value)
+                        if (values.status === value) {
+                          return
+                        }
+                        handleSubmit()
+                      }} />
+                    </Box>
                   </Box>
                   <ButtonCommon
-                    sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1, backgroundColor: colors.background.primary, textTransform: 'none', fontSize: '16px' }}
+                    sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: '8px', backgroundColor: colors.background.primary, textTransform: 'none', fontSize: '16px' }}
                     variant="contained"
                     onClick={() => setOpen(true)}
                   >

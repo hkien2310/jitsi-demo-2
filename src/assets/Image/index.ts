@@ -16,10 +16,11 @@ import notification from './source/notification.svg'
 import searchNormal from './source/search-normal.svg'
 import warning from './source/warning.svg'
 import note from './source/note-text.svg'
+import appLogo from './source/app-logo.png'
 
 export const ImageSource = {
     loginAvatar: 'https://sentrangusa.com/wp-content/uploads/2023/01/62196607bf1b46ebfb301f19_5f5bc69416e7fb495275b378_how20run20tips20top20execs.jpeg',
-    logoWeb: 'https://ecabinet.vn/style/thietke/frontend/images/logo.png?ver=1',
+    logoWeb: appLogo,
     companyName: 'https://eticket.vnpt.vn/assets/image-app-none.png',
     wordLogo: WordLogo,
     pdfLogo: PDFLogo,

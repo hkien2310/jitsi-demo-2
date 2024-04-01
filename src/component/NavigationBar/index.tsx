@@ -147,9 +147,13 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 <List>
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding>
-                            <ListItemButton style={{ backgroundColor: text?.path === location.pathname ? 'gray' : 'white' }}>
+                            <ListItemButton 
+                                style={{ 
+                                    backgroundColor: text?.path === location.pathname ? colors.background.primary : 'white',
+                                    color: text?.path === location.pathname ? colors.text.white : 'black',
+                                    }}>
                                 <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                                    {index % 2 === 0 ? <InboxIcon sx={{color: text?.path === location.pathname ? colors.text.white : 'black'}}/> : <MailIcon />}
                                 </ListItemIcon>
                                 <ListItemText primary={text?.name} />
                             </ListItemButton>

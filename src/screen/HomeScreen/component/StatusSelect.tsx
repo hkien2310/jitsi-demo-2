@@ -1,25 +1,22 @@
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import Divider from '@mui/material/Divider';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { EnumMeetingStatus, meetingStatus } from '../columns';
+import { colors } from '../../../const/colors';
+import ButtonCommon from '../../../component/Button';
 
 const StyledMenu = styled((props: MenuProps) => (
     <Menu
         elevation={0}
         anchorOrigin={{
             vertical: 'bottom',
-            horizontal: 'right',
+            horizontal: 'left',
         }}
         transformOrigin={{
             vertical: 'top',
-            horizontal: 'right',
+            horizontal: 'left',
         }}
         {...props}
     />
@@ -53,7 +50,7 @@ const StyledMenu = styled((props: MenuProps) => (
 
 
 interface IProps {
-    value: string
+    value: EnumMeetingStatus
     onChange: (value: string) => void
 }
 
@@ -66,22 +63,24 @@ export default function StatusSelect(props: IProps) {
     };
     const handleClose = (value: string) => {
         setAnchorEl(null);
+        onChange(value)
     };
 
     return (
-        <div>
-            <Button
+        <>
+            <ButtonCommon
                 id="demo-customized-button"
                 aria-controls={open ? 'demo-customized-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
                 variant="contained"
+                style={{ backgroundColor: colors.background.primary, borderRadius: '8px', height: '100%', textTransform: 'none', fontSize: '16px' }}
                 disableElevation
                 onClick={handleClick}
                 endIcon={<KeyboardArrowDownIcon />}
             >
-                Options
-            </Button>
+                {Boolean(value) ? meetingStatus[EnumMeetingStatus[value]] : 'Bộ lọc'}
+            </ButtonCommon>
             <StyledMenu
                 id="demo-customized-menu"
                 MenuListProps={{
@@ -89,10 +88,17 @@ export default function StatusSelect(props: IProps) {
                 }}
                 anchorEl={anchorEl}
                 open={open}
-                onClose={(e) => handleClose('')}
+                onClose={(e) => handleClose(value)}
             >
-
+                <MenuItem onClick={() => handleClose('')} disableRipple>
+                    <em>Bộ lọc</em>
+                </MenuItem>
+                {(Object.keys(EnumMeetingStatus) as Array<keyof typeof EnumMeetingStatus>).map((key, index) => {
+                    return <MenuItem onClick={() => handleClose(EnumMeetingStatus[key])} disableRipple key={index} style={value === EnumMeetingStatus[key] ? { backgroundColor: colors.background.primary, color: colors.text.white } : {}}>
+                        {meetingStatus[EnumMeetingStatus[key]]}
+                    </MenuItem>
+                })}
             </StyledMenu>
-        </div>
+        </>
     );
 }
