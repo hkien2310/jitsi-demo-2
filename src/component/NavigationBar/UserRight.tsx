@@ -6,6 +6,10 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { IUserItem } from '../../interface/user';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AuthServices from '../../services/Auth.services';
+import { ImageSource } from '../../assets/Image';
+import { colors } from '../../const/colors';
+import Badge from '@mui/material/Badge';
+
 
 const UserRight = () => {
     const userInfo: IUserItem = useGet(cacheKeys.USER_INFO)
@@ -25,10 +29,15 @@ const UserRight = () => {
     const id = open ? 'simple-popover' : undefined;
 
 
-    return <Box>
+    return <Box sx={{display: 'flex'}}>
+        <Box mr={1} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '41px', width: '41px', border: `1px solid ${colors.border.noti}`, borderRadius: 1000 }}>
+            <Badge color="error" variant="dot" invisible={false}>
+                <img src={ImageSource.notification} alt={''} />
+            </Badge>
+        </Box>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }} onClick={(e: any) => handleClick(e)}>
-            <AccountCircleIcon />
-            <Box pl={1}>
+            <AccountCircleIcon sx={{ height: '41px', width: '41px' }} />
+            <Box pl={1} sx={{ fontSize: '16px', textTransform: 'capitalize' }}>
                 {userInfo?.fullname}
             </Box>
         </Box>

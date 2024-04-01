@@ -11,6 +11,8 @@ import TooltipButton from "../../../component/Tooltip";
 import AuthServices from "../../../services/Auth.services";
 import { typeMeetingOptions } from "../AddMetting";
 import { colors } from "../../../const/colors";
+import { IconsSource } from "../../../const/icons";
+import { ImageSource } from "../../../assets/Image";
 
 
 interface IProps {
@@ -21,7 +23,13 @@ interface IProps {
     onJoin: (row: any) => void
 }
 
-const meetingStatus: { [key: string]: string } = {
+export enum EnumMeetingStatus {
+    WAITING = 'WAITING',
+    IN_MEETING = 'IN_MEETING',
+    FINISHED = 'FINISHED',
+}
+
+export const meetingStatus: { [key: string]: string } = {
     WAITING: "Đang chờ",
     IN_MEETING: "Đang diễn ra",
     FINISHED: "Hoàn thành",
@@ -47,6 +55,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "stt",
             headerName: "STT",
+            // flex: 1,
             minWidth: 45,
             align: 'center',
             headerAlign: 'center',
@@ -56,6 +65,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "title",
             headerName: "Tên cuộc họp",
+            flex: 1,
             minWidth: 120,
             align: 'center',
             headerAlign: 'center',
@@ -65,6 +75,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "description",
             headerName: "Mô tả",
+            flex: 1,
             minWidth: 150,
             align: 'center',
             headerAlign: 'center',
@@ -74,20 +85,21 @@ const columnsMeet = (props: IProps) => {
         {
             field: "decentralize",
             headerName: "Thành viên",
-            minWidth: 200,
+            minWidth: 250,
             editable: false,
             sortable: false,
-            renderCell: ({ row }) => {
-                const members = row?.members.map((elm: any) => elm?.user.fullname);
-                const stringMember = members.join(", ");
-                return <Box p={1}>{stringMember}</Box>;
-            },
+            // renderCell: ({ row }) => {
+            //     const members = row?.members.map((elm: any) => elm?.user.fullname);
+            //     const stringMember = members.join(", ");
+            //     return <Box p={1}>{stringMember}</Box>;
+            // },
             align: 'center',
             headerAlign: 'center',
         },
         {
             field: "type",
             headerName: "Loại phiên họp",
+            flex: 1,
             minWidth: 200,
             editable: false,
             sortable: false,
@@ -101,6 +113,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "startTime",
             headerName: "Thời gian từ",
+            flex: 1,
             minWidth: 200,
             editable: false,
             sortable: false,
@@ -114,6 +127,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "endTime",
             headerName: "Thời gian hết hạn",
+            flex: 1,
             minWidth: 200,
             editable: false,
             sortable: false,
@@ -127,6 +141,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "location",
             headerName: "Địa điểm",
+            flex: 1,
             minWidth: 125,
             editable: false,
             sortable: false,
@@ -137,6 +152,7 @@ const columnsMeet = (props: IProps) => {
             field: "status",
             headerName: "Trạng thái",
             // type: "number",
+            flex: 1,
             minWidth: 125,
             editable: false,
             sortable: false,
@@ -169,6 +185,7 @@ const columnsMeet = (props: IProps) => {
             field: "action",
             headerName: "Hành động",
             sortable: false,
+            flex: 1,
             minWidth: 200,
             align: 'center',
             headerAlign: 'center',
@@ -178,34 +195,37 @@ const columnsMeet = (props: IProps) => {
                     return (
                         <>
                             <TooltipButton title="Chi tiết" onClick={() => onClickDetail(row)}>
-                                <InfoOutlined color="info" />
+                                {/* <InfoOutlined color="info" /> */}
+                                <img src={ImageSource.warning} alt={''} />
                             </TooltipButton>
                             <TooltipButton
                                 title={"Ghi chú cuộc họp"}
                                 onClick={() => { onClickNote(row) }}
                             >
-                                <DescriptionOutlinedIcon color="inherit" />
+                                {/* <DescriptionOutlinedIcon color="inherit" /> */}
+                                <img src={ImageSource.note} alt={''} />
                             </TooltipButton>
                             <TooltipButton title="Xoá" onClick={() => onClickDelete(row)}>
-                                <DeleteOutlineOutlinedIcon color="error" />
+                                {/* <DeleteOutlineOutlinedIcon color="error" /> */}
+                                <img src={ImageSource.bag} alt={''} />
                             </TooltipButton>
                         </>
                     );
                 return (
                     <Box style={{ display: "flex", flexDirection: "row" }}>
                         <TooltipButton title="Chi tiết" onClick={() => onClickDetail(row)}>
-                            <InfoOutlined color="info" />
+                            <img src={ImageSource.warning} alt={''} />
+                            {/* <InfoOutlined color="info" /> */}
                         </TooltipButton>
-                        <TooltipButton title="Xoá" onClick={() => onClickDelete(row)}>
-                            <DeleteOutlineOutlinedIcon color="error" />
-                        </TooltipButton>
+
                         <TooltipButton
                             title="Tham gia"
                             onClick={() => {
                                 onJoin(row)
                             }}
                         >
-                            <LoginOutlinedIcon color="primary" />
+                            {/* <LoginOutlinedIcon color="primary" /> */}
+                            <img src={ImageSource.login} alt={''} />
                         </TooltipButton>
                         {`${row?.creatorId}` === `${userInfo.id}` ? (
                             <TooltipButton title="Hoàn thành" onClick={() => onComplete(row)}>
@@ -213,7 +233,12 @@ const columnsMeet = (props: IProps) => {
                             </TooltipButton>
                         ) : null}
                         <TooltipButton title="Tải tệp">
-                            <UploadFile color="action" />
+                            <img src={ImageSource.documentUpload} alt={''} />
+                            {/* <UploadFile color="action" /> */}
+                        </TooltipButton>
+                        <TooltipButton title="Xoá" onClick={() => onClickDelete(row)}>
+                            {/* <DeleteOutlineOutlinedIcon color="error" /> */}
+                            <img src={ImageSource.bag} alt={''} />
                         </TooltipButton>
                     </Box>
                 );

@@ -3,6 +3,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import PaginationItem from '@mui/material/PaginationItem';
 import { colors } from '../../const/colors';
+import { IconsSource } from '../../const/icons';
 
 interface IProps {
   page: number
@@ -30,6 +31,12 @@ export default function PaginationCommon(props: IProps) {
         renderItem={(item) => (
           <PaginationItem
             {...item}
+            slots={{ 
+              previous: IconsSource.KeyboardArrowLeftIcon, 
+              next: IconsSource.KeyboardArrowRightIcon,
+              first: IconsSource.KeyboardDoubleArrowLeftIcon,
+              last: IconsSource.KeyboardDoubleArrowRightIcon
+            }}
             sx={{
               border: `1px solid ${colors.border.pagination}`,
               width: '42px',
@@ -38,7 +45,7 @@ export default function PaginationCommon(props: IProps) {
             }}
           />
         )}
-        siblingCount={0}
+        siblingCount={1}
       />
     </Stack>
   );

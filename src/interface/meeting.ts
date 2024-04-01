@@ -9,6 +9,22 @@ export interface IRequestGetListMeeting {
     status?: string[]
 }
 
+export interface IMemberMeeting {
+    addedAt: string
+    addedById: number
+    createdAt: string
+    meetingId: number
+    memberType: string
+    updatedAt: string
+    user: {
+        email: string
+        fullname: string
+        id: 1
+        username: string
+    }
+    userId: number
+}
+
 export interface IMeetingItem {
     createdAt?: string
     creatorId?: number
@@ -20,6 +36,7 @@ export interface IMeetingItem {
     status?: string
     title?: string
     updatedAt?: string
+    members?: IMemberMeeting[]
 }
 
 export interface IResponseMeeting {

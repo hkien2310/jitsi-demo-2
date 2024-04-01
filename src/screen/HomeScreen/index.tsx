@@ -1,29 +1,26 @@
-import { InfoOutlined, UploadFile } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import { Box, Button } from "@mui/material";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import Slide from "@mui/material/Slide";
-import { blue } from "@mui/material/colors";
+import { green, red } from "@mui/material/colors";
 import { TransitionProps } from "@mui/material/transitions";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { FastField, Formik } from "formik";
 import queryString from "query-string";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ImageSource } from "../../assets/Image";
 import ButtonCommon from "../../component/Button";
 import NavigationBar from "../../component/NavigationBar";
+import PaginationRounded from "../../component/Pagination";
 import TextField from "../../component/TextField";
-import TooltipButton from "../../component/Tooltip";
-import ButtonDialog from "../../component/dialog/ButtonDialog";
+import DialogCommon from "../../component/dialog";
+import DialogConfirm from "../../component/dialog/DialogConfirm";
 import cacheKeys from "../../const/cachedKeys";
+import { colors } from "../../const/colors";
 import { RoleMeeting } from "../../const/enum";
+import { calculateTotalPages, renderSTT } from "../../helper/function";
 import { showError } from "../../helper/toast";
 import useFiltersHandler from "../../hooks/useFilters";
 import useGetListMeeting from "../../hooks/useGetListMeeting";
@@ -31,17 +28,14 @@ import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
 import AuthServices from "../../services/Auth.services";
 import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
-import AddMeeting, { typeMeetingOptions } from "./AddMetting";
-import DialogCommon from "../../component/dialog";
-import DialogConfirm from "../../component/dialog/DialogConfirm";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { red, green, yellow } from "@mui/material/colors";
-import dayjs from "dayjs";
-import { calculateTotalPages, renderSTT } from "../../helper/function";
-import { colors } from "../../const/colors";
-import columnsMeet from "./columns";
-import PaginationRounded from "../../component/Pagination";
+import AddMeeting from "./AddMetting";
+import columnsMeet, { EnumMeetingStatus, meetingStatus } from "./columns";
 // import typeMeetingOptions from "../../../AddMeeting"
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import StatusSelect from "./component/StatusSelect";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -55,6 +49,15 @@ const HomeScreen = () => {
   const [noteViewOpen, setNoteViewOpen] = useState(false);
   const refFormik = useRef<any>(null);
   const userInfo = AuthServices.getUserLocalStorage();
+  const [openStatusSelect, setOpenStatusSelect] = React.useState(false);
+
+  const handleClose = () => {
+    setOpenStatusSelect(false);
+  };
+
+  const handleOpen = () => {
+    setOpenStatusSelect(true);
+  };
 
   const { filters, handleChangePage } = useFiltersHandler({ page: 0, perPage: 10 });
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
@@ -124,7 +127,7 @@ const HomeScreen = () => {
   };
 
   const dataRows = React.useMemo(() => {
-    return data?.data?.map((e, index) => ({ ...e, stt: renderSTT(index, filters.page, filters.perPage) })) || [];
+    return data?.data?.map((e, index) => ({ ...e, decentralize: e?.members?.map((elm: any) => elm?.user.fullname), stt: renderSTT(index, filters.page, filters.perPage) })) || [];
   }, [data?.data, filters.page, filters.perPage]);
 
   const onAdd = async (value: any) => {
@@ -196,6 +199,7 @@ const HomeScreen = () => {
         innerRef={refFormik}
         initialValues={{
           search: "",
+          status: '',
         }}
         onSubmit={(values) => {
           if (values.search) {
@@ -203,7 +207,7 @@ const HomeScreen = () => {
           }
         }}
       >
-        {({ handleSubmit }) => {
+        {({ values, setFieldValue, handleSubmit }) => {
           return (
             <>
               <Box sx={{ display: "flex" }}>
@@ -230,13 +234,15 @@ const HomeScreen = () => {
                       fullWidth
                     />
                     <ButtonCommon
-                      sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }}
-                      color="info"
+                      sx={{ padding: 1, minWidth: "auto", marginLeft: 1, backgroundColor: colors.background.secondary, borderRadius: '8px' }}
                       variant="contained"
                       onClick={() => handleSubmit()}
                     >
-                      <SearchOutlinedIcon /> Tìm kiếm
+                      <img src={ImageSource.searchIcon} style={{ width: '24px', height: '24px' }} alt={''} />
+                      {/* <SearchOutlinedIcon /> Tìm kiếm */}
                     </ButtonCommon>
+
+                    <StatusSelect />
                   </Box>
                   <ButtonCommon
                     sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1, backgroundColor: colors.background.primary, textTransform: 'none', fontSize: '16px' }}
@@ -285,6 +291,9 @@ const HomeScreen = () => {
             color: colors.text.tableContent,
             "& .MuiDataGrid-columnHeaders": {
               // background: blue["A100"],
+              "& .MuiDataGrid-columnSeparator": {
+                display: 'none'
+              },
               background: colors.background.tableHeader,
               color: 'black',
               "& .MuiDataGrid-columnHeaderTitle": {

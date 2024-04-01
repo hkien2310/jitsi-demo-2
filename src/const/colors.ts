@@ -7,8 +7,8 @@ export const colors = {
         tableHeader: 'rgba(209, 209, 209, 0.14)',
         primary: '#5A6873',
         wait: 'rgba(220, 165, 96, 0.14)',
-        success: 'rgba(71, 184, 129, 0.14)'
-
+        success: 'rgba(71, 184, 129, 0.14)',
+        secondary: 'rgba(36, 49, 65, 1)',
     },
     text: {
         main: '#333333',
@@ -26,7 +26,8 @@ export const colors = {
         main: '#efefef',
         dashed: '#dadada',
         tableBorder: 'rgba(0, 0, 0, 0.05)',
-        pagination: 'rgba(230, 230, 230, 1)'
+        pagination: 'rgba(230, 230, 230, 1)',
+        noti: 'rgba(71, 85, 99, 1)',
     },
     header: {
         main: '#243141',
