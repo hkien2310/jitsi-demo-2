@@ -9,6 +9,7 @@ import { showError } from "../helper/toast";
 
 //* Check parse body request
 const parseRequest = (filters?: IRequestGetListMeeting) => {
+    console.log(filters, 'filters')
     return cloneDeep({
         page: (filters?.page || 0) + 1,
         page_size: filters?.perPage,
