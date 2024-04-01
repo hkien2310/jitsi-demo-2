@@ -19,6 +19,7 @@ interface IProps {
   icon?: any;
   bgcolor?: any;
   content?: React.ReactNode;
+  isDelete?: boolean
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -32,63 +33,19 @@ const Transition = React.forwardRef(function Transition(
 export default function DialogConfirm(props: IProps) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-  const { open, handleClose, title, description, icon, children, bgcolor, subTitle, content } = props;
+  const { open, handleClose, title, description, icon, children, bgcolor, subTitle, content, isDelete } = props;
 
   return (
     <React.Fragment>
-      <Dialog maxWidth={false} fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
-        <Box
-          sx={{
-            paddingLeft: "40px",
-            paddingRight: "40px",
-            paddingTop: "18px",
-            paddingBottom: "18px",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            boxShadow: "4px 0px 20px 0px rgba(142,142,142,0.1)",
-          }}
-        >
-          {title ? (
-            <TypographyCommon
-              sx={{
-                fontSize: "20px",
-                fontWeight: "600",
-              }}
-            >
-              {title}
-            </TypographyCommon>
-          ) : (
-            <Box></Box>
-          )}
-          <Button sx={{ padding: 0, minWidth: 0 }} onClick={() => handleClose()}>
-            <img src={ImageSource.close} />
-          </Button>
+      <Dialog maxWidth={"lg"} fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
+        <Button sx={{ padding: 0, minWidth: 0, position: 'absolute', right: '10px', top: '10px' }} onClick={() => handleClose()}>
+          <img src={ImageSource.close} />
+        </Button>
+        <Box sx={{ justifyContent: "center !important ", alignItems: "center !important", display: "flex", pt: '36px' }}>
+          <img src={ isDelete ? ImageSource.warningDelete : ImageSource.warning } style={{ height: "48px", width: "48px" }} />
         </Box>
-        {/* <Box
-          sx={{
-            height: 40,
-            width: 40,
-            bgcolor: bgcolor,
-            alignItems: "center",
-            alignSelf: "center",
-            display: "flex",
-            justifyContent: "center",
-            borderRadius: "50%",
-            mt: 4,
-          }}
-        >
-          {icon}
-        </Box> */}
-        <Box sx={{ backgroundColor: "pink", justifyContent: "center !important ", alignItems: "center !important", display: "flex" }}>
-          <img src={ImageSource.warningDelete} style={{ height: "48px", width: "48px" }} />
-        </Box>
-        {/* <DialogTitle id="responsive-dialog-title" sx={{ textAlign: "center" }}>
-          <Box>{subTitle}</Box>
-        </DialogTitle> */}
         <Box>{content}</Box>
-        <DialogContent>{children}</DialogContent>
+        <DialogContent sx={{ padding: 0 }}>{children}</DialogContent>
       </Dialog>
     </React.Fragment>
   );

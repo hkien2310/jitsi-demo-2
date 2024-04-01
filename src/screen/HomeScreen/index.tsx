@@ -122,7 +122,13 @@ const HomeScreen = () => {
   };
 
   const dataRows = React.useMemo(() => {
-    return data?.data?.map((e, index) => ({ ...e, decentralize: e?.members?.map((elm: any) => elm?.user.fullname), stt: renderSTT(index, filters.page, filters.perPage) })) || [];
+    return (
+      data?.data?.map((e, index) => ({
+        ...e,
+        decentralize: e?.members?.map((elm: any) => elm?.user.fullname),
+        stt: renderSTT(index, filters.page, filters.perPage),
+      })) || []
+    );
   }, [data?.data, filters.page, filters.perPage]);
 
   const onAdd = async (value: any) => {
@@ -162,17 +168,17 @@ const HomeScreen = () => {
   };
 
   const onClickDetail = (row: any) => {
-    openDetail(row)
-  }
+    openDetail(row);
+  };
 
   const onClickNote = (row: any) => {
     handleClickOpenDialogViewNote();
     refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id });
-  }
+  };
 
   const onClickDelete = (row: any) => {
-    handleDelete(row)
-  }
+    handleDelete(row);
+  };
 
   const onJoin = (row: any) => {
     const body = {
@@ -182,11 +188,11 @@ const HomeScreen = () => {
       idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null,
     };
     navigate(`/call?${queryString.stringify(body)}`);
-  }
+  };
 
   const onComplete = (row: any) => {
-    handleComplete(row)
-  }
+    handleComplete(row);
+  };
 
   return (
     <NavigationBar>
@@ -194,7 +200,7 @@ const HomeScreen = () => {
         innerRef={refFormik}
         initialValues={{
           search: "",
-          status: '',
+          status: "",
         }}
         onSubmit={(values) => {
           // if (values.search || values.status ) {
@@ -216,7 +222,7 @@ const HomeScreen = () => {
                   />
                 )}
                 <Box sx={{ justifyContent: "space-between", flex: 1, display: "flex" }} mb={2}>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     <FastField
                       style={{ width: 400 }}
                       size="medium"
@@ -228,25 +234,44 @@ const HomeScreen = () => {
                       fullWidth
                     />
                     <ButtonCommon
-                      sx={{ padding: 1, minWidth: "auto", marginLeft: 1, backgroundColor: colors.background.secondary, borderRadius: '8px', height: '56px', width: '56px' }}
+                      sx={{
+                        padding: 1,
+                        minWidth: "auto",
+                        marginLeft: 1,
+                        backgroundColor: colors.background.secondary,
+                        borderRadius: "8px",
+                        height: "56px",
+                        width: "56px",
+                      }}
                       variant="contained"
                       onClick={() => handleSubmit()}
                     >
-                      <img src={ImageSource.searchIcon} style={{ width: '28px', height: '28px' }} alt={''} />
+                      <img src={ImageSource.searchIcon} style={{ width: "28px", height: "28px" }} alt={""} />
                       {/* <SearchOutlinedIcon /> Tìm kiếm */}
                     </ButtonCommon>
-                    <Box ml={3} sx={{ height: '100%' }}>
-                      <StatusSelect value={values.status as EnumMeetingStatus} onChange={(value) => {
-                        setFieldValue('status', value)
-                        if (values.status === value) {
-                          return
-                        }
-                        handleSubmit()
-                      }} />
+                    <Box ml={3} sx={{ height: "100%" }}>
+                      <StatusSelect
+                        value={values.status as EnumMeetingStatus}
+                        onChange={(value) => {
+                          setFieldValue("status", value);
+                          if (values.status === value) {
+                            return;
+                          }
+                          handleSubmit();
+                        }}
+                      />
                     </Box>
                   </Box>
                   <ButtonCommon
-                    sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: '8px', backgroundColor: colors.background.primary, textTransform: 'none', fontSize: '16px' }}
+                    sx={{
+                      padding: 1,
+                      minWidth: "auto",
+                      marginLeft: 1,
+                      borderRadius: "8px",
+                      backgroundColor: colors.background.primary,
+                      textTransform: "none",
+                      fontSize: "16px",
+                    }}
                     variant="contained"
                     onClick={() => setOpen(true)}
                   >
@@ -258,7 +283,7 @@ const HomeScreen = () => {
           );
         }}
       </Formik>
-      <Box sx={{ width: '100%', flex: 1 }}>
+      <Box sx={{ width: "100%", flex: 1 }}>
         <DataGrid
           rows={dataRows}
           columns={columnsMeet({
@@ -288,27 +313,32 @@ const HomeScreen = () => {
           columnBuffer={10}
           // hideFooterPagination={true}
           sx={{
-            textAlign: 'center',
+            textAlign: "center",
             color: colors.text.tableContent,
             "& .MuiDataGrid-columnHeaders": {
               // background: blue["A100"],
               "& .MuiDataGrid-columnSeparator": {
-                display: 'none'
+                display: "none",
               },
               background: colors.background.tableHeader,
-              color: 'black',
+              color: "black",
               "& .MuiDataGrid-columnHeaderTitle": {
                 fontWeight: "500",
               },
             },
           }}
         />
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }} p={1}>
-          <PaginationRounded totalPage={calculateTotalPages(data?.total || 0, filters.perPage)} page={filters.page + 1} handleChangePage={(page) => handleChangePage(page - 1)} />
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }} p={1}>
+          <PaginationRounded
+            totalPage={calculateTotalPages(data?.total || 0, filters.perPage)}
+            page={filters.page + 1}
+            handleChangePage={(page) => handleChangePage(page - 1)}
+          />
         </Box>
       </Box>
-      {open &&
+      {open && (
         <DialogCommon
+          
           title={dataRow ? "Chi tiết cuộc họp" : "Thêm mới cuộc họp"}
           open={open}
           handleClose={() => {
@@ -316,7 +346,7 @@ const HomeScreen = () => {
             setDataRow(undefined);
           }}
           content={
-            <Box sx={{ width: "75vw" }}>
+            <Box sx={{ width: "55vw" }}>
               <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
             </Box>
           }
@@ -324,27 +354,27 @@ const HomeScreen = () => {
       )}
       {confirmDelete && (
         <DialogConfirm
+          isDelete
           handleClose={() => {
             setConfirmDelete(false);
           }}
           open={confirmDelete}
           content={
-            <Box sx={{ width: "100%" }}>
-              <Box>Cảnh báo</Box>
-              <Box>Bạn chắc chắn muốn xoá phiên họp này?</Box>
+            <Box sx={{ width: "100%", textAlign: "center", pr: "40px", pl: "40px", pt: "24px", pb: "24px" }}>
+              <Box sx={{ color: "#243141", fontWeight: 600 }}>Cảnh báo</Box>
+              <Box sx={{ color: "rgba(84, 89, 94, 0.6)", fontSize: 14, fontWeight: 400 }}>Bạn có muốn chắc chắc muốn xóa phiên họp này không ?</Box>
             </Box>
           }
           children={
-            <Box>
-              <ButtonCommon  variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550" }} color="secondary">
+            <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
+              <ButtonCommon variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
                 Xoá
               </ButtonCommon>
-              <ButtonCommon variant="outlined" onClick={handleConfirmDelete}>
+              <ButtonCommon variant="outlined" onClick={handleConfirmDelete} sx={{ width: "100%", mt: "16px" }}>
                 Huỷ bỏ
               </ButtonCommon>
             </Box>
           }
-          // bgcolor={red[100]}
         />
       )}
       {confirmComplete && (
@@ -352,20 +382,23 @@ const HomeScreen = () => {
           handleClose={() => {
             setConfirmComplete(false);
           }}
-          title="Bạn chắc chắn muốn hoàn thành?"
           open={confirmComplete}
-          icon={<TaskAltOutlinedIcon color="success" />}
-          children={
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
-              <Button variant="outlined" onClick={() => setConfirmComplete(false)} sx={{ fontWeight: "550" }} color="success">
-                Huỷ bỏ
-              </Button>
-              <Button variant="contained" onClick={handleConfirmComplete} sx={{ fontWeight: "550", ml: 1 }} color="success">
-                Đồng ý
-              </Button>
+          content={
+            <Box sx={{ width: "100%", textAlign: "center", pr: "40px", pl: "40px", pt: "24px", pb: "24px" }}>
+              <Box sx={{ color: "#243141", fontWeight: 600 }}>Cảnh báo</Box>
+              <Box sx={{ color: "rgba(84, 89, 94, 0.6)", fontSize: 14, fontWeight: 400 }}>Bạn chắc chắn muốn hoàn thành phiên họp này ?</Box>
             </Box>
           }
-          bgcolor={green[100]}
+          children={
+            <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
+              <ButtonCommon variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
+                Hoàn thành
+              </ButtonCommon>
+              <ButtonCommon variant="outlined" onClick={handleConfirmDelete} sx={{ width: "100%", mt: "16px" }}>
+                Huỷ bỏ
+              </ButtonCommon>
+            </Box>
+          }
         />
       )}
     </NavigationBar>
