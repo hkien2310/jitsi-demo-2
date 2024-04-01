@@ -45,7 +45,21 @@ const CallScreen = () => {
         iframeRef.style.height = `${height}px`;
         // iframeRef.style.width = `${width}px`;
         iframeRef.style.border = `none`;
+        // console.log(iframeRef, 'iframeRefiframeRef')
+
     };
+    const elements = Array.from(document.getElementsByTagName('span'))
+    const elementssss = Array.from(document.getElementsByClassName('css-109tr2-emptyMessage'))
+    console.log(elementssss, 'elementselements')
+    elements?.forEach((e) => {
+        console.log(e?.textContent, 'ádasdas')
+
+        if (e?.textContent?.includes('There are no polls in the meeting yet. Start a poll here!')) {
+            e.textContent = 'aaaaa';
+            console.log(e, 'ádasdas')
+          }
+    })
+    
 
     const handleApiReady = (apiObj: any) => {
         // apiRef.current = apiObj;
@@ -88,12 +102,15 @@ const CallScreen = () => {
                         displayName: userInfo?.fullname,
                         email: email || ''
                     }}
-                    lang={'vi'}
+                    lang={'vii'}
                     onApiReady={externalApi => handleApiReady(externalApi)}
 
                     // @ts-ignore
                     onReadyToClose={() => navigate('/')}
                     getIFrameRef={handleJitsiIFrameRef1}
+                    
+                    
+                    
                 />
             </Grid>
             <Grid item xs={12} md={3}>

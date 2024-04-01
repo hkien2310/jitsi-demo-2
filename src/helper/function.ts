@@ -88,3 +88,11 @@ export const renderSTT = (index: number, page: number, pagesize: number) => {
         return (Number(page)) * Number(pagesize) + (Number(index) + 1)
     }
 }
+
+export function calculateTotalPages(total: number, perPage: number) {
+    if (total <= 0) {
+        return 0;
+    } else {
+        return Math.ceil(total / perPage);
+    }
+}
