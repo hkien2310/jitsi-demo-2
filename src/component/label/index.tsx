@@ -7,7 +7,7 @@ interface Props {
 const LabelCommon = (props: Props) => {
   const { label} = props;
   return (
-    <Box sx={{ color: "black", flex: 1,  mr: 2 }}>
+    <Box sx={{ color: "black", flex: 1, mb: '6px' }}>
       {label}: <span style={{ color: "red" }}> *</span>
     </Box>
   );

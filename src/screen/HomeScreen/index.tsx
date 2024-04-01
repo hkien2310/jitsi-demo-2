@@ -38,6 +38,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red, green, yellow } from "@mui/material/colors";
 import dayjs from "dayjs";
 import { renderSTT } from "../../helper/function";
+import { ImageSource } from "../../assets/Image";
 // import typeMeetingOptions from "../../../AddMeeting"
 
 const HomeScreen = () => {
@@ -112,7 +113,7 @@ const HomeScreen = () => {
 
   const handleCloseDialogViewNote = () => {
     setNoteViewOpen(false);
-    setNoteData(undefined)
+    setNoteData(undefined);
   };
 
   const openDetail = (row: any) => {
@@ -242,9 +243,9 @@ const HomeScreen = () => {
         if (isDisabled)
           return (
             <>
-            <TooltipButton title="Chi tiết" onClick={() => openDetail(row)}>
-              <InfoOutlined color="info" />
-            </TooltipButton>
+              <TooltipButton title="Chi tiết" onClick={() => openDetail(row)}>
+                <InfoOutlined color="info" />
+              </TooltipButton>
               <TooltipButton
                 title={"Ghi chú cuộc họp"}
                 onClick={() => {
@@ -320,7 +321,7 @@ const HomeScreen = () => {
 
   const renderListNote = () => {
     return (
-      <Box width={'50vw'}>
+      <Box width={"50vw"}>
         {/* <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>Ghi chú của cuộc họp</Box> */}
         <Box>
           {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ? (
@@ -355,12 +356,11 @@ const HomeScreen = () => {
                 {noteViewOpen && (
                   <DialogCommon
                     open={noteViewOpen}
-                    title={'Ghi chú của cuộc họp'}
+                    title={"Ghi chú của cuộc họp"}
                     handleClose={handleCloseDialogViewNote}
                     aria-describedby="alert-dialog-slide-description"
                     content={renderListNote()}
                   />
-
                 )}
                 <Box sx={{ justifyContent: "space-between", flex: 1, display: "flex" }} mb={2}>
                   <Box>
@@ -423,9 +423,9 @@ const HomeScreen = () => {
           },
         }}
       />
-      {open &&
+      {open && (
         <DialogCommon
-          title={dataRow ? "Chi tiết" : "Thêm mới"}
+          title={dataRow ? "Chi tiết cuộc họp" : "Thêm mới cuộc họp"}
           open={open}
           handleClose={() => {
             setOpen(false);
@@ -437,30 +437,33 @@ const HomeScreen = () => {
             </Box>
           }
         />
-      }
-      {confirmDelete &&
+      )}
+      {confirmDelete && (
         <DialogConfirm
           handleClose={() => {
             setConfirmDelete(false);
           }}
-          title="Bạn chắc chắn muốn xoá phiên họp này?"
           open={confirmDelete}
-          icon={<DeleteForeverIcon color="error" />}
-          children={
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: 1 }} width="100%">
-              <Button variant="outlined" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550" }} color="error">
-                Huỷ bỏ
-              </Button>
-              <Button variant="contained" onClick={handleConfirmDelete} sx={{ fontWeight: "550", ml: 1 }} color="error">
-                Đồng ý
-              </Button>
+          content={
+            <Box sx={{ width: "100%" }}>
+              <Box>Cảnh báo</Box>
+              <Box>Bạn chắc chắn muốn xoá phiên họp này?</Box>
             </Box>
           }
-          bgcolor={red[100]}
+          children={
+            <Box>
+              <ButtonCommon  variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550" }} color="secondary">
+                Xoá
+              </ButtonCommon>
+              <ButtonCommon variant="outlined" onClick={handleConfirmDelete}>
+                Huỷ bỏ
+              </ButtonCommon>
+            </Box>
+          }
+          // bgcolor={red[100]}
         />
-      }
-      {
-        confirmComplete &&
+      )}
+      {confirmComplete && (
         <DialogConfirm
           handleClose={() => {
             setConfirmComplete(false);
@@ -480,7 +483,7 @@ const HomeScreen = () => {
           }
           bgcolor={green[100]}
         />
-      }
+      )}
     </NavigationBar>
   );
 };

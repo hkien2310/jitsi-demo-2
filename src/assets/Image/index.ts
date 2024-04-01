@@ -15,6 +15,7 @@ import login from './source/login.svg'
 import notification from './source/notification.svg'
 import searchNormal from './source/search_normal.svg'
 import warning from './source/warning.svg'
+import warningDelete from './source/warning_delete.png'
 
 export const ImageSource = {
     loginAvatar: 'https://sentrangusa.com/wp-content/uploads/2023/01/62196607bf1b46ebfb301f19_5f5bc69416e7fb495275b378_how20run20tips20top20execs.jpeg',
@@ -36,5 +37,6 @@ export const ImageSource = {
     login,
     notification,
     searchNormal,
-    warning
+    warning,
+    warningDelete
 }
