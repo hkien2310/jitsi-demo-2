@@ -7,6 +7,7 @@ import cacheKeys from "../../const/cachedKeys";
 import { useSave } from "../../store/useStores";
 import { ImageSource } from "../../assets/Image";
 import * as Yup from "yup";
+import ButtonCommon from "../../component/Button";
 
 const validationSchema = () => {
     return Yup.object().shape({
@@ -51,10 +52,7 @@ const LoginScreen = () => {
                                 <Box sx={{ display: 'flex', height: '100%' }}>
                                     <Box>
                                         <Box pb={2} pt={5}>
-                                            <img src={ImageSource.logoWeb} alt='' style={{ width: '25%', height: '25%', objectFit: 'cover' }} />
-                                        </Box>
-                                        <Box pb={2}>
-                                            <img src={ImageSource.companyName} alt='' style={{ width: '50%', height: '50%', objectFit: 'cover' }} />
+                                            <img src={ImageSource.logoWeb} alt='' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </Box>
                                         <Box p={1}>
                                             {/* <Box id="username" sx={{ textAlign: 'left' }}>Tên đăng nhập</Box> */}
@@ -93,9 +91,21 @@ const LoginScreen = () => {
                                                 Ghi nhớ đăng nhập
                                             </Typography>
                                         </Box>
-                                        <Box onClick={() => handleSubmit()} p={2} m={2} sx={{ backgroundColor: '#2f8a46', color: 'white', fontWeight: 'bold', borderRadius: '10px' }}>
+                                        <ButtonCommon
+                                            fullWidth 
+                                            variant="contained"
+                                            onClick={() => handleSubmit()} 
+                                            sx={{ 
+                                                padding: '16px',
+                                                // margin: '16px', 
+                                                backgroundColor: '#2f8a46', 
+                                                color: 'white', 
+                                                fontWeight: 'bold', 
+                                                borderRadius: '10px' 
+                                                }}
+                                            >
                                             Đăng nhập
-                                        </Box>
+                                        </ButtonCommon>
                                     </Box>
                                 </Box>
                             </Grid>
