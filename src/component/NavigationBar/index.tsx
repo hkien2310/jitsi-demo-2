@@ -21,6 +21,8 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSave } from '../../store/useStores';
 import UserRight from './UserRight';
+import { colors } from '../../const/colors';
+import TypographyCommon from '../Typography';
 
 const drawerWidth = 240;
 
@@ -98,9 +100,9 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
 
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', maxWidth: '100vw', height: '100vh' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar position="fixed" open={open} sx={{backgroundColor: colors.header.main}}>
                 <Toolbar>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -113,9 +115,9 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                             >
                                 <MenuIcon />
                             </IconButton>
-                            <Typography variant="h6" noWrap component="div">
+                            <TypographyCommon style={{color: colors.text.header, fontSize: '24px', fontWeight: 500}} noWrap component="div">
                                 Hệ thống quản lý cuộc họp
-                            </Typography>
+                            </TypographyCommon>
                         </Box>
                         <Box>
                             <UserRight />
@@ -175,7 +177,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 </Button> */}
             </Drawer>
 
-            <Main open={open}>
+            <Main open={open} sx={{width: '100%', height: '100%'}}>
                 <DrawerHeader />
                 {children}
                 {/* {props?.children} */}

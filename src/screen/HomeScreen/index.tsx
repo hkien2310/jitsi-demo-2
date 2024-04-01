@@ -37,7 +37,10 @@ import DialogConfirm from "../../component/dialog/DialogConfirm";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { red, green, yellow } from "@mui/material/colors";
 import dayjs from "dayjs";
-import { renderSTT } from "../../helper/function";
+import { calculateTotalPages, renderSTT } from "../../helper/function";
+import { colors } from "../../const/colors";
+import columnsMeet from "./columns";
+import PaginationRounded from "../../component/Pagination";
 // import typeMeetingOptions from "../../../AddMeeting"
 
 const HomeScreen = () => {
@@ -120,181 +123,6 @@ const HomeScreen = () => {
     setDataRow(row);
   };
 
-  const columns: GridColDef[] = [
-    {
-      field: "stt",
-      headerName: "STT",
-      width: 90,
-      // renderCell: (row) => {
-      //   return <>{row.id}</>;
-      // },
-    },
-    {
-      field: "title",
-      headerName: "Tên cuộc họp",
-      width: 150,
-      editable: false,
-      sortable: false,
-    },
-    {
-      field: "description",
-      headerName: "Mô tả",
-      flex: 1,
-      editable: false,
-      sortable: false,
-    },
-    {
-      field: "decentralize",
-      headerName: "Thành viên",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      renderCell: ({ row }) => {
-        const members = row?.members.map((elm: any) => elm?.user.fullname);
-        const stringMember = members.join(", ");
-        return <Box p={1}>{stringMember}</Box>;
-      },
-    },
-    {
-      field: "type",
-      headerName: "Loại phiên họp",
-      flex: 1,
-      editable: false,
-      sortable: false,
-      renderCell: ({ row }) => {
-        const type = typeMeetingOptions.find((e) => row.type === e.value)?.label;
-        return <Box p={1}>{type}</Box>;
-      },
-    },
-    {
-      field: "startTime",
-      headerName: "Thời gian từ",
-      width: 300,
-      editable: false,
-      sortable: false,
-      renderCell: ({ row }) => {
-        const from = dayjs(row.startTime).format("LLLL"); // '25/01/2019'
-        return <Box p={1}>{from}</Box>;
-      },
-    },
-    {
-      field: "endTime",
-      headerName: "Thời gian hết hạn",
-      width: 300,
-      editable: false,
-      sortable: false,
-      renderCell: ({ row }) => {
-        const endTime = dayjs(row?.endTime).format("LLLL"); // '25/01/2019'
-        return <Box p={1}>{endTime}</Box>;
-      },
-    },
-    {
-      field: "location",
-      headerName: "Địa điểm",
-      width: 200,
-      editable: false,
-      sortable: false,
-    },
-    {
-      field: "status",
-      headerName: "Trạng thái",
-      // type: "number",
-      width: 150,
-      editable: false,
-      sortable: false,
-      renderCell: ({ row }) => {
-        const meetingStatus: { [key: string]: string } = {
-          WAITING: "Đang chờ",
-          IN_MEETING: "Đang diễn ra",
-          FINISHED: "Hoàn thành",
-        };
-        const meetingColorStatus: { [key: string]: string } = {
-          WAITING: yellow[800],
-          IN_MEETING: "#007bff",
-          FINISHED: green[800],
-        };
-        return (
-          <Button
-            variant="outlined"
-            sx={{
-              width: 200,
-              borderRadius: 50,
-              border: `1px solid ${meetingColorStatus[`${row.status}`]}`,
-              color: meetingColorStatus[`${row.status}`],
-              textTransform: "unset",
-            }}
-          >
-            {meetingStatus[`${row.status}`]}
-          </Button>
-          // <Box p={1} sx={{ color: meetingColorStatus[`${row.status}`] }}>
-          //   {meetingStatus[`${row.status}`]}
-          // </Box>
-        );
-      },
-    },
-    {
-      field: "action",
-      headerName: "Hành động",
-      sortable: false,
-      width: 300,
-      renderCell: ({ row }) => {
-        const isDisabled = row.status === "FINISHED";
-        if (isDisabled)
-          return (
-            <>
-            <TooltipButton title="Chi tiết" onClick={() => openDetail(row)}>
-              <InfoOutlined color="info" />
-            </TooltipButton>
-              <TooltipButton
-                title={"Ghi chú cuộc họp"}
-                onClick={() => {
-                  handleClickOpenDialogViewNote();
-                  refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id });
-                }}
-              >
-                <DescriptionOutlinedIcon color="inherit" />
-              </TooltipButton>
-              <TooltipButton title="Xoá" onClick={() => handleDelete(row)}>
-                <DeleteOutlineOutlinedIcon color="error" />
-              </TooltipButton>
-            </>
-          );
-        return (
-          <Box style={{ display: "flex", flexDirection: "row" }}>
-            <TooltipButton title="Chi tiết" onClick={() => openDetail(row)}>
-              <InfoOutlined color="info" />
-            </TooltipButton>
-            <TooltipButton title="Xoá" onClick={() => handleDelete(row)}>
-              <DeleteOutlineOutlinedIcon color="error" />
-            </TooltipButton>
-            <TooltipButton
-              title="Tham gia"
-              onClick={() => {
-                const body = {
-                  room: row?.meetingCode,
-                  roomName: row?.title,
-                  meetingId: row?.id,
-                  idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null,
-                };
-                navigate(`/call?${queryString.stringify(body)}`);
-              }}
-            >
-              <LoginOutlinedIcon color="primary" />
-            </TooltipButton>
-            {`${row?.creatorId}` === `${userInfo.id}` ? (
-              <TooltipButton title="Hoàn thành" onClick={() => handleComplete(row)}>
-                <TaskAltOutlinedIcon color="success" />
-              </TooltipButton>
-            ) : null}
-            <TooltipButton title="Tải tệp">
-              <UploadFile color="action" />
-            </TooltipButton>
-          </Box>
-        );
-      },
-    },
-  ];
-
   const dataRows = React.useMemo(() => {
     return data?.data?.map((e, index) => ({ ...e, stt: renderSTT(index, filters.page, filters.perPage) })) || [];
   }, [data?.data, filters.page, filters.perPage]);
@@ -334,6 +162,33 @@ const HomeScreen = () => {
       </Box>
     );
   };
+
+  const onClickDetail = (row: any) => {
+    openDetail(row)
+  }
+
+  const onClickNote = (row: any) => {
+    handleClickOpenDialogViewNote();
+    refetchMeetingNote({ ...filtersMeetingNote, meetingId: row?.id });
+  }
+
+  const onClickDelete = (row: any) => {
+    handleDelete(row)
+  }
+
+  const onJoin = (row: any) => {
+    const body = {
+      room: row?.meetingCode,
+      roomName: row?.title,
+      meetingId: row?.id,
+      idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null,
+    };
+    navigate(`/call?${queryString.stringify(body)}`);
+  }
+
+  const onComplete = (row: any) => {
+    handleComplete(row)
+  }
 
   return (
     <NavigationBar>
@@ -384,8 +239,7 @@ const HomeScreen = () => {
                     </ButtonCommon>
                   </Box>
                   <ButtonCommon
-                    sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1 }}
-                    color="error"
+                    sx={{ padding: 1, minWidth: "auto", marginLeft: 1, borderRadius: 1, backgroundColor: colors.background.primary, textTransform: 'none', fontSize: '16px' }}
                     variant="contained"
                     onClick={() => setOpen(true)}
                   >
@@ -397,32 +251,52 @@ const HomeScreen = () => {
           );
         }}
       </Formik>
-      <DataGrid
-        rows={dataRows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: paginationModel,
-          },
-        }}
-        paginationMode="server"
-        sortingMode="server"
-        rowCount={data?.total || 0}
-        onPaginationModelChange={(model) => handleChangePage(model?.page)}
-        pageSizeOptions={[5]}
-        checkboxSelection={false}
-        disableRowSelectionOnClick
-        // hideFooterPagination={true}
-        sx={{
-          "& .MuiDataGrid-columnHeaders": {
-            background: blue["A100"],
-            color: "white",
-            "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "700",
+      <Box sx={{ width: '100%', flex: 1 }}>
+        <DataGrid
+          rows={dataRows}
+          columns={columnsMeet({
+            onClickDelete,
+            onClickDetail,
+            onClickNote,
+            onComplete,
+            onJoin,
+          })}
+          rowSpacingType={"margin"}
+          hideFooter
+          initialState={{
+            pagination: {
+              paginationModel: paginationModel,
             },
-          },
-        }}
-      />
+          }}
+          paginationMode="server"
+          sortingMode="server"
+          rowCount={data?.total || 0}
+          onPaginationModelChange={(model) => handleChangePage(model?.page)}
+          pageSizeOptions={[5]}
+          checkboxSelection={false}
+          disableRowSelectionOnClick
+          disableColumnFilter
+          disableColumnMenu
+          disableColumnSelector
+          columnBuffer={10}
+          // hideFooterPagination={true}
+          sx={{
+            textAlign: 'center',
+            color: colors.text.tableContent,
+            "& .MuiDataGrid-columnHeaders": {
+              // background: blue["A100"],
+              background: colors.background.tableHeader,
+              color: 'black',
+              "& .MuiDataGrid-columnHeaderTitle": {
+                fontWeight: "500",
+              },
+            },
+          }}
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }} p={1}>
+          <PaginationRounded totalPage={calculateTotalPages(data?.total || 0, filters.perPage)} page={filters.page + 1} handleChangePage={(page) => handleChangePage(page - 1)} />
+        </Box>
+      </Box>
       {open &&
         <DialogCommon
           title={dataRow ? "Chi tiết" : "Thêm mới"}
