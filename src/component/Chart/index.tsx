@@ -3,14 +3,22 @@ import ReactApexChart from 'react-apexcharts';
 
 const ApexChart = () => {
   const [series] = useState([{
-    name: 'series1',
-    data: [31, 40, 28, 51, 42, 109, 100]
-  }, {
-    name: 'series2',
-    data: [11, 32, 45, 32, 34, 52, 41]
-  }]);
+    name: 'Kiên đẹp trai',
+    data: [90, 100, 80, 60, 100, 109, 100]
+  }
+]);
 
   const [options] = useState({
+    colors: ['#D56C4E'],
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 0,
+        opacityFrom: 0.9,
+        opacityTo: 0.5,
+        stops: [0, 90, 100]
+      }
+    },
     chart: {
       height: 350,
       type: 'area'
@@ -23,7 +31,14 @@ const ApexChart = () => {
     },
     xaxis: {
       type: 'datetime',
-      categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+      categories: [
+        "2018-09-19T00:00:00.000Z", 
+        "2018-09-19T01:30:00.000Z", 
+        "2018-09-19T02:30:00.000Z", 
+        "2018-09-19T03:30:00.000Z", 
+        "2018-09-19T04:30:00.000Z", 
+        "2018-09-19T05:30:00.000Z", 
+        "2018-09-19T06:30:00.000Z"]
     },
     tooltip: {
       x: {
