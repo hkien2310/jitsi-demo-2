@@ -200,6 +200,9 @@ function AutoCompleteField(props: Props) {
             sx={{
               "& div": {
                 borderRadius: "0.5rem",
+                "& .MuiChip-filled": {
+                  backgroundColor: 'rgba(140, 150, 160, 0.4)'
+                }
               },
               "& label": {
                 "& .MuiFormLabel-asterisk": {

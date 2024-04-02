@@ -9,6 +9,8 @@ export const colors = {
         wait: 'rgba(220, 165, 96, 0.14)',
         success: 'rgba(71, 184, 129, 0.14)',
         secondary: 'rgba(36, 49, 65, 1)',
+        sideBar: 'rgba(54, 69, 84, 1)',
+        sideBarSelected: '#243141',
     },
     text: {
         main: '#333333',

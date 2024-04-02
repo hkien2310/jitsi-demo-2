@@ -4,16 +4,7 @@ interface Props extends ButtonProps {}
 
 const ButtonCommon = (props: Props) => {
   const { ...remainProps } = props;
-  return (
-    <Button
-      sx={{
-        borderRadius: 3,
-      }}
-      {...remainProps}
-    >
-      {props.children}
-    </Button>
-  );
+  return <Button {...remainProps}>{props.children}</Button>;
 };
 
 export default ButtonCommon;

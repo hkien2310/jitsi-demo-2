@@ -96,3 +96,11 @@ export function calculateTotalPages(total: number, perPage: number) {
         return Math.ceil(total / perPage);
     }
 }
+
+export function generateMessage(data: any[], page: number, pageSize: number, total: number) {
+    const startIndex = (page - 1) * pageSize + 1;
+    const endIndex = Math.min(startIndex + pageSize - 1, total);
+    console.log(startIndex, endIndex, 'endIndexendIndex')
+
+    return `Hiển thị từ ${startIndex} đến ${endIndex} trong tổng số ${total} bản ghi`;
+}

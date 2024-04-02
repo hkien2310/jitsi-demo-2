@@ -18,38 +18,39 @@ import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListUser from "../../../hooks/useGetListUser";
 import AuthServices from "../../../services/Auth.services";
 import MeetingServices from "../../../services/Meeting.services";
+import ButtonCommon from "../../../component/Button";
 export const typeMeetingOptions = [
   {
     label: "Họp giao ban",
-    value: '1',
+    value: "1",
   },
   {
     label: "Phiên họp thường trực",
-    value: '2',
+    value: "2",
   },
   {
     label: "Thảo luận tổ",
-    value: '3',
+    value: "3",
   },
   {
     label: "Họp thẩm tra",
-    value: '4',
+    value: "4",
   },
   {
     label: "Họp thường kỳ tháng",
-    value: '5',
+    value: "5",
   },
   {
     label: "Họp phiên chính thức",
-    value: '6',
+    value: "6",
   },
   {
     label: "Họp phiên trù bị",
-    value: '7',
+    value: "7",
   },
   {
     label: "Họp nội dung khác",
-    value: '8',
+    value: "8",
   },
 ];
 interface IProps {
@@ -131,17 +132,17 @@ const AddMeeting = (props: IProps) => {
           };
         })?.[0]
     : "";
-  
+
   const file = {
     name: dataRow?.syllabusFileName,
     size: dataRow?.syllabusFileSize,
-  } 
+  };
   const initial: any = {
     name: dataRow?.title,
     status: 1,
     description: dataRow?.description,
     assigned: filterMember,
-    agenda: dataRow?.syllabusContent || '',
+    agenda: dataRow?.syllabusContent || "",
     startTime: dataRow?.startTime,
     endTime: dataRow?.endTime,
     location: dataRow?.location,
@@ -157,7 +158,6 @@ const AddMeeting = (props: IProps) => {
         <Formik
           initialValues={initial}
           validationSchema={validationSchema}
-          
           onSubmit={async (values, help) => {
             onAdd(values);
             help?.resetForm();
@@ -183,7 +183,7 @@ const AddMeeting = (props: IProps) => {
             });
             formData.append("description", values?.description);
             formData.append("type", typeMeeting?.value || "");
-            formData.append("syllabusContent", values?.agenda || '');
+            formData.append("syllabusContent", values?.agenda || "");
             formData.append("startTime", values?.startTime?.toISOString());
             formData.append("endTime", values?.endTime?.toISOString());
             formData.append("location", values?.location);
@@ -206,170 +206,144 @@ const AddMeeting = (props: IProps) => {
 
             return (
               <>
-                <Grid container spacing={2}>
-                  <Box
-                    sx={{
-                      flex: 1,
-                      borderWidth: 1,
-                      borderColor: indigo[50],
-                      borderRadius: 2,
-                      borderStyle: "solid",
-                      position: "relative",
-                      margin: 4,
-                      bgcolor: "white",
-                      boxShadow: 2,
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        bgcolor: "white",
-                        fontWeight: 600,
-                        color: indigo[500],
-                        position: "absolute",
-                        top: -12,
-                        left: 24,
-                        width: 200,
-                        textAlign: "center",
-                      }}
-                    >
-                      {isDetail ? "Chi tiết phiên họp" : "Thêm mới phiên họp"}
-                    </Box>
-                    <Grid sx={{ marginRight: 4, marginTop: 5, marginLeft: 4, marginBottom: 4 }}>
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Tiêu đề" />
-                        <FastField
-                          component={TextField}
-                          sx={{ flex: 5 }}
-                          name={"name"}
-                          fullWidth
-                          required
-                          placeholder="Nhập tiêu đề cuộc họp"
-                          disabled={isDetail}
-                        />
-                      </Grid>
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Loại phiên họp" />
-                        <Box sx={{ flex: 5 }}>
-                          <FastField options={typeMeetingOptions} component={SelectField} name={"type"} required disabled={isDetail} />
-                        </Box>
-                      </Grid>
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Nội dung" />
-                        <FastField
-                          component={TextField}
-                          multiline
-                          rows={2}
-                          name={"description"}
-                          sx={{ flex: 5 }}
-                          required
-                          placeholder="Vui lòng nhập nội dung"
-                          disabled={isDetail}
-                        />
-                      </Grid>
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Chương trình họp" />
-                        <Box sx={{ flex: 5 }}>
-                          <Box sx={{ pb: !values?.acceptUploadFile ? 2 : 0 }}>
-                            {!values?.acceptUploadFile ? <FastField component={Tiny} name="agenda" disabled={isDetail} /> : undefined}
-                          </Box>
-                          <Box>
-                            <FastField
-                              disabled={isDetail}
-                              name="acceptUploadFile"
-                              component={CheckBoxField}
-                              label={"Chọn tải file"}
-                              sxContainer={{
-                                gap: "4px",
-                                ".Mui-checked": {
-                                  color: `${green[800]} !important`,
-                                },
-                              }}
-                            />
-                          </Box>
-                          {values?.acceptUploadFile ? <UploadFile hideUpload={Boolean(dataRow)} onFileSelected={handleChooseFile} files={values.uploadFile ? [values.uploadFile] :[]} multiple={false} /> : undefined}
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
-                        <Box sx={{ display: "flex" }}>
-                          <LabelCommon label="Thời gian từ" />
-                          <FastField
-                            component={DateTimePickerField}
-                            name="startTime"
-                            required
-                            sx={{ flex: 2, "& div": { borderRadius: "0.5rem" } }}
-                            placeholder="Chọn thời gian bắt đầu"
-                            disabled={isDetail}
-                            // formatCustom={'YYYY-MM-DD HH:mm:ss'}
-                            isDayjs
-                          />
-                        </Box>
-                        <Box sx={{ display: "flex" }}>
-                          <LabelCommon label="Thời gian hết hạn" />
-                          <FastField
-                            component={DateTimePickerField}
-                            isDayjs
-                            name="endTime"
-                            sx={{ flex: 2, "& div": { borderRadius: "0.5rem" } }}
-                            required
-                            placeholder="Chọn thời gian kết thúc"
-                            disabled={isDetail}
-                            // formatCustom={'YYYY-MM-DD HH:mm:ss'}
-                          />
-                        </Box>
-                      </Grid>
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Địa điểm" />
-                        <FastField sx={{ flex: 5 }} component={TextField} name={"location"} required placeholder="Nhập địa điểm họp" disabled={isDetail} />
-                      </Grid>
-
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Thành viên" />
-                        <Box sx={{ flex: 5 }}>
-                          <Field
-                            component={AutoCompleteField}
-                            name="assigned"
-                            multiple
-                            required
-                            onChangeCustomize={(e: any, value: any) => {
-                              setFieldValue("assigned", value);
-                            }}
-                            options={listOptions}
-                            disabled={isDetail}
-                          />
-                        </Box>
-                      </Grid>
-
-                      <Grid item xs={6} md={12} sx={{ display: "flex", pb: 2 }}>
-                        <LabelCommon label="Thư ký" />
-                        <Box sx={{ flex: 5 }}>
-                          <Field
-                            component={AutoCompleteField}
-                            name="secretary"
-                            fullWidth
-                            required
-                            onChangeCustomize={(e: any, value: any) => {
-                              setFieldValue("secretary", value);
-                            }}
-                            options={listOptions}
-                            disabled={isDetail}
-                          />
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  {!isDetail ? (
-                    <Box sx={{ display: "flex", justifyContent: "flex-end", mr: 4 }} width="100%">
-                      <Button variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>
-                        Huỷ
-                      </Button>
-                      <Button variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>
-                        Tạo mới
-                      </Button>
-                    </Box>
-                  ) : (
-                    <Box />
-                  )}
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                  <Grid item xs={7}>
+                    <LabelCommon label="Tiêu đề" />
+                    <FastField component={TextField} name="name" fullWidth required placeholder="Nhập tiêu đề cuộc họp" disabled={isDetail} />
+                  </Grid>
+                  <Grid item xs={5}>
+                    <LabelCommon label="Loại phiên họp" />
+                    <FastField options={typeMeetingOptions} component={SelectField} name="type" required disabled={isDetail} />
+                  </Grid>
                 </Grid>
+                <Grid item xs={12} md={12} sx={{ mb: 2 }}>
+                  <LabelCommon label="Nội dung" />
+                  <FastField
+                    component={TextField}
+                    name="description"
+                    fullWidth
+                    multiline
+                    rows={3}
+                    required
+                    placeholder="Vui lòng nhập nội dung"
+                    disabled={isDetail}
+                  />
+                </Grid>
+                <Grid item xs={12} md={12} sx={{ mb: 2 }}>
+                  <LabelCommon label="Chương trình họp" />
+                  <Box sx={{ flex: 5 }}>
+                    <Box sx={{ pb: !values?.acceptUploadFile ? 2 : 0 }}>
+                      {!values?.acceptUploadFile ? <FastField component={Tiny} name="agenda" disabled={isDetail} /> : undefined}
+                    </Box>
+                    <Box>
+                      <FastField
+                        disabled={isDetail}
+                        name="acceptUploadFile"
+                        component={CheckBoxField}
+                        label={"Chọn tải file"}
+                        sxContainer={{
+                          gap: "4px",
+                          ".Mui-checked": {
+                            color: `${green[800]} !important`,
+                          },
+                        }}
+                      />
+                    </Box>
+                    {values?.acceptUploadFile ? (
+                      <UploadFile
+                        hideUpload={Boolean(dataRow)}
+                        onFileSelected={handleChooseFile}
+                        files={values.uploadFile ? [values.uploadFile] : []}
+                        multiple={false}
+                      />
+                    ) : undefined}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
+                  <Grid item xs={5}>
+                    <LabelCommon label="Thời gian từ" />
+                    <FastField
+                      component={DateTimePickerField}
+                      name="startTime"
+                      required
+                      sx={{ "& div": { borderRadius: "0.5rem" }, width: "100%" }}
+                      placeholder="Chọn thời gian bắt đầu"
+                      disabled={isDetail}
+                      // formatCustom={'YYYY-MM-DD HH:mm:ss'}
+                      isDayjs
+                      fullWidth
+                    />
+                  </Grid>
+                  <Grid item xs={5}>
+                    <LabelCommon label="Thời gian hết hạn" />
+                    <FastField
+                      component={DateTimePickerField}
+                      isDayjs
+                      name="endTime"
+                      sx={{ "& div": { borderRadius: "0.5rem" }, width: "100%" }}
+                      required
+                      placeholder="Chọn thời gian kết thúc"
+                      disabled={isDetail}
+                      // formatCustom={'YYYY-MM-DD HH:mm:ss'}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid item xs={6} md={12} sx={{ pb: 2 }}>
+                  <LabelCommon label="Địa điểm" />
+                  <FastField
+                    multiline
+                    rows={3}
+                    fullWidth
+                    component={TextField}
+                    name={"location"}
+                    required
+                    placeholder="Nhập địa điểm họp"
+                    disabled={isDetail}
+                  />
+                </Grid>
+                <Grid container spacing={2} columns={16}>
+                  <Grid item xs={8}>
+                    <LabelCommon label="Thành viên" />
+                    <Grid>
+                      <Field
+                        component={AutoCompleteField}
+                        name="assigned"
+                        multiple
+                        required
+                        onChangeCustomize={(e: any, value: any) => {
+                          setFieldValue("assigned", value);
+                        }}
+                        options={listOptions}
+                        disabled={isDetail}
+                      />
+                    </Grid>
+                  </Grid>
+
+                  <Grid item xs={8}>
+                    <LabelCommon label="Thư ký" />
+                    <Grid>
+                      <Field
+                        component={AutoCompleteField}
+                        name="secretary"
+                        fullWidth
+                        required
+                        onChangeCustomize={(e: any, value: any) => {
+                          setFieldValue("secretary", value);
+                        }}
+                        options={listOptions}
+                        disabled={isDetail}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                {!isDetail ? (
+                  <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
+                    <ButtonCommon variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>Huỷ</ButtonCommon>
+                    <ButtonCommon variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>Tạo mới</ButtonCommon>
+                  </Box>
+                ) : (
+                  <Box />
+                )}
               </>
             );
           }}
