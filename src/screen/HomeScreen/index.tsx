@@ -1,42 +1,30 @@
-import AddIcon from "@mui/icons-material/Add";
-import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
-import { Box, Button } from "@mui/material";
-import Slide from "@mui/material/Slide";
-import { green } from "@mui/material/colors";
-import { TransitionProps } from "@mui/material/transitions";
-import { DataGrid } from "@mui/x-data-grid";
-import { FastField, Formik } from "formik";
+import { Box } from "@mui/material";
 import queryString from "query-string";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ImageSource } from "../../assets/Image";
 import ButtonCommon from "../../component/Button";
 import NavigationBar from "../../component/NavigationBar";
-import PaginationRounded from "../../component/Pagination";
-import TextField from "../../component/TextField";
 import DialogCommon from "../../component/dialog";
 import DialogConfirm from "../../component/dialog/DialogConfirm";
 import cacheKeys from "../../const/cachedKeys";
-import { colors } from "../../const/colors";
 import { RoleMeeting } from "../../const/enum";
-import { calculateTotalPages, renderSTT } from "../../helper/function";
+import { renderSTT } from "../../helper/function";
 import { showError } from "../../helper/toast";
 import useFiltersHandler from "../../hooks/useFilters";
 import useGetListMeeting from "../../hooks/useGetListMeeting";
 import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
-import AuthServices from "../../services/Auth.services";
 import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
 import AddMeeting from "./AddMetting";
 import columnsMeet, { EnumMeetingStatus } from "./columns";
 // import typeMeetingOptions from "../../../AddMeeting"
-import StatusSelect from "./component/StatusSelect";
 import TableFilterSearch from "../../component/TableFilterSearch";
+import StatusSelect from "./component/StatusSelect";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
-  const deleteRef = useRef();
-  const completeRef = useRef();
+  const deleteRef = useRef<any>();
+  const completeRef = useRef<any>();
 
   const [open, setOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -44,16 +32,6 @@ const HomeScreen = () => {
   const [dataRow, setDataRow] = useState();
   const [noteViewOpen, setNoteViewOpen] = useState(false);
   const refFormik = useRef<any>(null);
-  const userInfo = AuthServices.getUserLocalStorage();
-  const [openStatusSelect, setOpenStatusSelect] = React.useState(false);
-
-  const handleClose = () => {
-    setOpenStatusSelect(false);
-  };
-
-  const handleOpen = () => {
-    setOpenStatusSelect(true);
-  };
 
   const { filters, handleChangePage } = useFiltersHandler({
     page: 0,
@@ -151,15 +129,6 @@ const HomeScreen = () => {
     setRows(result);
     setOpen(false);
   };
-
-  const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & {
-      children: React.ReactElement<any, any>;
-    },
-    ref: React.Ref<unknown>
-  ) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
 
   const renderListNote = () => {
     return (
