@@ -32,6 +32,7 @@ import columnsMeet, { EnumMeetingStatus } from "./columns";
 // import typeMeetingOptions from "../../../AddMeeting"
 import StatusSelect from "./component/StatusSelect";
 
+
 const HomeScreen = () => {
   const navigate = useNavigate();
   const deleteRef = useRef();
@@ -45,7 +46,6 @@ const HomeScreen = () => {
   const refFormik = useRef<any>(null);
   const userInfo = AuthServices.getUserLocalStorage();
   const [openStatusSelect, setOpenStatusSelect] = React.useState(false);
-
   const handleClose = () => {
     setOpenStatusSelect(false);
   };
@@ -262,6 +262,21 @@ const HomeScreen = () => {
                       />
                     </Box>
                   </Box>
+                  <ButtonCommon
+                    sx={{
+                      padding: 1,
+                      minWidth: "auto",
+                      marginLeft: 1,
+                      borderRadius: "8px",
+                      backgroundColor: colors.background.primary,
+                      textTransform: "none",
+                      fontSize: "16px",
+                    }}
+                    variant="contained"
+                    onClick={() => navigate("/dashboard")}
+                  >
+                    <AddIcon /> Dashboard
+                  </ButtonCommon>
                   <ButtonCommon
                     sx={{
                       padding: 1,
