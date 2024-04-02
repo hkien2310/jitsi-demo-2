@@ -391,10 +391,10 @@ const HomeScreen = () => {
           }
           children={
             <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
-              <ButtonCommon variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
+              <ButtonCommon variant="contained" onClick={handleConfirmComplete} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
                 Hoàn thành
               </ButtonCommon>
-              <ButtonCommon variant="outlined" onClick={handleConfirmDelete} sx={{ width: "100%", mt: "16px" }}>
+              <ButtonCommon variant="outlined" onClick={() => setConfirmComplete(false)} sx={{ width: "100%", mt: "16px" }}>
                 Huỷ bỏ
               </ButtonCommon>
             </Box>
