@@ -15,16 +15,15 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useSave } from '../../store/useStores';
 import UserRight from './UserRight';
 import { colors } from '../../const/colors';
 import TypographyCommon from '../Typography';
+import { ImageSource } from '../../assets/Image';
 
-const drawerWidth = 240;
+const drawerWidth = 350;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
     open?: boolean;
@@ -81,41 +80,39 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '/', name: "Quản lý cuộc họp" }
+    { path: '', name: "Dash Board", icon: ImageSource.category},
+    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor},
+    { path: '', name: "Quản lý nhóm quyền", icon: ImageSource.people},
+    { path: '', name: "Quản lý tài khoản", icon: ImageSource.data},
 ]
 
 const NavigationBar = ({ children }: MainLayoutProps) => {
     const location = useLocation();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const save = useSave()
 
-    const handleDrawerOpen = () => {
-        setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setOpen(false);
-    };
+    const handleToggle = () => {
+        setOpen((prev) => !prev)
+    }
 
 
     return (
         <Box sx={{ display: 'flex', maxWidth: '100vw', height: '100vh' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open} sx={{backgroundColor: colors.header.main}}>
+            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 100000000 }}>
                 <Toolbar>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <IconButton
                                 color="inherit"
                                 aria-label="open drawer"
-                                onClick={handleDrawerOpen}
+                                onClick={handleToggle}
                                 edge="start"
-                                sx={{ mr: 2, ...(open && { display: 'none' }) }}
+                                sx={{ mr: 2 }}
                             >
                                 <MenuIcon />
                             </IconButton>
-                            <TypographyCommon style={{color: colors.text.header, fontSize: '24px', fontWeight: 500}} noWrap component="div">
+                            <TypographyCommon style={{ color: colors.text.header, fontSize: '24px', fontWeight: 500 }} noWrap component="div">
                                 Hệ thống quản lý cuộc họp
                             </TypographyCommon>
                         </Box>
@@ -132,6 +129,8 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
                         boxSizing: 'border-box',
+                        backgroundColor: colors.background.sideBar,
+                        // minWidth: '25vw',
                     },
                 }}
                 variant="persistent"
@@ -139,23 +138,28 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 open={open}
             >
                 <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
+                    <IconButton onClick={handleToggle}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List>
+                <List sx={{padding: '8px'}}>
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding>
-                            <ListItemButton 
-                                style={{ 
-                                    backgroundColor: text?.path === location.pathname ? colors.background.primary : 'white',
-                                    color: text?.path === location.pathname ? colors.text.white : 'black',
-                                    }}>
+                            <ListItemButton
+                                style={{
+                                    backgroundColor: text?.path === location.pathname ? colors.background.sideBarSelected : 'unset',
+                                    color: colors.text.white,
+                                    fontWeight: 500,
+                                    borderRadius: '10px',
+                                }}>
                                 <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon sx={{color: text?.path === location.pathname ? colors.text.white : 'black'}}/> : <MailIcon />}
+                                    <img src={text?.icon} alt='' />
                                 </ListItemIcon>
-                                <ListItemText primary={text?.name} />
+                                <ListItemText primary={text?.name} sx={{
+                                    "& .MuiListItemText-primary": {
+                                        fontWeight: 500
+                                    }}}/>
                             </ListItemButton>
                         </ListItem>
                     ))}
@@ -181,7 +185,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 </Button> */}
             </Drawer>
 
-            <Main open={open} sx={{width: '100%', height: '100%'}}>
+            <Main open={open} sx={{ width: '100%', height: '100%' }}>
                 <DrawerHeader />
                 {children}
                 {/* {props?.children} */}

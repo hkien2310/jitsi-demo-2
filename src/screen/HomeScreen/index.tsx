@@ -1,42 +1,31 @@
-import AddIcon from "@mui/icons-material/Add";
-import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
-import { Box, Button } from "@mui/material";
-import Slide from "@mui/material/Slide";
-import { green } from "@mui/material/colors";
-import { TransitionProps } from "@mui/material/transitions";
-import { DataGrid } from "@mui/x-data-grid";
-import { FastField, Formik } from "formik";
+import { Box } from "@mui/material";
 import queryString from "query-string";
 import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ImageSource } from "../../assets/Image";
 import ButtonCommon from "../../component/Button";
 import NavigationBar from "../../component/NavigationBar";
-import PaginationRounded from "../../component/Pagination";
-import TextField from "../../component/TextField";
 import DialogCommon from "../../component/dialog";
 import DialogConfirm from "../../component/dialog/DialogConfirm";
 import cacheKeys from "../../const/cachedKeys";
-import { colors } from "../../const/colors";
 import { RoleMeeting } from "../../const/enum";
-import { calculateTotalPages, renderSTT } from "../../helper/function";
+import { renderSTT } from "../../helper/function";
 import { showError } from "../../helper/toast";
 import useFiltersHandler from "../../hooks/useFilters";
 import useGetListMeeting from "../../hooks/useGetListMeeting";
 import useGetListMeetingNote from "../../hooks/useGetListMeetingNote";
-import AuthServices from "../../services/Auth.services";
 import MeetingServices from "../../services/Meeting.services";
 import { useGet, useSave } from "../../store/useStores";
 import AddMeeting from "./AddMetting";
 import columnsMeet, { EnumMeetingStatus } from "./columns";
 // import typeMeetingOptions from "../../../AddMeeting"
+import TableFilterSearch from "../../component/TableFilterSearch";
 import StatusSelect from "./component/StatusSelect";
 
 
 const HomeScreen = () => {
   const navigate = useNavigate();
-  const deleteRef = useRef();
-  const completeRef = useRef();
+  const deleteRef = useRef<any>();
+  const completeRef = useRef<any>();
 
   const [open, setOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -44,19 +33,17 @@ const HomeScreen = () => {
   const [dataRow, setDataRow] = useState();
   const [noteViewOpen, setNoteViewOpen] = useState(false);
   const refFormik = useRef<any>(null);
-  const userInfo = AuthServices.getUserLocalStorage();
-  const [openStatusSelect, setOpenStatusSelect] = React.useState(false);
-  const handleClose = () => {
-    setOpenStatusSelect(false);
-  };
 
-  const handleOpen = () => {
-    setOpenStatusSelect(true);
-  };
-
-  const { filters, handleChangePage } = useFiltersHandler({ page: 0, perPage: 10 });
+  const { filters, handleChangePage } = useFiltersHandler({
+    page: 0,
+    perPage: 10,
+  });
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
-  const { data: dataListMeetingNote, refetch: refetchMeetingNote, setData: setNoteData } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
+  const {
+    data: dataListMeetingNote,
+    refetch: refetchMeetingNote,
+    setData: setNoteData,
+  } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
   const { data, refetch } = useGetListMeeting(filters);
 
   // const useGetListMeetingNote
@@ -93,7 +80,10 @@ const HomeScreen = () => {
       status: "FINISHED",
     };
     try {
-      const response = await MeetingServices.updateMeeting(completeRef.current?.id, body);
+      const response = await MeetingServices.updateMeeting(
+        completeRef.current?.id,
+        body
+      );
       if (response?.data) {
         setConfirmComplete(false);
         refetch();
@@ -141,23 +131,17 @@ const HomeScreen = () => {
     setOpen(false);
   };
 
-  const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & {
-      children: React.ReactElement<any, any>;
-    },
-    ref: React.Ref<unknown>
-  ) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
-
   const renderListNote = () => {
     return (
       <Box width={"50vw"}>
         {/* <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>Ghi chú của cuộc họp</Box> */}
         <Box>
-          {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ? (
+          {dataListMeetingNote?.data &&
+          dataListMeetingNote?.data?.length > 0 ? (
             dataListMeetingNote?.data?.map((e, index) => {
-              return <Box pb={1} key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>;
+              return (
+                <Box pb={1} key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>
+              );
             })
           ) : (
             <Box>Cuộc họp này chưa có ghi chú</Box>
@@ -185,7 +169,9 @@ const HomeScreen = () => {
       room: row?.meetingCode,
       roomName: row?.title,
       meetingId: row?.id,
-      idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null,
+      idRoleSecretary:
+        row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)
+          ?.user?.id || null,
     };
     navigate(`/call?${queryString.stringify(body)}`);
   };
@@ -196,164 +182,54 @@ const HomeScreen = () => {
 
   return (
     <NavigationBar>
-      <Formik
-        innerRef={refFormik}
-        initialValues={{
-          search: "",
-          status: "",
+      <TableFilterSearch
+        columns={columnsMeet({
+          onClickDelete,
+          onClickDetail,
+          onClickNote,
+          onComplete,
+          onJoin,
+        })}
+        dataRows={dataRows}
+        onSearchAndFilter={(values, filter) => {
+          refetch({
+            ...filter,
+            textSearch: values.search,
+            status: values.status ? [values.status] : undefined,
+          });
         }}
-        onSubmit={(values) => {
-          // if (values.search || values.status ) {
-          refetch({ ...filters, textSearch: refFormik?.current?.values?.search, status: values.status ? [values.status] : undefined });
-          // }
-        }}
-      >
-        {({ values, setFieldValue, handleSubmit }) => {
+        searchPlaceholder="Nhập tên cuộc họp"
+        rowCount={data?.total || 0}
+        rightTitle="Thêm mới cuộc họp"
+        onClickRight={() => setOpen(true)}
+        filterComponent={({ values, setFieldValue, handleSubmit }) => {
           return (
-            <>
-              <Box sx={{ display: "flex" }}>
-                {noteViewOpen && (
-                  <DialogCommon
-                    open={noteViewOpen}
-                    title={"Ghi chú của cuộc họp"}
-                    handleClose={handleCloseDialogViewNote}
-                    aria-describedby="alert-dialog-slide-description"
-                    content={renderListNote()}
-                  />
-                )}
-                <Box sx={{ justifyContent: "space-between", flex: 1, display: "flex" }} mb={2}>
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <FastField
-                      style={{ width: 400 }}
-                      size="medium"
-                      id={"search"}
-                      component={TextField}
-                      name={"search"}
-                      required
-                      placeholder="Nhập tên cuộc họp"
-                      fullWidth
-                    />
-                    <ButtonCommon
-                      sx={{
-                        padding: 1,
-                        minWidth: "auto",
-                        marginLeft: 1,
-                        backgroundColor: colors.background.secondary,
-                        borderRadius: "8px",
-                        height: "56px",
-                        width: "56px",
-                      }}
-                      variant="contained"
-                      onClick={() => handleSubmit()}
-                    >
-                      <img src={ImageSource.searchIcon} style={{ width: "28px", height: "28px" }} alt={""} />
-                      {/* <SearchOutlinedIcon /> Tìm kiếm */}
-                    </ButtonCommon>
-                    <Box ml={3} sx={{ height: "100%" }}>
-                      <StatusSelect
-                        value={values.status as EnumMeetingStatus}
-                        onChange={(value) => {
-                          setFieldValue("status", value);
-                          if (values.status === value) {
-                            return;
-                          }
-                          handleSubmit();
-                        }}
-                      />
-                    </Box>
-                  </Box>
-                  <ButtonCommon
-                    sx={{
-                      padding: 1,
-                      minWidth: "auto",
-                      marginLeft: 1,
-                      borderRadius: "8px",
-                      backgroundColor: colors.background.primary,
-                      textTransform: "none",
-                      fontSize: "16px",
-                    }}
-                    variant="contained"
-                    onClick={() => navigate("/dashboard")}
-                  >
-                    <AddIcon /> Dashboard
-                  </ButtonCommon>
-                  <ButtonCommon
-                    sx={{
-                      padding: 1,
-                      minWidth: "auto",
-                      marginLeft: 1,
-                      borderRadius: "8px",
-                      backgroundColor: colors.background.primary,
-                      textTransform: "none",
-                      fontSize: "16px",
-                    }}
-                    variant="contained"
-                    onClick={() => setOpen(true)}
-                  >
-                    <AddIcon /> Thêm mới cuộc họp
-                  </ButtonCommon>
-                </Box>
-              </Box>
-            </>
+            <Box sx={{ height: "100%" }}>
+              <StatusSelect
+                value={values.status as EnumMeetingStatus}
+                onChange={(value) => {
+                  setFieldValue("status", value);
+                  if (values.status === value) {
+                    return;
+                  }
+                  handleSubmit();
+                }}
+              />
+            </Box>
           );
         }}
-      </Formik>
-      <Box sx={{ width: "100%", flex: 1 }}>
-        <DataGrid
-          rows={dataRows}
-          columns={columnsMeet({
-            onClickDelete,
-            onClickDetail,
-            onClickNote,
-            onComplete,
-            onJoin,
-          })}
-          rowSpacingType={"margin"}
-          hideFooter
-          initialState={{
-            pagination: {
-              paginationModel: paginationModel,
-            },
-          }}
-          paginationMode="server"
-          sortingMode="server"
-          rowCount={data?.total || 0}
-          onPaginationModelChange={(model) => handleChangePage(model?.page)}
-          pageSizeOptions={[5]}
-          checkboxSelection={false}
-          disableRowSelectionOnClick
-          disableColumnFilter
-          disableColumnMenu
-          disableColumnSelector
-          columnBuffer={10}
-          // hideFooterPagination={true}
-          sx={{
-            textAlign: "center",
-            color: colors.text.tableContent,
-            "& .MuiDataGrid-columnHeaders": {
-              // background: blue["A100"],
-              "& .MuiDataGrid-columnSeparator": {
-                display: "none",
-              },
-              background: colors.background.tableHeader,
-              color: "black",
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontWeight: "500",
-              },
-            },
-          }}
+      />
+      {noteViewOpen && (
+        <DialogCommon
+          open={noteViewOpen}
+          title={"Ghi chú của cuộc họp"}
+          handleClose={handleCloseDialogViewNote}
+          aria-describedby="alert-dialog-slide-description"
+          content={renderListNote()}
         />
-        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }} p={1}>
-          <PaginationRounded
-            totalPage={calculateTotalPages(data?.total || 0, filters.perPage)}
-            page={filters.page + 1}
-            handleChangePage={(page) => handleChangePage(page - 1)}
-          />
-        </Box>
-      </Box>
+      )}
       {open && (
         <DialogCommon
-          
           title={dataRow ? "Chi tiết cuộc họp" : "Thêm mới cuộc họp"}
           open={open}
           handleClose={() => {
@@ -362,7 +238,12 @@ const HomeScreen = () => {
           }}
           content={
             <Box sx={{ width: "55vw" }}>
-              <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
+              <AddMeeting
+                refetchList={refetch}
+                onAdd={onAdd}
+                data={dataRow}
+                onClose={() => setOpen(false)}
+              />
             </Box>
           }
         />
@@ -375,17 +256,43 @@ const HomeScreen = () => {
           }}
           open={confirmDelete}
           content={
-            <Box sx={{ width: "100%", textAlign: "center", pr: "40px", pl: "40px", pt: "24px", pb: "24px" }}>
+            <Box
+              sx={{
+                width: "100%",
+                textAlign: "center",
+                pr: "40px",
+                pl: "40px",
+                pt: "24px",
+                pb: "24px",
+              }}
+            >
               <Box sx={{ color: "#243141", fontWeight: 600 }}>Cảnh báo</Box>
-              <Box sx={{ color: "rgba(84, 89, 94, 0.6)", fontSize: 14, fontWeight: 400 }}>Bạn có muốn chắc chắc muốn xóa phiên họp này không ?</Box>
+              <Box
+                sx={{
+                  color: "rgba(84, 89, 94, 0.6)",
+                  fontSize: 14,
+                  fontWeight: 400,
+                }}
+              >
+                Bạn có muốn chắc chắc muốn xóa phiên họp này không ?
+              </Box>
             </Box>
           }
           children={
             <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
-              <ButtonCommon variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
+              <ButtonCommon
+                variant="contained"
+                onClick={() => setConfirmDelete(false)}
+                sx={{ fontWeight: "550", width: "100%" }}
+                color="secondary"
+              >
                 Xoá
               </ButtonCommon>
-              <ButtonCommon variant="outlined" onClick={handleConfirmDelete} sx={{ width: "100%", mt: "16px" }}>
+              <ButtonCommon
+                variant="outlined"
+                onClick={handleConfirmDelete}
+                sx={{ width: "100%", mt: "16px" }}
+              >
                 Huỷ bỏ
               </ButtonCommon>
             </Box>
@@ -399,9 +306,26 @@ const HomeScreen = () => {
           }}
           open={confirmComplete}
           content={
-            <Box sx={{ width: "100%", textAlign: "center", pr: "40px", pl: "40px", pt: "24px", pb: "24px" }}>
+            <Box
+              sx={{
+                width: "100%",
+                textAlign: "center",
+                pr: "40px",
+                pl: "40px",
+                pt: "24px",
+                pb: "24px",
+              }}
+            >
               <Box sx={{ color: "#243141", fontWeight: 600 }}>Cảnh báo</Box>
-              <Box sx={{ color: "rgba(84, 89, 94, 0.6)", fontSize: 14, fontWeight: 400 }}>Bạn chắc chắn muốn hoàn thành phiên họp này ?</Box>
+              <Box
+                sx={{
+                  color: "rgba(84, 89, 94, 0.6)",
+                  fontSize: 14,
+                  fontWeight: 400,
+                }}
+              >
+                Bạn chắc chắn muốn hoàn thành phiên họp này ?
+              </Box>
             </Box>
           }
           children={
