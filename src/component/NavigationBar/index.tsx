@@ -17,7 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import { styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import UserRight from './UserRight';
 import { colors } from '../../const/colors';
 import TypographyCommon from '../Typography';
@@ -80,7 +80,7 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '', name: "Dash Board", icon: ImageSource.category},
+    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category},
     { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor},
     { path: '', name: "Quản lý nhóm quyền", icon: ImageSource.people},
     { path: '', name: "Quản lý tài khoản", icon: ImageSource.data},
@@ -90,6 +90,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     const location = useLocation();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const navigate = useNavigate();
 
     const handleToggle = () => {
         setOpen((prev) => !prev)
@@ -145,7 +146,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 <Divider />
                 <List sx={{padding: '8px'}}>
                     {listSideBar.map((text, index) => (
-                        <ListItem key={index} disablePadding>
+                        <ListItem key={index} disablePadding onClick={() => navigate(text.path)}>
                             <ListItemButton
                                 style={{
                                     backgroundColor: text?.path === location.pathname ? colors.background.sideBarSelected : 'unset',
