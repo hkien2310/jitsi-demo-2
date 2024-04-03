@@ -104,3 +104,12 @@ export function generateMessage(data: any[], page: number, pageSize: number, tot
 
     return `Hiển thị từ ${startIndex} đến ${endIndex} trong tổng số ${total} bản ghi`;
 }
+
+export function getStartEndOfMonth(month: number) {
+    const year = new Date().getFullYear(); // Get the current year
+    const startDate = new Date(year, month - 1, 1);
+    startDate.setDate(startDate.getDate() + 1);
+    const endDate = new Date(year, month, 1);
+    endDate.setDate(endDate.getDate());
+    return { startDate, endDate };
+}
