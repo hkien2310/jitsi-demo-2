@@ -169,21 +169,6 @@ const HomeScreen = () => {
 
   return (
     <NavigationBar>
-      <ButtonCommon
-        sx={{
-          padding: 1,
-          minWidth: "auto",
-          marginLeft: 1,
-          borderRadius: "8px",
-          backgroundColor: "pink",
-          textTransform: "none",
-          fontSize: "16px",
-        }}
-        variant="contained"
-        onClick={() => navigate("/dashboard")}
-      >
-        Dashboard
-      </ButtonCommon>
       <TableFilterSearch
         columns={columnsMeet({
           onClickDelete,

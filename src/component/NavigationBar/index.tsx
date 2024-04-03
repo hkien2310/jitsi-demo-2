@@ -80,10 +80,10 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category},
-    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor},
-    { path: '', name: "Quản lý nhóm quyền", icon: ImageSource.people},
-    { path: '', name: "Quản lý tài khoản", icon: ImageSource.data},
+    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category },
+    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor },
+    { path: '', name: "Quản lý nhóm quyền", icon: ImageSource.people },
+    { path: '', name: "Quản lý tài khoản", icon: ImageSource.data },
 ]
 
 const NavigationBar = ({ children }: MainLayoutProps) => {
@@ -144,7 +144,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List sx={{padding: '8px'}}>
+                <List sx={{ padding: '8px' }}>
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding onClick={() => navigate(text.path)}>
                             <ListItemButton
@@ -160,7 +160,8 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                                 <ListItemText primary={text?.name} sx={{
                                     "& .MuiListItemText-primary": {
                                         fontWeight: 500
-                                    }}}/>
+                                    }
+                                }} />
                             </ListItemButton>
                         </ListItem>
                     ))}
@@ -186,9 +187,11 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 </Button> */}
             </Drawer>
 
-            <Main open={open} sx={{ width: '100%', height: '100%' }}>
+            <Main open={open} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', }}>
                 <DrawerHeader />
-                {children}
+                <Box sx={{flex: 1}}>
+                    {children}
+                </Box>
                 {/* {props?.children} */}
             </Main>
         </Box>
