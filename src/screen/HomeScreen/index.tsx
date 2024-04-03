@@ -21,7 +21,6 @@ import columnsMeet, { EnumMeetingStatus } from "./columns";
 import TableFilterSearch from "../../component/TableFilterSearch";
 import StatusSelect from "./component/StatusSelect";
 
-
 const HomeScreen = () => {
   const navigate = useNavigate();
   const deleteRef = useRef<any>();
@@ -39,11 +38,7 @@ const HomeScreen = () => {
     perPage: 10,
   });
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
-  const {
-    data: dataListMeetingNote,
-    refetch: refetchMeetingNote,
-    setData: setNoteData,
-  } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
+  const { data: dataListMeetingNote, refetch: refetchMeetingNote, setData: setNoteData } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
   const { data, refetch } = useGetListMeeting(filters);
 
   // const useGetListMeetingNote
@@ -80,10 +75,7 @@ const HomeScreen = () => {
       status: "FINISHED",
     };
     try {
-      const response = await MeetingServices.updateMeeting(
-        completeRef.current?.id,
-        body
-      );
+      const response = await MeetingServices.updateMeeting(completeRef.current?.id, body);
       if (response?.data) {
         setConfirmComplete(false);
         refetch();
@@ -136,12 +128,9 @@ const HomeScreen = () => {
       <Box width={"50vw"}>
         {/* <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>Ghi chú của cuộc họp</Box> */}
         <Box>
-          {dataListMeetingNote?.data &&
-          dataListMeetingNote?.data?.length > 0 ? (
+          {dataListMeetingNote?.data && dataListMeetingNote?.data?.length > 0 ? (
             dataListMeetingNote?.data?.map((e, index) => {
-              return (
-                <Box pb={1} key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>
-              );
+              return <Box pb={1} key={e?.id}>{`${index + 1}. ${e?.content}`}</Box>;
             })
           ) : (
             <Box>Cuộc họp này chưa có ghi chú</Box>
@@ -169,9 +158,7 @@ const HomeScreen = () => {
       room: row?.meetingCode,
       roomName: row?.title,
       meetingId: row?.id,
-      idRoleSecretary:
-        row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)
-          ?.user?.id || null,
+      idRoleSecretary: row?.members?.find((e: any) => e?.memberType === RoleMeeting.SECRETARY)?.user?.id || null,
     };
     navigate(`/call?${queryString.stringify(body)}`);
   };
@@ -182,6 +169,21 @@ const HomeScreen = () => {
 
   return (
     <NavigationBar>
+      <ButtonCommon
+        sx={{
+          padding: 1,
+          minWidth: "auto",
+          marginLeft: 1,
+          borderRadius: "8px",
+          backgroundColor: "pink",
+          textTransform: "none",
+          fontSize: "16px",
+        }}
+        variant="contained"
+        onClick={() => navigate("/dashboard")}
+      >
+        Dashboard
+      </ButtonCommon>
       <TableFilterSearch
         columns={columnsMeet({
           onClickDelete,
@@ -238,12 +240,7 @@ const HomeScreen = () => {
           }}
           content={
             <Box sx={{ width: "55vw" }}>
-              <AddMeeting
-                refetchList={refetch}
-                onAdd={onAdd}
-                data={dataRow}
-                onClose={() => setOpen(false)}
-              />
+              <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
             </Box>
           }
         />
@@ -280,19 +277,10 @@ const HomeScreen = () => {
           }
           children={
             <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
-              <ButtonCommon
-                variant="contained"
-                onClick={() => setConfirmDelete(false)}
-                sx={{ fontWeight: "550", width: "100%" }}
-                color="secondary"
-              >
+              <ButtonCommon variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
                 Xoá
               </ButtonCommon>
-              <ButtonCommon
-                variant="outlined"
-                onClick={handleConfirmDelete}
-                sx={{ width: "100%", mt: "16px" }}
-              >
+              <ButtonCommon variant="outlined" onClick={handleConfirmDelete} sx={{ width: "100%", mt: "16px" }}>
                 Huỷ bỏ
               </ButtonCommon>
             </Box>
