@@ -17,7 +17,10 @@ import searchNormal from './source/search-normal.svg'
 import warning from './source/warning.svg'
 import warningDelete from './source/warning_delete.png'
 import note from './source/note-text.svg'
-import appLogo from './source/category.svg'
+import appLogo from './source/app-logo.png'
+import inprogressIcon from './source/inprogress.png'
+import completeIcon from './source/complete.png'
+import importIcon from './source/import.png'
 import data from './source/data.svg'
 import people from './source/people.svg'
 import monitor from './source/monitor.svg'
@@ -46,6 +49,9 @@ export const ImageSource = {
     warning,
     warningDelete,
     note,
+    inprogressIcon,
+    completeIcon,
+    importIcon,
     category,
     data,
     people,
