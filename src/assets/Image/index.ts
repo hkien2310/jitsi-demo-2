@@ -29,6 +29,7 @@ import edit from './source/edit.png'
 import eye from './source/eye.png'
 import tickSquare from './source/tick-square.svg'
 import box from './source/box.svg'
+import logout from './source/logout.svg'
 
 
 export const ImageSource = {
@@ -64,5 +65,6 @@ export const ImageSource = {
     edit,
     eye,
     tickSquare,
-    box
+    box,
+    logout
 }

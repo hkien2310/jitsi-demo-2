@@ -11,6 +11,7 @@ export const colors = {
         secondary: 'rgba(36, 49, 65, 1)',
         sideBar: 'rgba(54, 69, 84, 1)',
         sideBarSelected: '#243141',
+        logoutBG: 'rgba(89, 89, 89, 0.1)',
     },
     text: {
         main: '#333333',
