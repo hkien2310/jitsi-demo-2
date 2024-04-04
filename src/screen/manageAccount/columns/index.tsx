@@ -6,15 +6,12 @@ import AuthServices from "../../../services/Auth.services";
 
 interface IProps {
   onClickDetail: (row: any) => void;
-  onClickNote: (row: any) => void;
+  onClickEdit: (row: any) => void;
   onClickDelete: (row: any) => void;
-  onComplete: (row: any) => void;
-  onJoin: (row: any) => void;
 }
 
 const columnsAcc = (props: IProps) => {
-  const { onClickDetail, onClickNote, onClickDelete, onComplete, onJoin } = props;
-  // const userInfo = AuthServices.getUserLocalStorage();
+  const { onClickDetail, onClickEdit, onClickDelete } = props;
 
   const columns: GridColDef[] = [
     {
@@ -70,7 +67,7 @@ const columnsAcc = (props: IProps) => {
             <TooltipButton
               title={"Chỉnh sửa"}
               onClick={() => {
-                onClickNote(row);
+                onClickEdit(row);
               }}
             >
               {/* <DescriptionOutlinedIcon color="inherit" /> */}
