@@ -100,7 +100,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     return (
         <Box sx={{ display: 'flex', maxWidth: '100vw', height: '100vh' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 100000000 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 9999 }}>
                 <Toolbar>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
