@@ -6,6 +6,7 @@ import { useSave } from "../store/useStores";
 import { showError } from "../helper/toast";
 import { IRequestGetListUser, IResponseListUser, IResponseUser } from "../interface/user";
 import UserServices from "../services/User.services";
+import { IRequestGetListMeeting } from "../interface/meeting";
 
 //* Check parse body request
 const parseRequest = (filters?: IRequestGetListUser) => {
@@ -78,10 +79,10 @@ const useGetListUser = (
     );
 
     //* Refetch implicity (without changing loading state)
-    const refetch = useCallback(async () => {
+    const refetch = useCallback(async (filter?: IRequestGetListMeeting) => {
         try {
             setRefetching(true);
-            const nextFilters = parseRequest(filters);
+            const nextFilters = parseRequest(filter ? filter : filters );
             const response = await UserServices.getListUser(nextFilters);
             checkConditionPass(response);
             setRefetching(false);
