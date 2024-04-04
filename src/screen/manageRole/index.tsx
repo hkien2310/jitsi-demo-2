@@ -1,54 +1,78 @@
 import { Box } from "@mui/material";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavigationBar from "../../component/NavigationBar";
 import TableFilterSearch from "../../component/TableFilterSearch";
 import DialogCommon from "../../component/dialog";
 import AddRole from "./addRole";
 import columnsRole from "./columns";
-const dataMock = [
-  {
-    nameGroup: "Tên nhóm quyền",
-    codeGroup: "Họp thường kỳ tháng 3",
-    id: 1,
-    stt: 1,
-  },
-  {
-    nameGroup: "Tên nhóm quyền",
-    codeGroup: "Họp thường kỳ tháng 4",
-    id: 2,
-    stt: 2,
-  },
-  {
-    nameGroup: "Tên nhóm quyền",
-    codeGroup: "Họp thường kỳ tháng 5",
-    id: 3,
-    stt: 3,
-  },
-  {
-    nameGroup: "Tên nhóm quyền",
-    codeGroup: "Họp thường kỳ tháng 3",
-    id: 4,
-    stt: 4,
-  },
-]
+import useFiltersHandler from "../../hooks/useFilters";
+import { renderSTT } from "../../helper/function";
+import { IUserGroupItem } from "../../interface/usergroup";
+import cacheKeys from "../../const/cachedKeys";
+import { useGet, useSave } from "../../store/useStores";
+import ViewDetailRole from "./viewDetailRole";
+import useGetListUserGroup from "../../hooks/useGetListUserGroup";
+import ButtonCommon from "../../component/Button";
+import DialogConfirm from "../../component/dialog/DialogConfirm";
+import { showError } from "../../helper/toast";
+import UserGroupService from "../../services/UserGroup.service";
+
 const ManageRoleScreen = () => {
   const [open, setOpen] = useState(false);
+  const [openDetail, setOpenDetail] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [itemSelected, setItemSelected] = useState<IUserGroupItem>();
+  const [itemSelectIsEdit, setItemSelectedIsEdit] = useState(false);
+  const save = useSave()
+  const searchUserGroup = useGet(cacheKeys.SEARCH_USER_GROUP)
 
-  const onClickDelete = () => {
-    console.log("123");
+  const { filters, handleChangePage } = useFiltersHandler({
+    page: 0,
+    perPage: 10
+  })
+  const { data, isLoading, refetch } = useGetListUserGroup(filters)
+  const dataRows = React.useMemo(() => {
+    return (
+      data?.data?.map((e, index) => ({
+        ...e,
+        stt: renderSTT(index, filters.page, filters.perPage),
+      })) || []
+    );
+  }, [data?.data, filters.page, filters.perPage]);
+
+  const onClickDelete = (row: any) => {
+    setItemSelected(row)
+    setConfirmDelete(true)
   };
-  const onClickDetail = () => {
-    console.log("123");
+  const onClickDetail = (row: any) => {
+    setItemSelected(row)
+    setOpenDetail(true)
   };
-  const onClickNote = () => {
-    console.log("123");
+  const onClickEdit = (row: any) => {
+    setItemSelected(row)
+    setOpenDetail(true)
+    setItemSelectedIsEdit(true)
   };
-  const onComplete = () => {
-    console.log("123");
+
+  const handleConfirmDelete = async () => {
+    try {
+      await UserGroupService.deleteUserGroup(itemSelected?.id || 0);
+      setConfirmDelete(false);
+      refetch({
+        ...filters,
+        textSearch: searchUserGroup,
+      });
+    } catch (error: any) {
+      showError(error);
+    } finally {
+
+    }
   };
-  const onJoin = () => {
-    console.log("123");
-  };
+
+  useEffect(() => {
+    save(cacheKeys.LOADING_APP, isLoading)
+  }, [isLoading, save])
+
   return (
     <NavigationBar>
       <Box
@@ -66,42 +90,26 @@ const ManageRoleScreen = () => {
         columns={columnsRole({
           onClickDelete,
           onClickDetail,
-          onClickNote,
-          onComplete,
-          onJoin,
+          onClickEdit,
         })}
-        dataRows={dataMock}
+        rowCount={data?.total || 0}
+        dataRows={dataRows}
         onSearchAndFilter={(values, filter) => {
-          //   refetch({
-          //     ...filter,
-          //     textSearch: values.search,
-          //     status: values.status ? [values.status] : undefined,
-          //   });
+          refetch({
+            ...filters,
+            textSearch: values.search,
+          });
+          save(cacheKeys.SEARCH_USER_GROUP, values.search)
         }}
+        filters={filters}
+        handleChangePage={handleChangePage}
         searchPlaceholder="Nhập tên cuộc họp"
-        // rowCount={data?.total || 0}
         rightTitle="Thêm mới"
         onClickRight={() => setOpen(true)}
-        // filterComponent={({ values, setFieldValue, handleSubmit }) => {
-        //   return (
-        //     <Box sx={{ height: "100%" }}>
-        //       <StatusSelect
-        //         value={values.status as EnumMeetingStatus}
-        //         onChange={(value) => {
-        //           setFieldValue("status", value);
-        //           if (values.status === value) {
-        //             return;
-        //           }
-        //           handleSubmit();
-        //         }}
-        //       />
-        //     </Box>
-        //   );
-        // }}
       />
       {open && (
         <DialogCommon
-          title={!dataMock ? "Chi tiết nhóm quyền" : "Thêm mới nhóm quyền"}
+          title={"Thêm mới nhóm quyền"}
           open={open}
           handleClose={() => {
             setOpen(false);
@@ -110,8 +118,82 @@ const ManageRoleScreen = () => {
           sx={{ pt: '23px', pb: '25px' }}
           content={
             <Box sx={{ width: "55vw" }}>
-              <AddRole />
+              <AddRole onClose={() => setOpen(false)} onSuccess={() => refetch({
+                ...filters,
+                textSearch: searchUserGroup,
+              })} />
               {/* <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} /> */}
+            </Box>
+          }
+        />
+      )}
+      {openDetail && (
+        <DialogCommon
+          title={"Chi tiết nhóm quyền"}
+          open={openDetail}
+          handleClose={() => {
+            setOpenDetail(false);
+            // setDataRow(undefined);
+          }}
+          sx={{ pt: '23px', pb: '25px' }}
+          content={
+            <Box sx={{ width: "55vw" }}>
+              <ViewDetailRole
+                isEdit={itemSelectIsEdit}
+                idRole={itemSelected?.id || 0}
+                onClose={() => {
+                  setOpenDetail(false)
+                  setItemSelected(undefined)
+                  setItemSelectedIsEdit(false)
+                }}
+                onSuccess={() => refetch({
+                  ...filters,
+                  textSearch: searchUserGroup,
+                })}
+              />
+            </Box>
+          }
+        />
+      )}
+
+      {confirmDelete && (
+        <DialogConfirm
+          isDelete
+          handleClose={() => {
+            setConfirmDelete(false);
+          }}
+          open={confirmDelete}
+          content={
+            <Box
+              sx={{
+                width: "100%",
+                textAlign: "center",
+                pr: "40px",
+                pl: "40px",
+                pt: "24px",
+                pb: "24px",
+              }}
+            >
+              <Box sx={{ color: "#243141", fontWeight: 600 }}>Cảnh báo</Box>
+              <Box
+                sx={{
+                  color: "rgba(84, 89, 94, 0.6)",
+                  fontSize: 14,
+                  fontWeight: 400,
+                }}
+              >
+                Bạn có muốn chắc chắc muốn xóa nhóm quyền này không ?
+              </Box>
+            </Box>
+          }
+          children={
+            <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
+              <ButtonCommon variant="contained" onClick={handleConfirmDelete} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
+                Xoá
+              </ButtonCommon>
+              <ButtonCommon variant="outlined" onClick={() => setConfirmDelete(false)} sx={{ width: "100%", mt: "16px" }}>
+                Huỷ bỏ
+              </ButtonCommon>
             </Box>
           }
         />

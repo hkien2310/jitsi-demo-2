@@ -14,6 +14,7 @@ export type ITextFieldProps = CheckboxProps & {
   sx?: SxProps;
   sxLabel?: SxProps;
   sxWrapper?: SxProps;
+  customHandleChange: (value: any) => void
 };
 
 const CheckBoxField = (props: ITextFieldProps) => {

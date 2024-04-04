@@ -107,7 +107,7 @@ const HomeScreen = () => {
     return (
       data?.data?.map((e, index) => ({
         ...e,
-        decentralize: e?.members?.map((elm: any) => elm?.user.fullname),
+        decentralize: e?.members?.filter((el) => el?.user)?.map((elm: any) => elm?.user?.fullname),
         stt: renderSTT(index, filters.page, filters.perPage),
       })) || []
     );
@@ -177,6 +177,8 @@ const HomeScreen = () => {
           onComplete,
           onJoin,
         })}
+        filters={filters}
+        handleChangePage={handleChangePage}
         dataRows={dataRows}
         onSearchAndFilter={(values, filter) => {
           refetch({
@@ -262,10 +264,10 @@ const HomeScreen = () => {
           }
           children={
             <Box sx={{ pr: "40px", pl: "40px", pb: "36px" }}>
-              <ButtonCommon variant="contained" onClick={() => setConfirmDelete(false)} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
+              <ButtonCommon variant="contained" onClick={handleConfirmDelete} sx={{ fontWeight: "550", width: "100%" }} color="secondary">
                 Xoá
               </ButtonCommon>
-              <ButtonCommon variant="outlined" onClick={handleConfirmDelete} sx={{ width: "100%", mt: "16px" }}>
+              <ButtonCommon variant="outlined" onClick={() => setConfirmDelete(false)} sx={{ width: "100%", mt: "16px" }}>
                 Huỷ bỏ
               </ButtonCommon>
             </Box>

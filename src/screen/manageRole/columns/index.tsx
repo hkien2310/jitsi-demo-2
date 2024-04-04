@@ -2,18 +2,15 @@ import { Box } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import { ImageSource } from "../../../assets/Image";
 import TooltipButton from "../../../component/Tooltip";
-import AuthServices from "../../../services/Auth.services";
 
 interface IProps {
   onClickDetail: (row: any) => void;
-  onClickNote: (row: any) => void;
+  onClickEdit: (row: any) => void;
   onClickDelete: (row: any) => void;
-  onComplete: (row: any) => void;
-  onJoin: (row: any) => void;
 }
 
 const columnsRole = (props: IProps) => {
-  const { onClickDetail, onClickNote, onClickDelete, onComplete, onJoin } = props;
+  const { onClickDetail, onClickEdit, onClickDelete } = props;
   // const userInfo = AuthServices.getUserLocalStorage();
 
   const columns: GridColDef[] = [
@@ -27,7 +24,7 @@ const columnsRole = (props: IProps) => {
       sortable: false,
     },
     {
-      field: "nameGroup",
+      field: "name",
       headerName: "Tên nhóm",
       flex: 1,
       align: "center",
@@ -36,7 +33,7 @@ const columnsRole = (props: IProps) => {
       sortable: false,
     },
     {
-      field: "codeGroup",
+      field: "code",
       headerName: "Mã nhóm",
       flex: 1,
       align: "center",
@@ -61,7 +58,7 @@ const columnsRole = (props: IProps) => {
             <TooltipButton
               title={"Chỉnh sửa"}
               onClick={() => {
-                onClickNote(row);
+                onClickEdit(row);
               }}
             >
               {/* <DescriptionOutlinedIcon color="inherit" /> */}

@@ -1,34 +1,43 @@
 import { Box, Grid } from "@mui/material";
 import { FastField, Formik } from "formik";
-import { ImageSource } from "../../../assets/Image";
-import ButtonCommon from "../../../component/Button";
-import TextField from "../../../component/TextField";
 import LabelCommon from "../../../component/label";
-import cacheKeys from "../../../const/cachedKeys";
-import { showError, showSuccess } from "../../../helper/toast";
+import TextField from "../../../component/TextField";
+import CheckBoxField from "../../../component/checkBox";
+import { green, indigo } from "@mui/material/colors";
+import ButtonCommon from "../../../component/Button";
+import { ImageSource } from "../../../assets/Image";
 import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListPermission from "../../../hooks/useGetListPermission";
-import { IBodyPostCreateUserGroup } from "../../../interface/usergroup";
 import UserGroupService from "../../../services/UserGroup.service";
+import { IBodyPostCreateUserGroup, IUserGroupItem } from "../../../interface/usergroup";
+import { showError, showSuccess } from "../../../helper/toast";
 import { useSave } from "../../../store/useStores";
+import cacheKeys from "../../../const/cachedKeys";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface IProps {
   onClose: () => void
+  idRole: string | number
+  isEdit: boolean
   onSuccess: () => void
 }
 
-const AddRole = (props: IProps) => {
-  const { onClose, onSuccess } = props
+const ViewDetailRole = (props: IProps) => {
+  const { onClose, idRole, isEdit, onSuccess } = props
   const save = useSave()
+  const trigger = useRef(false)
   // !Init
-  const initial: any = {
-    nameGroup: "",
-    permission: [],
-  };
+  const initial: any = useMemo(() => (
+    {
+      nameGroup: "",
+      permission: [],
+    }
+  ), [])
   const { filters: filterPermission } = useFiltersHandler({
     page: 0,
     perPage: 100,
   })
+  const [dataDetail, setDataDetail] = useState<IUserGroupItem>()
   const { data: dataPermission, refetch: refetchPermission } = useGetListPermission(filterPermission)
 
   // !Function
@@ -41,9 +50,9 @@ const AddRole = (props: IProps) => {
     }
     try {
       save(cacheKeys.LOADING_APP, true)
-      const response = await UserGroupService.postCreateUserGroup(valueCVT)
-      if (response.status === 201) {
-        showSuccess("Tạo mới thành công")
+      const response = await UserGroupService.patchChangeUserGroup(valueCVT, idRole)
+      if (response.status === 200) {
+        showSuccess("Chỉnh sửa thành công")
         onClose?.()
         onSuccess?.()
       }
@@ -55,11 +64,49 @@ const AddRole = (props: IProps) => {
     }
   }
 
+  const getDetailDataUserGroup = useCallback(async () => {
+    try {
+      trigger.current = true
+      save(cacheKeys.LOADING_APP, true)
+      const response = await UserGroupService.getDetailUserGroup(idRole)
+      const data = response.data as IUserGroupItem
+      setDataDetail(data)
+    } catch (e) {
+      showError("Có lỗi xảy ra trong quá trình lấy dữ liệu!")
+    } finally {
+      save(cacheKeys.LOADING_APP, false)
+      trigger.current = false
+    }
+  }, [idRole, save])
+
+  useEffect(() => {
+    if (!trigger.current) {
+      if (idRole !== undefined) {
+        getDetailDataUserGroup()
+      }
+    }
+  }, [getDetailDataUserGroup, idRole])
+
+  const compareInit = useMemo(() => {
+    if (dataDetail) {
+      return {
+        nameGroup: dataDetail.name,
+        permission: dataDetail.permissions?.map((e) => ({
+          ...e?.permission
+        })),
+      }
+    }
+    return initial
+  }, [dataDetail, initial])
+
   // !Render
   return (
     <Box>
-      <Formik initialValues={initial} onSubmit={(values) => { onCreateUserGroup(values) }}>
+      <Formik initialValues={compareInit} enableReinitialize onSubmit={(values) => { onCreateUserGroup(values) }}>
         {({ values, setFieldValue, handleSubmit, errors }) => {
+          const checkAll = dataPermission?.data?.every((el: any) => {
+            return values?.permission?.some((e: any) => e?.id === el?.id)
+          })
           return (
             <>
               <Grid>
@@ -70,7 +117,7 @@ const AddRole = (props: IProps) => {
                   fullWidth
                   required
                   placeholder="Nhập tên nhóm quyền"
-                  //   disabled={isDetail}
+                  disabled={!isEdit}
                   sx={{ mb: "24px" }}
                 />
               </Grid>
@@ -86,20 +133,18 @@ const AddRole = (props: IProps) => {
                         <Box
                           sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}
                           onClick={() => {
-                            dataPermission?.data?.every((el: any) => {
-                              return values.permission.some((e: any) => e?.id === el?.id)
-                            })
-                              ?
-                              setFieldValue('permission', [])
-                              :
-                              setFieldValue('permission', dataPermission?.data || [])
+                            if (isEdit) {
+                              if (checkAll) {
+                                setFieldValue('permission', [])
+                              } else {
+                                setFieldValue('permission', dataPermission?.data || [])
+                              }
+                            }
                           }}
                         >
                           <Box pr={1}>
                             {
-                              dataPermission?.data?.every((el: any) => {
-                                return values.permission.some((e: any) => e?.id === el?.id)
-                              }) ?
+                              checkAll ?
                                 <img alt='' src={ImageSource.tickSquare} style={{ height: "14px", width: "14px" }} />
                                 :
                                 <img alt='' src={ImageSource.box} style={{ height: "14px", width: "14px" }} />
@@ -113,7 +158,7 @@ const AddRole = (props: IProps) => {
                           fullWidth
                           required
                           placeholder="Nhập tên quyền"
-                        //   disabled={isDetail}
+                          disabled={!isEdit}
                         />
                       </Box>
                       <ButtonCommon
@@ -121,7 +166,12 @@ const AddRole = (props: IProps) => {
                         color="secondary"
                         // type="submit"
                         size="small"
-                        onClick={() => refetchPermission({ ...filterPermission, textSearch: values.search })}
+                        disabled={!isEdit}
+                        onClick={() => {
+                          if (isEdit) {
+                            refetchPermission({ ...filterPermission, textSearch: values.search })
+                          }
+                        }}
                         sx={{ p: 0, minWidth: "auto", height: "36px", width: "40px", borderRadius: "8px" }}
                       >
                         <img src={ImageSource.searchIcon} style={{ width: "20px", height: "20px" }} alt={""} />
@@ -129,19 +179,24 @@ const AddRole = (props: IProps) => {
                     </Box>
                     <Box sx={{ pl: "10px", pt: "10px", pb: "8px", pr: "10px" }}>
                       {dataPermission?.data?.map((elm, index) => {
+                        const checkItem = values.permission?.some((el: any) => el?.id === elm?.id)
                         return (
                           <Box
                             sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}
                             onClick={() => {
-                              values.permission?.some((el: any) => el?.id === elm?.id) ?
-                                setFieldValue('permission', values.permission?.filter((el: any) => el?.id !== elm?.id)) :
-                                setFieldValue('permission', [...values.permission, elm])
+                              if (isEdit) {
+                                if (checkItem) {
+                                  setFieldValue('permission', values.permission?.filter((el: any) => el?.id !== elm?.id))
+                                } else {
+                                  setFieldValue('permission', [...values.permission, elm])
+                                }
+                              }
                             }}
                             mb={2}
                           >
                             <Box pr={1}>
                               {
-                                values.permission?.some((el: any) => el?.id === elm?.id) ?
+                                checkItem ?
                                   <img alt='' src={ImageSource.tickSquare} style={{ height: "14px", width: "14px" }} />
                                   :
                                   <img alt='' src={ImageSource.box} style={{ height: "14px", width: "14px" }} />
@@ -176,34 +231,38 @@ const AddRole = (props: IProps) => {
                   </Box>
                 </Grid>
               </Grid>
-              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
-                <ButtonCommon
-                  sx={{
-                    // height: "47px",
-                    padding: "14px 24px",
-                    borderRadius: "8px",
-                    fontWeight: "600",
-                  }}
-                  variant="outlined"
-                  onClick={onClose}
-                >
-                  Huỷ
-                </ButtonCommon>
-                <ButtonCommon
-                  sx={{
-                    // height: "47px",
-                    padding: "14px 24px",
-                    borderRadius: "8px",
-                    fontWeight: "600",
-                    ml: 1,
-                  }}
-                  variant="contained"
-                  onClick={() => handleSubmit()}
-                  disabled={!Boolean(values.nameGroup) || !Boolean(values.permission.length)}
-                >
-                  Tạo mới
-                </ButtonCommon>
-              </Box>
+              {
+                isEdit ?
+                  <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
+                    <ButtonCommon
+                      sx={{
+                        // height: "47px",
+                        padding: "14px 24px",
+                        borderRadius: "8px",
+                        fontWeight: "600",
+                      }}
+                      variant="outlined"
+                      onClick={onClose}
+                    >
+                      Huỷ
+                    </ButtonCommon>
+                    <ButtonCommon
+                      sx={{
+                        // height: "47px",
+                        padding: "14px 24px",
+                        borderRadius: "8px",
+                        fontWeight: "600",
+                        ml: 1,
+                      }}
+                      variant="contained"
+                      onClick={() => handleSubmit()}
+                      disabled={!Boolean(values.nameGroup) || !Boolean(values.permission.length)}
+                    >
+                      Chỉnh sửa
+                    </ButtonCommon>
+                  </Box>
+                  : <></>
+              }
             </>
           );
         }}
@@ -211,4 +270,4 @@ const AddRole = (props: IProps) => {
     </Box>
   );
 };
-export default AddRole;
+export default ViewDetailRole;

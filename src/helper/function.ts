@@ -98,15 +98,18 @@ export function calculateTotalPages(total: number, perPage: number) {
 }
 
 export function generateMessage(data: any[], page: number, pageSize: number, total: number) {
-    const startIndex = (page - 1) * pageSize + 1;
-    const endIndex = Math.min(startIndex + pageSize - 1, total);
-    console.log(startIndex, endIndex, 'endIndexendIndex')
+    if (Boolean(total)) {
+        const startIndex = (page - 1) * pageSize + 1;
+        const endIndex = Math.min(startIndex + pageSize - 1, total);
+        console.log(startIndex, endIndex, 'endIndexendIndex')
 
-    return `Hiển thị từ ${startIndex} đến ${endIndex} trong tổng số ${total} bản ghi`;
+        return `Hiển thị từ ${startIndex} đến ${endIndex} trong tổng số ${total} bản ghi`;
+    }
+    return `Hiển thị từ 0 đến 0 trong tổng số 0 bản ghi`;
 }
 export const regexUsername = (username: string) => {
-  const regex = /^(\d|\w)+$/;
-  return regex.test(username);
+    const regex = /^(\d|\w)+$/;
+    return regex.test(username);
 }
 export const isValidEmail = (email: string) => {
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
