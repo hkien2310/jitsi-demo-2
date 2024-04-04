@@ -7,6 +7,7 @@ import listUser from './mock/listUser.json';
 import { useGet, useSave } from './store/useStores';
 import AuthServices from './services/Auth.services';
 import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const rowsDemo = [
@@ -45,6 +46,7 @@ function App() {
       <ToastContainer
         position="top-right"
         autoClose={5000}
+        style={{zIndex: 10000}}
         hideProgressBar={true}
         newestOnTop
         // closeButton={false}
