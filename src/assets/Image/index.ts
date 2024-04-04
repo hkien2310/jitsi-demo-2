@@ -25,6 +25,11 @@ import data from './source/data.svg'
 import people from './source/people.svg'
 import monitor from './source/monitor.svg'
 import category from './source/category.svg'
+import edit from './source/edit.png'
+import eye from './source/eye.png'
+import tickSquare from './source/tick-square.svg'
+import box from './source/box.svg'
+
 
 export const ImageSource = {
     loginAvatar: 'https://sentrangusa.com/wp-content/uploads/2023/01/62196607bf1b46ebfb301f19_5f5bc69416e7fb495275b378_how20run20tips20top20execs.jpeg',
@@ -55,6 +60,9 @@ export const ImageSource = {
     category,
     data,
     people,
-    monitor
-
+    monitor,
+    edit,
+    eye,
+    tickSquare,
+    box
 }
