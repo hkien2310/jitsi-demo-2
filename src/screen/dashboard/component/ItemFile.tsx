@@ -4,10 +4,11 @@ import { renderLogo } from "../../../component/UploadFile/Drag";
 interface IProps {
   onClick?: () => void;
   fileName: string;
-  fileType: string;
+  // fileType: string;
 }
 const ItemFile = (props: IProps) => {
-  const { onClick, fileName, fileType } = props;
+  const { onClick, fileName } = props;
+  const fileType = fileName?.split(".")?.pop()
   return (
     <Box
       onClick={onClick}
@@ -20,7 +21,7 @@ const ItemFile = (props: IProps) => {
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <img src={renderLogo(fileType.split(".")?.pop() || "")} alt={"logo"} style={{ height: 25.11, width: 27 }} />
+        <img src={renderLogo(fileType || "")} alt={"logo"} style={{ height: 25.11, width: 27 }} />
         <Box sx={{ ml: "12px", color: "#4D4D4D", fontSize: "14px", fontWeight: 500, textOverflow: "ellipsis" }}>{fileName}</Box>
       </Box>
       <img src={ImageSource.importIcon} style={{ height: 24, width: 24 }} />

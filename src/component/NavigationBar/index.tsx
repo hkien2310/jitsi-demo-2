@@ -100,7 +100,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     return (
         <Box sx={{ display: 'flex', maxWidth: '100vw', height: '100vh' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 100000000 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 9999 }}>
                 <Toolbar>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -144,7 +144,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List sx={{padding: '8px'}}>
+                <List sx={{ padding: '8px' }}>
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding onClick={() => navigate(text.path)}>
                             <ListItemButton
@@ -160,7 +160,8 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                                 <ListItemText primary={text?.name} sx={{
                                     "& .MuiListItemText-primary": {
                                         fontWeight: 500
-                                    }}}/>
+                                    }
+                                }} />
                             </ListItemButton>
                         </ListItem>
                     ))}
@@ -186,9 +187,11 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 </Button> */}
             </Drawer>
 
-            <Main open={open} sx={{ width: '100%', height: '100%' }}>
+            <Main open={open} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', }}>
                 <DrawerHeader />
-                {children}
+                <Box sx={{flex: 1}}>
+                    {children}
+                </Box>
                 {/* {props?.children} */}
             </Main>
         </Box>
