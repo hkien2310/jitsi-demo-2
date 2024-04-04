@@ -10,7 +10,7 @@ interface IProps {
   title?: string | React.ReactNode;
   content: string | React.ReactNode;
   footer?: React.ReactNode;
-  sx: SxProps<Theme> | undefined
+  sx?: SxProps<Theme> | undefined
 }
 
 const Transition = React.forwardRef(function Transition(

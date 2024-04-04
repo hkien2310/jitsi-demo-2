@@ -22,7 +22,8 @@ export const colors = {
         buttonPaging: 'rgba(90, 104, 115, 0.2)',
         header: '#D2D7DD',
         wait: '#D9822B',
-        success: 'rgba(71, 184, 129, 1)'
+        success: 'rgba(71, 184, 129, 1)',
+        tableRowCount: 'rgba(80, 86, 92, 1)',
     },
     border: {
         main: '#efefef',

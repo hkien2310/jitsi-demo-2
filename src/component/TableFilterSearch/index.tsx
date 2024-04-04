@@ -4,12 +4,13 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import * as React from "react";
 import PaginationRounded from "../../component/Pagination";
 import { colors } from "../../const/colors";
-import { calculateTotalPages } from "../../helper/function";
+import { calculateTotalPages, generateMessage } from "../../helper/function";
 import useFiltersHandler from "../../hooks/useFilters";
 import ButtonCommon from "../Button";
 import { FastField, Form, Formik, FormikProps } from "formik";
 import TextField from "../TextField";
 import { ImageSource } from "../../assets/Image";
+import { CustomNoRowsOverlay } from "./component/NoRows";
 
 interface ITableFilterSearch {
   columns: GridColDef[];
@@ -34,6 +35,8 @@ interface ITableFilterSearch {
       status: string;
     }>
   ) => React.ReactNode;
+  filters: any
+  handleChangePage: (page: number) => void
 }
 
 const TableFilterSearch = (props: ITableFilterSearch) => {
@@ -46,12 +49,14 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
     rightTitle,
     searchPlaceholder,
     filterComponent,
+    filters,
+    handleChangePage,
     ...remainProps
   } = props;
-  const { filters, handleChangePage } = useFiltersHandler({
-    page: 0,
-    perPage: 10,
-  });
+  // const { filters, handleChangePage } = useFiltersHandler({
+  //   page: 0,
+  //   perPage: 10,
+  // });
 
   const paginationModel = React.useMemo(() => {
     return {
@@ -59,6 +64,7 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
       page: filters?.page,
     };
   }, [filters]);
+
 
   return (
     <Box>
@@ -127,44 +133,53 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
           );
         }}
       </Formik>
-      <DataGrid
-        rows={dataRows}
-        columns={columns}
-        rowSpacingType={"margin"}
-        hideFooter
-        initialState={{
-          pagination: {
-            paginationModel: paginationModel,
-          },
-        }}
-        paginationMode="server"
-        sortingMode="server"
-        rowCount={rowCount}
-        // onPaginationModelChange={(model) => handleChangePage(model?.page)}
-        pageSizeOptions={[5]}
-        checkboxSelection={false}
-        disableRowSelectionOnClick
-        disableColumnFilter
-        disableColumnMenu
-        disableColumnSelector
-        columnBuffer={10}
-        // hideFooterPagination={true}
-        sx={{
-          textAlign: "center",
-          color: colors.text.tableContent,
-          "& .MuiDataGrid-columnHeaders": {
-            // background: blue["A100"],
-            "& .MuiDataGrid-columnSeparator": {
-              display: "none",
+      <Box sx={{ height: dataRows?.length === 0 ? 400 : undefined }}>
+        <DataGrid
+          rows={dataRows}
+          columns={columns}
+          rowSpacingType={"margin"}
+          hideFooter
+          initialState={{
+            pagination: {
+              paginationModel: paginationModel,
             },
-            background: colors.background.tableHeader,
-            color: "black",
-            "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "500",
+          }}
+          paginationMode="server"
+          sortingMode="server"
+          rowCount={rowCount}
+          // onPaginationModelChange={(model) => handleChangePage(model?.page)}
+          pageSizeOptions={[5]}
+          checkboxSelection={false}
+          disableRowSelectionOnClick
+          disableColumnFilter
+          disableColumnMenu
+          disableColumnSelector
+          columnBuffer={10}
+          // hideFooterPagination={true}
+          slots={{
+            noRowsOverlay: CustomNoRowsOverlay
+          }}
+          sx={{
+            textAlign: "center",
+            color: colors.text.tableContent,
+            "& .MuiDataGrid-columnHeaders": {
+              // background: blue["A100"],
+              "& .MuiDataGrid-columnSeparator": {
+                display: "none",
+              },
+              background: colors.background.tableHeader,
+              color: "black",
+              "& .MuiDataGrid-columnHeaderTitle": {
+                fontWeight: "500",
+              },
             },
-          },
-        }}
-      />
+          }}
+        />
+
+      </Box>
+      <Box sx={{ textAlign: 'left', color: colors.text.tableRowCount, fontSize: '14px', }} py={1}>
+        {generateMessage(dataRows || [], (filters.page || 0) + 1, (filters.perPage || 0), (rowCount || 0))}
+      </Box>
       <Box
         sx={{ display: "flex", justifyContent: "center", width: "100%" }}
         p={1}

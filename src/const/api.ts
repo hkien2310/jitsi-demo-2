@@ -24,3 +24,12 @@ export const GET_LIST_FILES_DASHBOARD = `${ROOT_URL}/dashboard/latest-uploaded-f
 
 export const GET_STATISTICS_DASHBOARD = `${ROOT_URL}/dashboard/statistics`
 
+// user group 
+
+export const GET_LIST_PERMISSION = `${ROOT_URL}/permission`
+export const POST_CREATE_USER_GROUP = `${ROOT_URL}/user-group`
+export const GET_LIST_USER_GROUP = `${ROOT_URL}/user-group`
+export const GET_USER_GROUP_DETAIL = (id: number | string) => `${ROOT_URL}/user-group/${id}`
+export const PATCH_CHANGE_USER_GROUP = (id: number | string) => `${ROOT_URL}/user-group/${id}`
+
+
