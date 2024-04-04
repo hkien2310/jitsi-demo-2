@@ -9,36 +9,6 @@ import useGetListUser from "../../hooks/useGetListUser";
 import useFiltersHandler from "../../hooks/useFilters";
 import { renderSTT } from "../../helper/function";
 
-const dataMock = [
-  {
-    account: "Tài khoản 01",
-    fullname: "Nguyễn Văn A",
-    email: "Tk01@gmail.com",
-    stt: 1,
-    id: 1,
-  },
-  {
-    account: "Tài khoản 01",
-    fullname: "Nguyễn Văn A",
-    email: "Tk01@gmail.com",
-    stt: 2,
-    id: 2,
-  },
-  {
-    account: "Tài khoản 01",
-    fullname: "Nguyễn Văn A",
-    email: "Tk01@gmail.com",
-    stt: 3,
-    id: 3,
-  },
-  {
-    account: "Tài khoản 01",
-    fullname: "Nguyễn Văn A",
-    email: "Tk01@gmail.com",
-    stt: 4,
-    id: 4,
-  },
-];
 const ManageAccountScreen = () => {
   const [open, setOpen] = useState(false);
   const { filters } = useFiltersHandler({ page: 0 });
