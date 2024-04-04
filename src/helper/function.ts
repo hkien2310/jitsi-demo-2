@@ -104,6 +104,13 @@ export function generateMessage(data: any[], page: number, pageSize: number, tot
 
     return `Hiển thị từ ${startIndex} đến ${endIndex} trong tổng số ${total} bản ghi`;
 }
+export const regexUsername = (username: string) => {
+  const regex = /^(\d|\w)+$/;
+  return regex.test(username);
+}
+export const isValidEmail = (email: string) => {
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return regex.test(email);
 
 export function getStartEndOfMonth(month: number) {
     const year = new Date().getFullYear(); // Get the current year

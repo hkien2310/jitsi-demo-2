@@ -80,10 +80,10 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category },
-    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor },
-    { path: '', name: "Quản lý nhóm quyền", icon: ImageSource.people },
-    { path: '', name: "Quản lý tài khoản", icon: ImageSource.data },
+    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category},
+    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor},
+    { path: '/role', name: "Quản lý nhóm quyền", icon: ImageSource.people},
+    { path: '/account', name: "Quản lý tài khoản", icon: ImageSource.data},
 ]
 
 const NavigationBar = ({ children }: MainLayoutProps) => {

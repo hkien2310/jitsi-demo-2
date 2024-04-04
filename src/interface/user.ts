@@ -26,3 +26,9 @@ export interface IResponseUser {
 }
 
 export type IResponseListUser = AxiosResponse<IResponseUser>;
+export interface IUser {
+    account: string,
+    password: string,
+    fullName: string,
+    email: string
+}

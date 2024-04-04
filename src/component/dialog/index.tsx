@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, Slide } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, Slide, SxProps, Theme } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import React from "react";
 import { ImageSource } from "../../assets/Image";
@@ -10,19 +10,20 @@ interface IProps {
   title?: string | React.ReactNode;
   content: string | React.ReactNode;
   footer?: React.ReactNode;
+  sx: SxProps<Theme> | undefined
 }
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
   },
-  ref: React.Ref<unknown>
+  ref: React.Ref<unknown>,
 ) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const DialogCommon = (props: IProps) => {
-  const { open, handleClose, title, content, footer } = props;
+  const { open, handleClose, title, content, footer, sx } = props;
 
   return (
     <Dialog
@@ -36,6 +37,7 @@ const DialogCommon = (props: IProps) => {
     >
       <Box sx={{ borderRadius: `{8px} !important` }}>
         <Box
+         
           sx={{
             paddingLeft: "40px",
             paddingRight: "40px",
@@ -64,7 +66,7 @@ const DialogCommon = (props: IProps) => {
             <img src={ImageSource.close} />
           </Button>
         </Box>
-        <DialogContent sx={{ paddingLeft: '40px', paddingRight: '40px', paddingTop: '36px', paddingBottom: '36px' }} >{content}</DialogContent>
+        <DialogContent sx={{ paddingLeft: '40px', paddingRight: '40px', paddingTop: '36px', paddingBottom: '36px', ...sx }} >{content}</DialogContent>
         <DialogActions>{footer && footer}</DialogActions>
       </Box>
     </Dialog>
