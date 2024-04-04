@@ -8,6 +8,9 @@ export interface IRequestGetListUser {
     textSearch?: string
     status?: string[]
 }
+export interface IGetDetailUser {
+    id: number
+}
 
 export interface IUserItem {
     id: string,

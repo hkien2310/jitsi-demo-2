@@ -112,10 +112,9 @@ export const regexUsername = (username: string) => {
     return regex.test(username);
 }
 export const isValidEmail = (email: string) => {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    return regex.test(email);
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return regex.test(email);
 }
-
 export function getStartEndOfMonth(month: number) {
     const year = new Date().getFullYear(); // Get the current year
     const startDate = new Date(year, month - 1, 1);

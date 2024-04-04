@@ -1,25 +1,23 @@
 import { Box } from "@mui/material";
 import { FastField, Formik } from "formik";
+import * as Yup from "yup";
 import ButtonCommon from "../../../component/Button";
 import TextField from "../../../component/TextField";
 import LabelCommon from "../../../component/label";
-import * as Yup from "yup";
-import UserServices from "../../../services/User.services";
 import { regexUsername } from "../../../helper/function";
-import { useGetDetailUser } from "../../../hooks/useGetDetailUser";
-import { useEffect } from "react";
 import { showError, showSuccess } from "../../../helper/toast";
+import { useGetDetailUser } from "../../../hooks/useGetDetailUser";
+import UserServices from "../../../services/User.services";
 
-interface IAddAccount {
+interface IEditAccount {
   refetchList: () => void;
   onClose: () => void;
   id: number;
 }
-const AddAccount = (props: IAddAccount) => {
+const EditAccount = (props: IEditAccount) => {
   const { refetchList, onClose, id } = props;
   const { data: userDetail, isLoading, refetch } = useGetDetailUser(id);
-  const isDetail = Boolean(userDetail);
-
+  
   // !Init
   const initial: any = {
     account: userDetail?.username || "",
@@ -44,7 +42,7 @@ const AddAccount = (props: IAddAccount) => {
     <Box>
       <Formik
         initialValues={initial}
-        validationSchema={isDetail ? null : validationSchema}
+        validationSchema={validationSchema}
         onSubmit={async (values, help) => {
           const body = {
             fullname: values.fullName,
@@ -53,11 +51,11 @@ const AddAccount = (props: IAddAccount) => {
             email: values.email,
           };
           try {
-            const response = await UserServices.postUser(body);
-            if (response?.status === 201 && response?.data) {
+            const response = await UserServices.updateUser(id, body);
+            if (response?.data) {
               refetchList();
               onClose();
-              showSuccess(response?.statusText)
+              showSuccess('Chỉnh sửa thành công!')
             }
           } catch (error: any) {
             showError(error);
@@ -65,57 +63,55 @@ const AddAccount = (props: IAddAccount) => {
         }}
         enableReinitialize
       >
-        {({ values, setFieldValue, handleSubmit, errors }) => {
+        {({ handleSubmit, errors }) => {
           return (
             <>
               <Box>
                 <Box>
                   <LabelCommon label="Tài khoản" />
-                  <FastField component={TextField} name="account" fullWidth required placeholder="Nhập tên tài khoản" disabled={isDetail} sx={{ mb: "16px" }} />
+                  <FastField component={TextField} name="account" fullWidth required placeholder="Nhập tên tài khoản" sx={{ mb: "16px" }} />
                 </Box>
+
                 <Box>
                   <LabelCommon label="Mật khẩu" />
-                  <FastField component={TextField} name="password" fullWidth required placeholder="Nhập mật khẩu" disabled={isDetail} sx={{ mb: "16px" }} />
+                  <FastField component={TextField} name="password" fullWidth required placeholder="Nhập mật khẩu" sx={{ mb: "16px" }} />
                 </Box>
+
                 <Box>
                   <LabelCommon label="Họ và tên" />
-                  <FastField component={TextField} name="fullName" fullWidth required placeholder="Họ và tên" disabled={isDetail} sx={{ mb: "16px" }} />
+                  <FastField component={TextField} name="fullName" fullWidth required placeholder="Họ và tên" sx={{ mb: "16px" }} />
                 </Box>
                 <Box>
                   <LabelCommon label="Email" />
-                  <FastField component={TextField} name="email" fullWidth required placeholder="Nhập email" disabled={isDetail} sx={{ mb: "16px" }} />
+                  <FastField component={TextField} name="email" fullWidth required placeholder="Nhập email" sx={{ mb: "16px" }} />
                 </Box>
               </Box>
-              {!isDetail ? (
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
-                  <ButtonCommon
-                    sx={{
-                      padding: "14px 24px",
-                      borderRadius: "8px",
-                      fontWeight: "600",
-                    }}
-                    variant="outlined"
-                    onClick={onClose}
-                  >
-                    Huỷ
-                  </ButtonCommon>
-                  <ButtonCommon
-                    sx={{
-                      padding: "14px 24px",
-                      borderRadius: "8px",
-                      fontWeight: "600",
-                      ml: 1,
-                    }}
-                    variant="contained"
-                    disabled={!errors}
-                    onClick={() => handleSubmit()}
-                  >
-                    Tạo mới
-                  </ButtonCommon>
-                </Box>
-              ) : (
-                <Box />
-              )}
+              <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
+                <ButtonCommon
+                  sx={{
+                    padding: "14px 24px",
+                    borderRadius: "8px",
+                    fontWeight: "600",
+                  }}
+                  variant="outlined"
+                  onClick={onClose}
+                >
+                  Huỷ
+                </ButtonCommon>
+                <ButtonCommon
+                  sx={{
+                    padding: "14px 24px",
+                    borderRadius: "8px",
+                    fontWeight: "600",
+                    ml: 1,
+                  }}
+                  variant="contained"
+                  disabled={!errors}
+                  onClick={() => handleSubmit()}
+                >
+                  Chỉnh sửa
+                </ButtonCommon>
+              </Box>
             </>
           );
         }}
@@ -123,4 +119,4 @@ const AddAccount = (props: IAddAccount) => {
     </Box>
   );
 };
-export default AddAccount;
+export default EditAccount;
