@@ -22,6 +22,10 @@ import UserRight from './UserRight';
 import { colors } from '../../const/colors';
 import TypographyCommon from '../Typography';
 import { ImageSource } from '../../assets/Image';
+import ButtonCommon from '../Button';
+import AuthServices from '../../services/Auth.services';
+import cacheKeys from '../../const/cachedKeys';
+import { useSave } from '../../store/useStores';
 
 const drawerWidth = 350;
 
@@ -80,10 +84,10 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category},
-    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor},
-    { path: '/role', name: "Quản lý nhóm quyền", icon: ImageSource.people},
-    { path: '/account', name: "Quản lý tài khoản", icon: ImageSource.data},
+    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category },
+    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor },
+    { path: '/role', name: "Quản lý nhóm quyền", icon: ImageSource.people },
+    { path: '/account', name: "Quản lý tài khoản", icon: ImageSource.data },
 ]
 
 const NavigationBar = ({ children }: MainLayoutProps) => {
@@ -91,6 +95,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
+    const save = useSave()
 
     const handleToggle = () => {
         setOpen((prev) => !prev)
@@ -144,7 +149,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
-                <List sx={{ padding: '8px' }}>
+                <List sx={{ padding: '8px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding onClick={() => navigate(text.path)}>
                             <ListItemButton
@@ -167,29 +172,37 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                     ))}
                 </List>
                 <Divider />
-                {/* <List>
-                    {['All mail', 'Trash', 'Spam'].map((text, index) => (
-                        <ListItem key={text} disablePadding>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List> */}
-                {/* <Button variant='contained' onClick={async () => {
-                    AuthServices.logout()
-                    save(cacheKeys.IS_LOGGED, false)
-                }}>
+                <Box
+                    sx={{
+                        backgroundColor: colors.background.logoutBG,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 600,
+                        color: colors.text.white,
+                        cursor: 'pointer'
+                    }}
+                    py={3}
+                    onClick={async () => {
+                        AuthServices.logout()
+                        save(cacheKeys.IS_LOGGED, false)
+                    }}>
+                    <img alt={''} src={ImageSource.logout} style={{ fontSize: '20px', padding: '10px', borderRadius: 1000, background: 'white', marginRight: '10px'}} />
                     Đăng xuất
-                </Button> */}
+                </Box>
+
             </Drawer>
 
             <Main open={open} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', }}>
                 <DrawerHeader />
-                <Box sx={{flex: 1}}>
+                <Box sx={{ flex: 1 }} onClick={(e) => {
+                    if (open) {
+                        setOpen(false)
+                    } else {
+                        e.preventDefault()
+                    }
+                }}>
                     {children}
                 </Box>
                 {/* {props?.children} */}

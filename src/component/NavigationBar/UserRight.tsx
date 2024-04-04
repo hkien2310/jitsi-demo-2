@@ -41,7 +41,7 @@ const UserRight = () => {
                 {userInfo?.fullname}
             </Box>
         </Box>
-        <Popover
+        {/* <Popover
             id={id}
             open={open}
             anchorEl={anchorEl}
@@ -64,7 +64,7 @@ const UserRight = () => {
                     </Box>
                 </Button>
             </Box>
-        </Popover>
+        </Popover> */}
     </Box>
 }
 
