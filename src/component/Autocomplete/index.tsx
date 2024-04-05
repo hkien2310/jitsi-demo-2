@@ -54,7 +54,7 @@ function AutoCompleteField(props: Props) {
     callbackOnOpen,
     callbackOnClose,
     disabled,
-    required
+    required,
   } = props;
 
   const [open, setOpen] = React.useState(false);

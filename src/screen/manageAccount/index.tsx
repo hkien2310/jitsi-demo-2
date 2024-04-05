@@ -52,14 +52,14 @@ const ManageAccountScreen = () => {
     handleDelete(row);
   };
   const onClickDetail = (row: any) => {
-    setUserId(row.id);
+    setUserId(row?.id);
     setOpen(true);
     setDataRow(row);
   };
   const onClickEdit = (row: any) => {
     setIsEdit(true);
     setDataRow(row);
-    setUserId(row.id);
+    setUserId(row?.id);
   };
 
   return (

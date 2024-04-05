@@ -99,8 +99,8 @@ const AddMeeting = (props: IProps) => {
         .filter((elm: any) => elm?.memberType !== "SECRETARY")
         .map((e: any) => {
           return {
-            label: e?.user.fullname,
-            value: e?.user.id,
+            label: e?.user?.fullname,
+            value: e?.user?.id,
           };
         })
     : [
@@ -129,7 +129,7 @@ const AddMeeting = (props: IProps) => {
         .map((e: any) => {
           return {
             label: e?.user.fullname,
-            value: e?.user.id,
+            value: e?.user?.id,
           };
         })?.[0]
     : "";
@@ -322,6 +322,7 @@ const AddMeeting = (props: IProps) => {
                         onChangeCustomize={(e: any, value: any) => {
                           setFieldValue("assigned", value);
                         }}
+                        getOptionDisabled={(option: any) => console.log(option, 'ádasdasd')}
                         options={listOptions}
                         disabled={isDetail}
                       />
@@ -339,7 +340,7 @@ const AddMeeting = (props: IProps) => {
                         onChangeCustomize={(e: any, value: any) => {
                           setFieldValue("secretary", value);
                         }}
-                        options={listOptions}
+                        options={listOptions?.filter((e) => `${e?.value}` !== `${userInfo?.id}`)}
                         disabled={isDetail}
                       />
                     </Grid>

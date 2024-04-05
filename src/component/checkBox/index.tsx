@@ -51,7 +51,7 @@ const CheckBoxField = (props: ITextFieldProps) => {
         <CheckboxMui
           className={className}
           checked={!!value}
-          onChange={handleChange}
+          onClick={handleChange}
           sx={{ padding: 0, ...sx }}
           {...rest}
         />

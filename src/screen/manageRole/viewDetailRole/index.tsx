@@ -46,7 +46,7 @@ const ViewDetailRole = (props: IProps) => {
   const onCreateUserGroup = async (values: any) => {
     const valueCVT: IBodyPostCreateUserGroup = {
       name: values.nameGroup,
-      permissionIds: values.permission.map((e: any) => e.id)
+      permissionIds: values.permission.map((e: any) => e?.id)
     }
     try {
       save(cacheKeys.LOADING_APP, true)
