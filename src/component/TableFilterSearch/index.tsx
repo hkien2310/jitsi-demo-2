@@ -1,21 +1,21 @@
 import AddIcon from "@mui/icons-material/Add";
 import { Box } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { FastField, Form, Formik, FormikProps } from "formik";
 import * as React from "react";
+import { ImageSource } from "../../assets/Image";
 import PaginationRounded from "../../component/Pagination";
 import { colors } from "../../const/colors";
 import { calculateTotalPages, generateMessage } from "../../helper/function";
-import useFiltersHandler from "../../hooks/useFilters";
 import ButtonCommon from "../Button";
-import { FastField, Form, Formik, FormikProps } from "formik";
 import TextField from "../TextField";
-import { ImageSource } from "../../assets/Image";
 import { CustomNoRowsOverlay } from "./component/NoRows";
 
 interface ITableFilterSearch {
   columns: GridColDef[];
   dataRows: any[];
   rowCount: number;
+  loading?: boolean;
   onSearchAndFilter: (
     values: {
       search: string;
@@ -51,6 +51,7 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
     filterComponent,
     filters,
     handleChangePage,
+    loading,
     ...remainProps
   } = props;
   // const { filters, handleChangePage } = useFiltersHandler({
@@ -64,7 +65,11 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
       page: filters?.page,
     };
   }, [filters]);
-
+  // const loadingCVT = React.useMemo(() => {
+  //   setTimeout(() => {
+  //     return Boolean(loading)
+  //   }, 100)
+  // }, [loading])
 
   return (
     <Box>
@@ -99,7 +104,8 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
                   <ButtonCommon
                     variant="contained"
                     color="secondary"
-                    type="submit"
+                    // type="submit"
+                    onClick={() => formikProps.handleSubmit()}
                     sx={{ height: "56px", width: "56px", ml: "20px" }}
                   >
                     <img
@@ -133,7 +139,13 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
           );
         }}
       </Formik>
-      <Box sx={{ height: dataRows?.length === 0 ? 400 : undefined }}>
+      <Box sx={{
+        // height: 
+        //   loading ? 200 :
+        //   (dataRows?.length === 0 ? 400 : undefined )
+        height: (dataRows?.length === 0 ? 400 : undefined)
+      }}
+      >
         <DataGrid
           rows={dataRows}
           columns={columns}
@@ -157,8 +169,10 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
           columnBuffer={10}
           // hideFooterPagination={true}
           slots={{
-            noRowsOverlay: CustomNoRowsOverlay
+            noRowsOverlay: CustomNoRowsOverlay,
+            // loadingOverlay: LoadingTable
           }}
+          // loading={loadingCVT}
           sx={{
             textAlign: "center",
             color: colors.text.tableContent,

@@ -12,7 +12,7 @@ import ManageAccountScreen from "../screen/manageAccount";
 
 const router = createBrowserRouter([
     {
-        path: "/",
+        path: "/meeting",
         element: <HomeScreen />,
     },
     {
@@ -20,7 +20,7 @@ const router = createBrowserRouter([
         element: <CallScreen />,
     },
     {
-        path: "/dashboard",
+        path: "/",
         element: <DashboardScreen />,
     },
     {

@@ -76,7 +76,7 @@ const DashboardScreen = () => {
   return (
     <NavigationBar>
       <Box sx={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Box sx={{ textAlign: "left", ml: 3, color: "#000000", fontSize: "24px", fontWeight: 600 }}>Dashboard</Box>
+        <Box sx={{ textAlign: "left", color: "#000000", fontSize: "24px", fontWeight: 600 }}>Dashboard</Box>
         <Grid container spacing={2} sx={{ flex: 1 }}>
           <Grid item xs={8} pb={3}>
             <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
