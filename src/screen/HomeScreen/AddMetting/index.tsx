@@ -2,7 +2,7 @@ import { Box, Button, Grid } from "@mui/material";
 import { green, indigo } from "@mui/material/colors";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { FastField, Field, Formik } from "formik";
+import { FastField, Field, Form, Formik } from "formik";
 import React, { useRef } from "react";
 import * as Yup from "yup";
 import AutoCompleteField from "../../../component/Autocomplete";
@@ -13,12 +13,13 @@ import CheckBoxField from "../../../component/checkBox";
 import DateTimePickerField from "../../../component/dateTime";
 import LabelCommon from "../../../component/label";
 import Tiny from "../../../component/tinyMce";
-import { showError } from "../../../helper/toast";
+import { showError, showSuccess } from "../../../helper/toast";
 import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListUser from "../../../hooks/useGetListUser";
 import AuthServices from "../../../services/Auth.services";
 import MeetingServices from "../../../services/Meeting.services";
 import ButtonCommon from "../../../component/Button";
+import dayjs from "dayjs";
 export const typeMeetingOptions = [
   {
     label: "Họp giao ban",
@@ -65,9 +66,9 @@ const validationSchema = () => {
     name: Yup.string().required("Đây là trường bắt buộc"),
     description: Yup.string().required("Đây là trường bắt buộc"),
     assigned: Yup.array().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
-    // agenda: Yup.string().required("Đây là trường bắt buộc"),
-    // startTime: Yup.string().required("Đây là trường bắt buộc"),
-    // endTime: Yup.string().required("Đây là trường bắt buộc"),
+    agenda: Yup.string().required("Đây là trường bắt buộc"),
+    startTime: Yup.string().required("Đây là trường bắt buộc"),
+    endTime: Yup.string().required("Đây là trường bắt buộc"),
     location: Yup.string().required("Đây là trường bắt buộc"),
     secretary: Yup.object().required("Đây là trường bắt buộc"),
     type: Yup.string().required("Đây là trường bắt buộc").min(1, "Đây là trường bắt buộc"),
@@ -91,7 +92,7 @@ const AddMeeting = (props: IProps) => {
       }) || []
     );
   }, [data?.data]);
-
+  
   const isDetail = Boolean(dataRow);
   const filterMember = dataRow
     ? dataRow?.members
@@ -159,6 +160,7 @@ const AddMeeting = (props: IProps) => {
           initialValues={initial}
           validationSchema={validationSchema}
           onSubmit={async (values, help) => {
+            help.setSubmitting(true)
             onAdd(values);
             help?.resetForm();
             const secretary = [
@@ -192,20 +194,24 @@ const AddMeeting = (props: IProps) => {
               const response = await MeetingServices.createMeeting(formData);
               if (response?.status === 201 && response?.data) {
                 refetchList();
-                // showSuccess(response?.statusText)
+                showSuccess(response?.statusText);
+                help.setSubmitting(false)
               }
             } catch (error: any) {
+              console.log(error, "error1222322");
+              help.setSubmitting(false)
               showError(error);
             }
           }}
           innerRef={ref}
           enableReinitialize
         >
-          {({ values, setFieldValue, handleSubmit, errors }) => {
+          {({ values, setFieldValue, handleSubmit, errors, isValid, isSubmitting }) => {
+            console.log("123__________", values?.endTime);
             // console.log("error__", values);
 
             return (
-              <>
+              <Form>
                 <Grid container spacing={2} sx={{ mb: 2 }}>
                   <Grid item xs={7}>
                     <LabelCommon label="Tiêu đề" />
@@ -258,11 +264,13 @@ const AddMeeting = (props: IProps) => {
                       />
                     ) : undefined}
                   </Box>
+                  
                 </Grid>
                 <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
                   <Grid item xs={5}>
                     <LabelCommon label="Thời gian từ" />
-                    <FastField
+                    <Field
+                      minDate={dayjs()}
                       component={DateTimePickerField}
                       name="startTime"
                       required
@@ -276,9 +284,10 @@ const AddMeeting = (props: IProps) => {
                   </Grid>
                   <Grid item xs={5}>
                     <LabelCommon label="Thời gian hết hạn" />
-                    <FastField
+                    <Field
                       component={DateTimePickerField}
                       isDayjs
+                      minDate={dayjs(values.startTime)}
                       name="endTime"
                       sx={{ "& div": { borderRadius: "0.5rem" }, width: "100%" }}
                       required
@@ -338,13 +347,23 @@ const AddMeeting = (props: IProps) => {
                 </Grid>
                 {!isDetail ? (
                   <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
-                    <ButtonCommon variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>Huỷ</ButtonCommon>
-                    <ButtonCommon variant="contained" onClick={() => handleSubmit()} sx={{ fontWeight: "600", ml: 1 }}>Tạo mới</ButtonCommon>
+                    <ButtonCommon variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>
+                      Huỷ
+                    </ButtonCommon>
+                    <ButtonCommon
+                      disabled={isSubmitting}
+                      variant="contained"
+                      // type="submit"
+                      onClick={() => handleSubmit()}
+                      sx={{ fontWeight: "600", ml: 1 }}
+                    >
+                      Tạo mới
+                    </ButtonCommon>
                   </Box>
                 ) : (
                   <Box />
                 )}
-              </>
+              </Form>
             );
           }}
         </Formik>

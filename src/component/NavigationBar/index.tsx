@@ -84,7 +84,7 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '/dashboard', name: "Dash Board", icon: ImageSource.category },
+    { path: '/dashboard', name: "Dashboard", icon: ImageSource.category },
     { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor },
     { path: '/role', name: "Quản lý nhóm quyền", icon: ImageSource.people },
     { path: '/account', name: "Quản lý tài khoản", icon: ImageSource.data },
@@ -105,7 +105,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     return (
         <Box sx={{ display: 'flex', maxWidth: '100vw', height: '100vh' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 9999 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 1201 }}>
                 <Toolbar>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
