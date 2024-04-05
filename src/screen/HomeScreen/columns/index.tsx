@@ -227,7 +227,7 @@ const columnsMeet = (props: IProps) => {
                             {/* <LoginOutlinedIcon color="primary" /> */}
                             <img src={ImageSource.login} alt={''} />
                         </TooltipButton>
-                        {`${row?.creatorId}` === `${userInfo.id}` ? (
+                        {`${row?.creatorId}` === `${userInfo?.id}` ? (
                             <TooltipButton title="Hoàn thành" onClick={() => onComplete(row)}>
                                 <TaskAltOutlinedIcon color="success" />
                             </TooltipButton>

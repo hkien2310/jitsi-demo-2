@@ -184,7 +184,7 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
               background: colors.background.tableHeader,
               color: "black",
               "& .MuiDataGrid-columnHeaderTitle": {
-                fontWeight: "500",
+                fontWeight: "600",
               },
             },
           }}

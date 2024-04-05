@@ -37,7 +37,7 @@ const AddRole = (props: IProps) => {
   const onCreateUserGroup = async (values: any) => {
     const valueCVT: IBodyPostCreateUserGroup = {
       name: values.nameGroup,
-      permissionIds: values.permission.map((e: any) => e.id)
+      permissionIds: values.permission.map((e: any) => e?.id)
     }
     try {
       save(cacheKeys.LOADING_APP, true)
@@ -128,7 +128,7 @@ const AddRole = (props: IProps) => {
                       </ButtonCommon>
                     </Box>
                     <Box sx={{ pl: "10px", pt: "10px", pb: "8px", pr: "10px" }}>
-                      {dataPermission?.data?.map((elm, index) => {
+                      {(dataPermission?.data && dataPermission?.data?.length > 0) ? dataPermission?.data?.map((elm, index) => {
                         return (
                           <Box
                             sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row' }}
@@ -152,7 +152,10 @@ const AddRole = (props: IProps) => {
                             </Box>
                           </Box>
                         );
-                      })}
+                      }) : <Box sx={{textAlign: 'center'}} p={1}>
+                          Không có dữ liệu
+                        </Box>
+                    }
                     </Box>
                   </Box>
                 </Grid>
@@ -167,7 +170,7 @@ const AddRole = (props: IProps) => {
                         </Box>
                         : values.permission.map((elm: any) => {
                           return (
-                            <Box key={elm.id} sx={{ borderBottom: "1px solid #E7E7E7", pt: "12px", pb: "12px", pl: "40px" }}>
+                            <Box key={elm?.id} sx={{ borderBottom: "1px solid #E7E7E7", pt: "12px", pb: "12px", pl: "40px" }}>
                               {elm.name}
                             </Box>
                           );
