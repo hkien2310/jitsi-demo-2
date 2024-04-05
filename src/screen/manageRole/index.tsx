@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import NavigationBar from "../../component/NavigationBar";
 import TableFilterSearch from "../../component/TableFilterSearch";
 import DialogCommon from "../../component/dialog";
@@ -73,6 +73,7 @@ const ManageRoleScreen = () => {
     save(cacheKeys.LOADING_APP, isLoading)
   }, [isLoading, save])
 
+
   return (
     <NavigationBar>
       <Box
@@ -87,6 +88,7 @@ const ManageRoleScreen = () => {
         Danh sách nhóm quyền
       </Box>
       <TableFilterSearch
+        loading={isLoading}
         columns={columnsRole({
           onClickDelete,
           onClickDetail,

@@ -39,7 +39,7 @@ const HomeScreen = () => {
   });
   const { filters: filtersMeetingNote } = useFiltersHandler({ page: 0 });
   const { data: dataListMeetingNote, refetch: refetchMeetingNote, setData: setNoteData } = useGetListMeetingNote(filtersMeetingNote, { isTrigger: false });
-  const { data, refetch } = useGetListMeeting(filters);
+  const { data, refetch, isLoading } = useGetListMeeting(filters);
 
   // const useGetListMeetingNote
   const paginationModel = React.useMemo(() => {
@@ -170,6 +170,7 @@ const HomeScreen = () => {
   return (
     <NavigationBar>
       <TableFilterSearch
+        loading={isLoading}
         columns={columnsMeet({
           onClickDelete,
           onClickDetail,

@@ -17,7 +17,7 @@ import EditAccount from "./editAccount";
 const ManageAccountScreen = () => {
   const [open, setOpen] = useState(false);
   const { filters, handleChangePage } = useFiltersHandler({ page: 0, perPage: 10 });
-  const { data, refetch } = useGetListUser(filters);
+  const { data, refetch, isLoading } = useGetListUser(filters);
   const [userId, setUserId] = useState();
   const [dataRow, setDataRow] = useState();
   const deleteRef = useRef<any>();
@@ -76,6 +76,7 @@ const ManageAccountScreen = () => {
         Danh sách tài khoản
       </Box>
       <TableFilterSearch
+        loading={isLoading}
         filters={filters}
         handleChangePage={handleChangePage}
         columns={columnsAcc({

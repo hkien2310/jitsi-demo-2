@@ -25,7 +25,7 @@ import { ImageSource } from '../../assets/Image';
 import ButtonCommon from '../Button';
 import AuthServices from '../../services/Auth.services';
 import cacheKeys from '../../const/cachedKeys';
-import { useSave } from '../../store/useStores';
+import { useGet, useSave } from '../../store/useStores';
 
 const drawerWidth = 350;
 
@@ -84,8 +84,8 @@ interface MainLayoutProps {
 
 const listSideBar = [
     // {path: '/call', name: "Call"},
-    { path: '/dashboard', name: "Dashboard", icon: ImageSource.category },
-    { path: '/', name: "Quản lý cuộc họp", icon: ImageSource.monitor },
+    { path: '/', name: "Dashboard", icon: ImageSource.category },
+    { path: '/meeting', name: "Quản lý cuộc họp", icon: ImageSource.monitor },
     { path: '/role', name: "Quản lý nhóm quyền", icon: ImageSource.people },
     { path: '/account', name: "Quản lý tài khoản", icon: ImageSource.data },
 ]
@@ -93,12 +93,26 @@ const listSideBar = [
 const NavigationBar = ({ children }: MainLayoutProps) => {
     const location = useLocation();
     const theme = useTheme();
-    const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
+    const controlRaw = useGet(cacheKeys.CONTROL_SIDE_BAR)
+    const control = React.useMemo(() => {
+        if(controlRaw === undefined) {
+            return true
+        } else {
+            return controlRaw
+        }
+    }, [controlRaw])
     const save = useSave()
 
-    const handleToggle = () => {
-        setOpen((prev) => !prev)
+    const handleToggle = (nextAction?: () => void) => {
+        save(cacheKeys.CONTROL_SIDE_BAR, !control)
+        if(control) {
+            setTimeout(() => {
+                nextAction?.()
+                // save(cacheKeys.CONTROL_SIDE_BAR, !control)
+            }, 200)
+        }
+
     }
 
 
@@ -112,7 +126,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                             <IconButton
                                 color="inherit"
                                 aria-label="open drawer"
-                                onClick={handleToggle}
+                                onClick={() => handleToggle()}
                                 edge="start"
                                 sx={{ mr: 2 }}
                             >
@@ -141,17 +155,20 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                 }}
                 variant="persistent"
                 anchor="left"
-                open={open}
+                open={Boolean(control)}
             >
                 <DrawerHeader>
-                    <IconButton onClick={handleToggle}>
+                    <IconButton onClick={() => handleToggle()}>
                         {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
                 <List sx={{ padding: '8px', flex: 1, display: 'flex', flexDirection: 'column' }}>
                     {listSideBar.map((text, index) => (
-                        <ListItem key={index} disablePadding onClick={() => navigate(text.path)}>
+                        <ListItem key={index} disablePadding onClick={() => {
+                            handleToggle(() => navigate(text.path))
+                            
+                        }}>
                             <ListItemButton
                                 style={{
                                     backgroundColor: text?.path === location.pathname ? colors.background.sideBarSelected : 'unset',
@@ -188,17 +205,17 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                         AuthServices.logout()
                         save(cacheKeys.IS_LOGGED, false)
                     }}>
-                    <img alt={''} src={ImageSource.logout} style={{ fontSize: '20px', padding: '10px', borderRadius: 1000, background: 'white', marginRight: '10px'}} />
+                    <img alt={''} src={ImageSource.logout} style={{ fontSize: '20px', padding: '10px', borderRadius: 1000, background: 'white', marginRight: '10px' }} />
                     Đăng xuất
                 </Box>
 
             </Drawer>
 
-            <Main open={open} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', }}>
+            <Main open={Boolean(control)} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', }}>
                 <DrawerHeader />
                 <Box sx={{ flex: 1 }} onClick={(e) => {
-                    if (open) {
-                        setOpen(false)
+                    if (Boolean(control)) {
+                        handleToggle()
                     } else {
                         e.preventDefault()
                     }

@@ -43,16 +43,16 @@ const LoginScreen = () => {
         >
             {({ values, handleSubmit, setFieldValue }) => {
                 return <Box sx={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#13167d', flexDirection: 'column' }}>
-                    <Box sx={{ width: '75%', backgroundColor: 'white' }}>
-                        <Grid container >
+                    <Box sx={{ width: '75vw', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRadius: '8px' }}>
+                        <Grid container>
                             <Grid item xs={8}>
-                                <img src={ImageSource.loginAvatar} alt='' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <img src={ImageSource.loginAvatar} alt='' style={{ width: '100%', height: '60vh', objectFit: 'cover', borderRadius: '8px', }} />
                             </Grid>
                             <Grid item xs={4} p={1}>
                                 <Box sx={{ display: 'flex', height: '100%' }}>
                                     <Box>
                                         <Box pb={2} pt={5}>
-                                            <img src={ImageSource.logoWeb} alt='' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={ImageSource.logoWeb} alt='' style={{ width: '100%', height: '100%', objectFit: 'cover', padding: '40px' }} />
                                         </Box>
                                         <Box p={1}>
                                             {/* <Box id="username" sx={{ textAlign: 'left' }}>Tên đăng nhập</Box> */}
@@ -85,32 +85,34 @@ const LoginScreen = () => {
                                                 fullWidth
                                             />
                                         </Box>
-                                        <Box p={1} sx={{ textAlign: 'left', fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                                        {/* <Box p={1} sx={{ textAlign: 'left', fontSize: '14px', display: 'flex', alignItems: 'center' }}>
                                             <Checkbox checked={values.check} onChange={() => setFieldValue('check', !values.check)} />
                                             <Typography>
                                                 Ghi nhớ đăng nhập
                                             </Typography>
-                                        </Box>
-                                        <ButtonCommon
-                                            fullWidth 
-                                            variant="contained"
-                                            onClick={() => handleSubmit()} 
-                                            sx={{ 
-                                                padding: '16px',
-                                                // margin: '16px', 
-                                                backgroundColor: '#2f8a46', 
-                                                color: 'white', 
-                                                fontWeight: 'bold', 
-                                                borderRadius: '10px' 
+                                        </Box> */}
+                                        <Box px={1} mt={2}>
+                                            <ButtonCommon
+                                                fullWidth
+                                                variant="contained"
+                                                onClick={() => handleSubmit()}
+                                                sx={{
+                                                    padding: '16px',
+                                                    // margin: '16px', 
+                                                    backgroundColor: '#2f8a46',
+                                                    color: 'white',
+                                                    fontWeight: 'bold',
+                                                    borderRadius: '10px'
                                                 }}
                                             >
-                                            Đăng nhập
-                                        </ButtonCommon>
+                                                Đăng nhập
+                                            </ButtonCommon>
+                                        </Box>
                                     </Box>
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Typography py={2} sx={{ fontSize: '14px', color: 'grey', textAlign: 'center', width: '100%',  }}>
+                        <Typography py={2} sx={{ fontSize: '14px', color: 'grey', textAlign: 'center', width: '100%', }}>
                             @2024 Created
                         </Typography>
 

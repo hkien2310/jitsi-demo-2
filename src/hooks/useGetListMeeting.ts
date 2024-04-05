@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import cloneDeep from "lodash/cloneDeep";
 import { isEmpty } from "lodash";
 
@@ -26,10 +26,11 @@ const useGetListMeeting = (
 ) => {
     //! State
     const { isTrigger = true, refetchKey = "" } = options;
+    const trigger = useRef(false)
 
     const save = useSave();
     const [data, setData] = useState<IResponseMeeting>();
-    const [isLoading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(true);
     const [isRefetching, setRefetching] = useState(false);
     const [isFetchingPage, setFetchingPage] = useState(false);
     const [error, setError] = useState<unknown>(null);
@@ -38,6 +39,7 @@ const useGetListMeeting = (
 
     //! Function
     const fetch: () => Promise<IResponseListMeeting> | undefined = useCallback(() => {
+        trigger.current = true
         if (!isTrigger) {
             return;
         }
@@ -51,6 +53,8 @@ const useGetListMeeting = (
                     setError(error);
                     reject(error);
                     setFetchingPage(false);
+                } finally {
+                    trigger.current = false
                 }
             })();
         });
@@ -81,7 +85,7 @@ const useGetListMeeting = (
     const refetch = useCallback(async (filter?: IRequestGetListMeeting) => {
         try {
             setRefetching(true);
-            const nextFilters = parseRequest(filter ? filter : filters );
+            const nextFilters = parseRequest(filter ? filter : filters);
             const response = await MeetingServices.getListMeeting(nextFilters);
             checkConditionPass(response);
             setRefetching(false);
@@ -105,9 +109,8 @@ const useGetListMeeting = (
                 if (shouldSetData && response) {
                     checkConditionPass(response);
                 }
-                setLoading(false);
             } catch (error) {
-                setError(error);
+            } finally {
                 setLoading(false);
             }
         },
@@ -115,18 +118,20 @@ const useGetListMeeting = (
     );
 
     useEffect(() => {
-        let shouldSetData = true;
-        if (filters?.page !== undefined && filters?.page <= 0) {
-            refetchWithLoading(shouldSetData);
-            return;
+        if (!trigger.current) {
+            let shouldSetData = true;
+            if (filters?.page !== undefined && filters?.page <= 0) {
+                refetchWithLoading(shouldSetData);
+                return;
+            }
+
+            //* If offset > 0 -> fetch more
+            fetchChangePage(shouldSetData);
+
+            return () => {
+                shouldSetData = false;
+            };
         }
-
-        //* If offset > 0 -> fetch more
-        fetchChangePage(shouldSetData);
-
-        return () => {
-            shouldSetData = false;
-        };
     }, [filters?.page, fetchChangePage, refetchWithLoading]);
 
     return {
