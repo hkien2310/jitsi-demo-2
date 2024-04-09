@@ -51,6 +51,7 @@ const ManageRoleScreen = () => {
   };
   const onClickDetail = (row: any) => {
     setItemSelected(row)
+    setItemSelectedIsEdit(false)
     setOpenDetail(true)
   };
   const onClickEdit = (row: any) => {
@@ -137,8 +138,9 @@ const ManageRoleScreen = () => {
           title={"Chi tiết nhóm quyền"}
           open={openDetail}
           handleClose={() => {
-            setOpenDetail(false);
-            // setDataRow(undefined);
+            setOpenDetail(false)
+            setItemSelected(undefined)
+            setItemSelectedIsEdit(false)
           }}
           sx={{ pt: '23px', pb: '25px' }}
           content={

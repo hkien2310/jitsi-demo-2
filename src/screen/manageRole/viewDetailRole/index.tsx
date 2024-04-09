@@ -112,6 +112,7 @@ const ViewDetailRole = (props: IProps) => {
           const checkAll = dataPermission?.data?.every((el: any) => {
             return values?.permission?.some((e: any) => e?.id === el?.id)
           })
+          console.log(isEdit, 'isEditisEditisEdit')
           return (
             <Form>
               <Grid container spacing={2}>
@@ -127,7 +128,7 @@ const ViewDetailRole = (props: IProps) => {
                     sx={{ mb: "24px" }}
                   />
                 </Grid>
-                <Grid item>
+                <Grid item xs={12}>
                   <Grid container spacing={ isMobile ? 2 : 8}>
                     <Grid item xs={12} md={6}>
                       <LabelCommon label="Quyền có thể sử dụng" />
@@ -220,7 +221,7 @@ const ViewDetailRole = (props: IProps) => {
 
                     <Grid item xs={12} md={6} sx={{ display: "flex" }}>
                       <Box sx={{ width: "100%" }}>
-                        <Box sx={{}}>Các quyền đã được gán</Box>
+                        <Box sx={{marginBottom: '6px'}}>Các quyền đã được gán</Box>
                         <Box sx={{ boxShadow: "-10px 10px 0px 0px #E6EAEE", border: "1px solid #E7E7E7", borderRadius: "10px" }}>
                           {values.permission.length === 0 ?
                             <Box sx={{ textAlign: 'center' }} py={3}>

@@ -168,7 +168,7 @@ const AddRole = (props: IProps) => {
 
                 <Grid item xs={12} md={6} sx={{ display: "flex" }}>
                   <Box sx={{ width: "100%" }}>
-                    <Box sx={{}}>Các quyền đã được gán</Box>
+                    <Box sx={{marginBottom: '6px'}}>Các quyền đã được gán</Box>
                     <Box sx={{ boxShadow: "-10px 10px 0px 0px #E6EAEE", border: "1px solid #E7E7E7", borderRadius: "10px" }}>
                       {values.permission.length === 0 ?
                         <Box sx={{ textAlign: 'center' }} py={3}>
