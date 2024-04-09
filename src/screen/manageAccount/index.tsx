@@ -3,7 +3,7 @@ import DialogCommon from "../../component/dialog";
 import NavigationBar from "../../component/NavigationBar";
 import TableFilterSearch from "../../component/TableFilterSearch";
 import columnsAcc from "./columns";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import AddAccount from "./addAccount";
 import useGetListUser from "../../hooks/useGetListUser";
 import useFiltersHandler from "../../hooks/useFilters";
@@ -13,6 +13,9 @@ import { showError } from "../../helper/toast";
 import ButtonCommon from "../../component/Button";
 import DialogConfirm from "../../component/dialog/DialogConfirm";
 import EditAccount from "./editAccount";
+import cacheKeys from "../../const/cachedKeys";
+import { DeviceType } from "../../hooks/useDivices";
+import { useGet } from "../../store/useStores";
 
 const ManageAccountScreen = () => {
   const [open, setOpen] = useState(false);
@@ -23,6 +26,10 @@ const ManageAccountScreen = () => {
   const deleteRef = useRef<any>();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+  const isMobile = useMemo(() => {
+    return deviceType === DeviceType.MOBILE
+  }, [deviceType])
 
   const dataRows = React.useMemo(() => {
     return (
@@ -83,6 +90,7 @@ const ManageAccountScreen = () => {
           onClickDelete,
           onClickDetail,
           onClickEdit,
+          isMobile
         })}
         dataRows={dataRows || []}
         onSearchAndFilter={(values, filter) => {
@@ -127,7 +135,7 @@ const ManageAccountScreen = () => {
           }}
           sx={{ pt: "23px", pb: "25px" }}
           content={
-            <Box sx={{ width: "35vw" }}>
+            <Box sx={{ minWidth: isMobile ? '70vw' : "35vw" }}>
               <AddAccount
                 id={userId}
                 refetchList={refetch}
@@ -152,7 +160,7 @@ const ManageAccountScreen = () => {
           }}
           sx={{ pt: "23px", pb: "25px" }}
           content={
-            <Box sx={{ width: "35vw" }}>
+            <Box sx={{ minWidth: isMobile ? '70vw' : "35vw" }}>
               <EditAccount
                 id={userId}
                 refetchList={refetch}

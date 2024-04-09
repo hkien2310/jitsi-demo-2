@@ -7,10 +7,11 @@ interface IProps {
   onClickDetail: (row: any) => void;
   onClickEdit: (row: any) => void;
   onClickDelete: (row: any) => void;
+  isMobile: boolean
 }
 
 const columnsRole = (props: IProps) => {
-  const { onClickDetail, onClickEdit, onClickDelete } = props;
+  const { onClickDetail, onClickEdit, onClickDelete, isMobile } = props;
   // const userInfo = AuthServices.getUserLocalStorage();
 
   const columns: GridColDef[] = [
@@ -18,6 +19,7 @@ const columnsRole = (props: IProps) => {
       field: "stt",
       headerName: "STT",
       flex: 1,
+      minWidth: isMobile ? 25 : undefined,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -27,6 +29,7 @@ const columnsRole = (props: IProps) => {
       field: "name",
       headerName: "Tên nhóm",
       flex: 1,
+      minWidth: isMobile ? 200 : undefined,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -36,6 +39,7 @@ const columnsRole = (props: IProps) => {
       field: "code",
       headerName: "Mã nhóm",
       flex: 1,
+      minWidth: isMobile ? 200 : undefined,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -45,6 +49,7 @@ const columnsRole = (props: IProps) => {
       field: "action",
       headerName: "Hành động",
       sortable: false,
+      minWidth: isMobile ? 250 : undefined,
       flex: 1,
       align: "center",
       headerAlign: "center",

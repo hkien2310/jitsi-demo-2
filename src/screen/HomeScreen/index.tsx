@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import queryString from "query-string";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonCommon from "../../component/Button";
 import NavigationBar from "../../component/NavigationBar";
@@ -20,8 +20,13 @@ import columnsMeet, { EnumMeetingStatus } from "./columns";
 // import typeMeetingOptions from "../../../AddMeeting"
 import TableFilterSearch from "../../component/TableFilterSearch";
 import StatusSelect from "./component/StatusSelect";
+import { DeviceType } from "../../hooks/useDivices";
 
 const HomeScreen = () => {
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+  const isMobile = useMemo(() => {
+    return deviceType === DeviceType.MOBILE
+  }, [deviceType])
   const navigate = useNavigate();
   const deleteRef = useRef<any>();
   const completeRef = useRef<any>();
@@ -177,6 +182,7 @@ const HomeScreen = () => {
           onClickNote,
           onComplete,
           onJoin,
+          isMobile
         })}
         filters={filters}
         handleChangePage={handleChangePage}
@@ -227,7 +233,7 @@ const HomeScreen = () => {
             setDataRow(undefined);
           }}
           content={
-            <Box sx={{ width: "55vw" }}>
+            <Box sx={{ width: isMobile ? '70vw' : "55vw" }}>
               <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} />
             </Box>
           }

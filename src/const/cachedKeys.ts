@@ -10,6 +10,7 @@ const cacheKeys = {
   SEARCH_HOME: 'SEARCH_HOME',
   SEARCH_USER_GROUP: 'SEARCH_USER_GROUP',
   CONTROL_SIDE_BAR: 'CONTROL_SIDE_BAR',
+  DEVICE_TYPE: 'DEVICE_TYPE'
 }
 
 export default cacheKeys

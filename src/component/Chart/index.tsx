@@ -4,6 +4,9 @@ import ReactApexChart from "react-apexcharts";
 import ButtonSelect from "../Button/ButtonSelect";
 import { ApexOptions } from "apexcharts";
 import { IResponseStatisticsItem } from "../../interface/dashboard";
+import cacheKeys from "../../const/cachedKeys";
+import { useGet } from "../../store/useStores";
+import { DeviceType } from "../../hooks/useDivices";
 
 interface IProps {
   data: IResponseStatisticsItem[]
@@ -29,6 +32,7 @@ const listMonth = [
 const ApexChart = (props: IProps) => {
   const { month, data, onMonthChange } = props
   const category = useMemo(() => (data?.map((e) => e?.date) || []), [data])
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
   const series = useMemo(() => ([{
     name: "Số cuộc họp",
     data: data?.map((e) => e?.meetingCount)
@@ -222,6 +226,7 @@ const ApexChart = (props: IProps) => {
     const headerChart = document.getElementById('header-chard')
     const height = chartContainer?.offsetHeight
     const headerChartHeight = headerChart?.offsetHeight
+
     setHeightChart((height ?? 0) - (headerChartHeight ?? 0))
   }, [])
 
@@ -233,10 +238,10 @@ const ApexChart = (props: IProps) => {
           <Box sx={{ opacity: 0.6, fontSize: '20px', fontWeight: 500 }}>Tổng số cuộc họp</Box>
           <Box>
             <span>
-              <span style={{fontSize: '40px', fontWeight: 600}}>
+              <span style={{ fontSize: '40px', fontWeight: 600 }}>
                 {series?.[0]?.data?.reduce((total, current) => total + current, 0).toLocaleString()}
               </span>
-              <span style={{fontSize: '20px', fontWeight: 600}}>
+              <span style={{ fontSize: '20px', fontWeight: 600 }}>
                 {` trong tháng ${month}`}
               </span>
             </span>
@@ -246,9 +251,12 @@ const ApexChart = (props: IProps) => {
           <ButtonSelect options={listMonth} value={month} onChange={(value) => onMonthChange(value)} defaultText="" />
         </Box>
       </Box>
-      <Box id="chart">
-        <ReactApexChart options={options} series={series} type="area" height={heightChart - 64 * 1.5} />
-      </Box>
+      {
+        deviceType !== DeviceType.MOBILE &&
+        <Box id="chart">
+          <ReactApexChart options={options} series={series} type="area" height={(heightChart - 64 * 1.5)} />
+        </Box>
+      }
       <Box id="html-dist"></Box>
     </Box>
   );

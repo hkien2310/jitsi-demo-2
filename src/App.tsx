@@ -8,6 +8,7 @@ import { useGet, useSave } from './store/useStores';
 import AuthServices from './services/Auth.services';
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useDeviceType from './hooks/useDivices';
 
 
 const rowsDemo = [
@@ -41,13 +42,15 @@ function App() {
       save(cacheKeys.IS_LOGGED, false)
     }
   }, [save])
+
+  useDeviceType()
   return (
     <div className="App">
       <ToastContainer
         position="top-right"
         autoClose={5000}
         style={{zIndex: 10000}}
-        hideProgressBar={true}
+        hideProgressBar={false}
         newestOnTop
         // closeButton={false}
         closeOnClick

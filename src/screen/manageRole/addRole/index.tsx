@@ -10,7 +10,9 @@ import useFiltersHandler from "../../../hooks/useFilters";
 import useGetListPermission from "../../../hooks/useGetListPermission";
 import { IBodyPostCreateUserGroup } from "../../../interface/usergroup";
 import UserGroupService from "../../../services/UserGroup.service";
-import { useSave } from "../../../store/useStores";
+import { useGet, useSave } from "../../../store/useStores";
+import { DeviceType } from "../../../hooks/useDivices";
+import { useMemo } from "react";
 
 interface IProps {
   onClose: () => void
@@ -30,6 +32,10 @@ const AddRole = (props: IProps) => {
     perPage: 100,
   })
   const { data: dataPermission, refetch: refetchPermission } = useGetListPermission(filterPermission)
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+  const isMobile = useMemo(() => {
+    return deviceType ===  DeviceType.MOBILE
+  }, [deviceType])
 
   // !Function
   // const onClose = () => { };
@@ -75,8 +81,8 @@ const AddRole = (props: IProps) => {
                 />
               </Grid>
 
-              <Grid container spacing={8}>
-                <Grid item xs={6}>
+              <Grid container spacing={isMobile ? 2 : 8}>
+                <Grid item xs={12} md={6}>
                   <LabelCommon label="Quyền có thể sử dụng" />
                   <Box sx={{ borderRadius: "10px", border: "1px solid #E7E7E7" }}>
                     <Box
@@ -160,7 +166,7 @@ const AddRole = (props: IProps) => {
                   </Box>
                 </Grid>
 
-                <Grid item xs={6} sx={{ display: "flex" }}>
+                <Grid item xs={12} md={6} sx={{ display: "flex" }}>
                   <Box sx={{ width: "100%" }}>
                     <Box sx={{}}>Các quyền đã được gán</Box>
                     <Box sx={{ boxShadow: "-10px 10px 0px 0px #E6EAEE", border: "1px solid #E7E7E7", borderRadius: "10px" }}>

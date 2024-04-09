@@ -74,7 +74,6 @@ const useGetListFilesDashboard = (
                 setData(response.data)
             }
             if(response?.data?.data) {
-                console.log('á đù má', response?.data?.data?.length, filters?.perPage)
                 setHasMore(response?.data?.data?.length === (filters?.perPage || 10) )
             }
         }
