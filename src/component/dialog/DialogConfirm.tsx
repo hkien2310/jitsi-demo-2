@@ -32,17 +32,17 @@ const Transition = React.forwardRef(function Transition(
 });
 export default function DialogConfirm(props: IProps) {
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down("xs"));
   const { open, handleClose, title, description, icon, children, bgcolor, subTitle, content, isDelete } = props;
 
   return (
     <React.Fragment>
       <Dialog maxWidth={"lg"} fullScreen={fullScreen} open={open} onClose={handleClose} aria-labelledby="responsive-dialog-title">
         <Button sx={{ padding: 0, minWidth: 0, position: 'absolute', right: '10px', top: '10px' }} onClick={() => handleClose()}>
-          <img src={ImageSource.close} />
+          <img src={ImageSource.close} alt={''}/>
         </Button>
         <Box sx={{ justifyContent: "center !important ", alignItems: "center !important", display: "flex", pt: '36px' }}>
-          <img src={ isDelete ? ImageSource.warningDelete : ImageSource.warning } style={{ height: "48px", width: "48px" }} />
+          <img src={ isDelete ? ImageSource.warningDelete : ImageSource.warning } style={{ height: "48px", width: "48px" }} alt={''}/>
         </Box>
         <Box>{content}</Box>
         <DialogContent sx={{ padding: 0 }}>{children}</DialogContent>

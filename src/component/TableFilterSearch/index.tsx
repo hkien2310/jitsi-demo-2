@@ -1,5 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { FastField, Form, Formik, FormikProps } from "formik";
 import * as React from "react";
@@ -10,6 +10,9 @@ import { calculateTotalPages, generateMessage } from "../../helper/function";
 import ButtonCommon from "../Button";
 import TextField from "../TextField";
 import { CustomNoRowsOverlay } from "./component/NoRows";
+import cacheKeys from "../../const/cachedKeys";
+import { DeviceType } from "../../hooks/useDivices";
+import { useGet } from "../../store/useStores";
 
 interface ITableFilterSearch {
   columns: GridColDef[];
@@ -58,6 +61,10 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
   //   page: 0,
   //   perPage: 10,
   // });
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+  const isMobile = React.useMemo(() => {
+    return deviceType === DeviceType.MOBILE
+  }, [deviceType])
 
   const paginationModel = React.useMemo(() => {
     return {
@@ -65,6 +72,7 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
       page: filters?.page,
     };
   }, [filters]);
+
   // const loadingCVT = React.useMemo(() => {
   //   setTimeout(() => {
   //     return Boolean(loading)
@@ -83,7 +91,9 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
         {(formikProps) => {
           return (
             <Form>
-              <Box
+              <Grid
+                spacing={2}
+                container
                 sx={{
                   justifyContent: "space-between",
                   flex: 1,
@@ -91,50 +101,59 @@ const TableFilterSearch = (props: ITableFilterSearch) => {
                 }}
                 mb={2}
               >
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <FastField
-                    style={{ width: 400 }}
-                    size="medium"
-                    id={"search"}
-                    component={TextField}
-                    name={"search"}
-                    placeholder={searchPlaceholder}
-                    fullWidth
-                  />
-                  <ButtonCommon
-                    variant="contained"
-                    color="secondary"
-                    // type="submit"
-                    onClick={() => formikProps.handleSubmit()}
-                    sx={{ height: "56px", width: "56px", ml: "20px" }}
-                  >
-                    <img
-                      src={ImageSource.searchIcon}
-                      style={{ width: "28px", height: "28px" }}
-                      alt={""}
+                <Grid item md={6} xs={12}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <FastField
+                      style={{ width: 400 }}
+                      size={isMobile ? "small" : "medium"}
+                      id={"search"}
+                      component={TextField}
+                      name={"search"}
+                      placeholder={searchPlaceholder}
+                      fullWidth
                     />
-                  </ButtonCommon>
-                  <Box ml={3} sx={{ height: "100%" }}>
-                    {filterComponent && filterComponent(formikProps)}
-                  </Box>
-                </Box>
-                {onClickRight && rightTitle && (
-                  <Box>
                     <ButtonCommon
                       variant="contained"
-                      sx={{
-                        height: "56px",
-                        padding: "14px 16px",
-                        borderRadius: 2,
-                      }}
-                      startIcon={<AddIcon />}
-                      onClick={onClickRight}
+                      color="secondary"
+                      // type="submit"
+                      onClick={() => formikProps.handleSubmit()}
+                      sx={{ height: isMobile ? "40px" : "56px", width: isMobile ? "40px" : "56px", ml: "20px" }}
                     >
-                      {rightTitle}
+                      <img
+                        src={ImageSource.searchIcon}
+                        style={{ width: isMobile ? "20px" : "28px", height: isMobile ? "20px" :"28px" }}
+                        alt={""}
+                      />
                     </ButtonCommon>
                   </Box>
-                )}
-              </Box>
+                </Grid>
+                <Grid item md={2} xs={6}>
+                  <Box sx={{ height: "100%", display: 'flex' }}>
+                    {filterComponent && filterComponent(formikProps)}
+                  </Box>
+                </Grid>
+                <Grid item md={4} xs={6}>
+                  <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
+                  {onClickRight && rightTitle && (
+                    <Box>
+                      <ButtonCommon
+                        variant="contained"
+                        sx={{
+                          height: isMobile ? "40px" : "56px",
+                          // padding: "14px 16px",
+                          borderRadius: 2,
+                        }}
+                        startIcon={deviceType !== DeviceType.MOBILE && <AddIcon />}
+                        onClick={onClickRight}
+                      >
+                        {deviceType === DeviceType.MOBILE ? <AddIcon /> : rightTitle}
+                      </ButtonCommon>
+                    </Box>
+                  )}
+                  </Box>
+                </Grid>
+
+              </Grid>
             </Form>
           );
         }}

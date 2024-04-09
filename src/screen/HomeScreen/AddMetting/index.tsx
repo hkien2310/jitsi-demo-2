@@ -92,23 +92,23 @@ const AddMeeting = (props: IProps) => {
       }) || []
     );
   }, [data?.data]);
-  
+
   const isDetail = Boolean(dataRow);
   const filterMember = dataRow
     ? dataRow?.members
-        .filter((elm: any) => elm?.memberType !== "SECRETARY")
-        .map((e: any) => {
-          return {
-            label: e?.user?.fullname,
-            value: e?.user?.id,
-          };
-        })
+      .filter((elm: any) => elm?.memberType !== "SECRETARY")
+      .map((e: any) => {
+        return {
+          label: e?.user?.fullname,
+          value: e?.user?.id,
+        };
+      })
     : [
-        {
-          value: userInfo?.id,
-          label: userInfo?.fullname,
-        },
-      ];
+      {
+        value: userInfo?.id,
+        label: userInfo?.fullname,
+      },
+    ];
   const handleChooseFile = async (files: File[] | null) => {
     ref?.current?.setFieldValue("uploadFile", files?.[0]);
     // if (files) {
@@ -125,13 +125,13 @@ const AddMeeting = (props: IProps) => {
   };
   const filterSecretary = dataRow
     ? dataRow?.members
-        .filter((elm: any) => elm?.memberType === "SECRETARY")
-        .map((e: any) => {
-          return {
-            label: e?.user.fullname,
-            value: e?.user?.id,
-          };
-        })?.[0]
+      .filter((elm: any) => elm?.memberType === "SECRETARY")
+      .map((e: any) => {
+        return {
+          label: e?.user.fullname,
+          value: e?.user?.id,
+        };
+      })?.[0]
     : "";
 
   const file = {
@@ -198,7 +198,6 @@ const AddMeeting = (props: IProps) => {
                 help.setSubmitting(false)
               }
             } catch (error: any) {
-              console.log(error, "error1222322");
               help.setSubmitting(false)
               showError(error);
             }
@@ -207,67 +206,65 @@ const AddMeeting = (props: IProps) => {
           enableReinitialize
         >
           {({ values, setFieldValue, handleSubmit, errors, isValid, isSubmitting }) => {
-            console.log("123__________", values?.endTime);
             // console.log("error__", values);
 
             return (
               <Form>
-                <Grid container spacing={2} sx={{ mb: 2 }}>
-                  <Grid item xs={7}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
                     <LabelCommon label="Tiêu đề" />
                     <FastField component={TextField} name="name" fullWidth required placeholder="Nhập tiêu đề cuộc họp" disabled={isDetail} />
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid item xs={12} md={6}>
                     <LabelCommon label="Loại phiên họp" />
                     <FastField options={typeMeetingOptions} component={SelectField} name="type" required disabled={isDetail} />
                   </Grid>
-                </Grid>
-                <Grid item xs={12} md={12} sx={{ mb: 2 }}>
-                  <LabelCommon label="Nội dung" />
-                  <FastField
-                    component={TextField}
-                    name="description"
-                    fullWidth
-                    multiline
-                    rows={3}
-                    required
-                    placeholder="Vui lòng nhập nội dung"
-                    disabled={isDetail}
-                  />
-                </Grid>
-                <Grid item xs={12} md={12} sx={{ mb: 2 }}>
-                  <LabelCommon label="Chương trình họp" />
-                  <Box sx={{ flex: 5 }}>
-                    <Box sx={{ pb: !values?.acceptUploadFile ? 2 : 0 }}>
-                      {!values?.acceptUploadFile ? <FastField component={Tiny} name="agenda" disabled={isDetail} /> : undefined}
+                  <Grid item xs={12} md={12}>
+                    <LabelCommon label="Nội dung" />
+                    <FastField
+                      component={TextField}
+                      name="description"
+                      fullWidth
+                      multiline
+                      rows={3}
+                      required
+                      placeholder="Vui lòng nhập nội dung"
+                      disabled={isDetail}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={12}>
+                    <LabelCommon label="Chương trình họp" />
+                    <Box sx={{ flex: 5 }}>
+                      <Box sx={{ pb: !values?.acceptUploadFile ? 2 : 0 }}>
+                        {!values?.acceptUploadFile ? <FastField component={Tiny} name="agenda" disabled={isDetail} /> : undefined}
+                      </Box>
+                      <Box>
+                        <FastField
+                          disabled={isDetail}
+                          name="acceptUploadFile"
+                          component={CheckBoxField}
+                          label={"Chọn tải file"}
+                          sxContainer={{
+                            gap: "4px",
+                            ".Mui-checked": {
+                              color: `${green[800]} !important`,
+                            },
+                          }}
+                        />
+                      </Box>
+                      {values?.acceptUploadFile ? (
+                        <UploadFile
+                          hideUpload={Boolean(dataRow)}
+                          onFileSelected={handleChooseFile}
+                          files={values.uploadFile ? [values.uploadFile] : []}
+                          multiple={false}
+                        />
+                      ) : undefined}
                     </Box>
-                    <Box>
-                      <FastField
-                        disabled={isDetail}
-                        name="acceptUploadFile"
-                        component={CheckBoxField}
-                        label={"Chọn tải file"}
-                        sxContainer={{
-                          gap: "4px",
-                          ".Mui-checked": {
-                            color: `${green[800]} !important`,
-                          },
-                        }}
-                      />
-                    </Box>
-                    {values?.acceptUploadFile ? (
-                      <UploadFile
-                        hideUpload={Boolean(dataRow)}
-                        onFileSelected={handleChooseFile}
-                        files={values.uploadFile ? [values.uploadFile] : []}
-                        multiple={false}
-                      />
-                    ) : undefined}
-                  </Box>
-                  
-                </Grid>
-                <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}>
-                  <Grid item xs={5}>
+
+                  </Grid>
+                  {/* <Grid item xs={12} md={12} sx={{ gridTemplateColumns: "1fr 1fr", gap: 2, display: "grid", pb: 2 }}> */}
+                  <Grid item xs={12} md={6}>
                     <LabelCommon label="Thời gian từ" />
                     <Field
                       minDate={dayjs()}
@@ -282,7 +279,7 @@ const AddMeeting = (props: IProps) => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={5}>
+                  <Grid item xs={12} md={6}>
                     <LabelCommon label="Thời gian hết hạn" />
                     <Field
                       component={DateTimePickerField}
@@ -293,25 +290,24 @@ const AddMeeting = (props: IProps) => {
                       required
                       placeholder="Chọn thời gian kết thúc"
                       disabled={isDetail}
-                      // formatCustom={'YYYY-MM-DD HH:mm:ss'}
+                    // formatCustom={'YYYY-MM-DD HH:mm:ss'}
                     />
                   </Grid>
-                </Grid>
-                <Grid item xs={6} md={12} sx={{ pb: 2 }}>
-                  <LabelCommon label="Địa điểm" />
-                  <FastField
-                    multiline
-                    rows={3}
-                    fullWidth
-                    component={TextField}
-                    name={"location"}
-                    required
-                    placeholder="Nhập địa điểm họp"
-                    disabled={isDetail}
-                  />
-                </Grid>
-                <Grid container spacing={2} columns={16}>
-                  <Grid item xs={8}>
+                  {/* </Grid> */}
+                  <Grid item xs={12} md={6}>
+                    <LabelCommon label="Địa điểm" />
+                    <FastField
+                      multiline
+                      rows={3}
+                      fullWidth
+                      component={TextField}
+                      name={"location"}
+                      required
+                      placeholder="Nhập địa điểm họp"
+                      disabled={isDetail}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
                     <LabelCommon label="Thành viên" />
                     <Grid>
                       <Field
@@ -322,14 +318,13 @@ const AddMeeting = (props: IProps) => {
                         onChangeCustomize={(e: any, value: any) => {
                           setFieldValue("assigned", value);
                         }}
-                        getOptionDisabled={(option: any) => console.log(option, 'ádasdasd')}
                         options={listOptions}
                         disabled={isDetail}
                       />
                     </Grid>
                   </Grid>
 
-                  <Grid item xs={8}>
+                  <Grid item xs={12} md={6}>
                     <LabelCommon label="Thư ký" />
                     <Grid>
                       <Field
@@ -345,25 +340,25 @@ const AddMeeting = (props: IProps) => {
                       />
                     </Grid>
                   </Grid>
+                  {!isDetail ? (
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
+                      <ButtonCommon variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>
+                        Huỷ
+                      </ButtonCommon>
+                      <ButtonCommon
+                        disabled={isSubmitting}
+                        variant="contained"
+                        // type="submit"
+                        onClick={() => handleSubmit()}
+                        sx={{ fontWeight: "600", ml: 1 }}
+                      >
+                        Tạo mới
+                      </ButtonCommon>
+                    </Box>
+                  ) : (
+                    <Box />
+                  )}
                 </Grid>
-                {!isDetail ? (
-                  <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 5 }} width="100%">
-                    <ButtonCommon variant="outlined" onClick={onClose} sx={{ fontWeight: "600" }}>
-                      Huỷ
-                    </ButtonCommon>
-                    <ButtonCommon
-                      disabled={isSubmitting}
-                      variant="contained"
-                      // type="submit"
-                      onClick={() => handleSubmit()}
-                      sx={{ fontWeight: "600", ml: 1 }}
-                    >
-                      Tạo mới
-                    </ButtonCommon>
-                  </Box>
-                ) : (
-                  <Box />
-                )}
               </Form>
             );
           }}

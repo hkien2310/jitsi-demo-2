@@ -8,16 +8,18 @@ interface IProps {
   onClickDetail: (row: any) => void;
   onClickEdit: (row: any) => void;
   onClickDelete: (row: any) => void;
+  isMobile: boolean
 }
 
 const columnsAcc = (props: IProps) => {
-  const { onClickDetail, onClickEdit, onClickDelete } = props;
+  const { onClickDetail, onClickEdit, onClickDelete, isMobile } = props;
 
   const columns: GridColDef[] = [
     {
       field: "stt",
       headerName: "STT",
       flex: 1,
+      minWidth: isMobile ? 25 : undefined,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -27,6 +29,7 @@ const columnsAcc = (props: IProps) => {
       field: "username",
       headerName: "Tài khoản",
       flex: 1,
+      minWidth: isMobile ? 200 : undefined,
       align: "center",
       headerAlign: "center",
       editable: false,
@@ -35,6 +38,7 @@ const columnsAcc = (props: IProps) => {
     {
       field: "fullname",
       headerName: "Họ và tên",
+      minWidth: isMobile ? 200 : undefined,
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -44,6 +48,7 @@ const columnsAcc = (props: IProps) => {
     {
       field: "email",
       headerName: "Email",
+      minWidth: isMobile ? 200 : undefined,
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -53,6 +58,7 @@ const columnsAcc = (props: IProps) => {
     {
       field: "action",
       headerName: "Hành động",
+      minWidth: isMobile ? 250 : undefined,
       sortable: false,
       flex: 1,
       align: "center",

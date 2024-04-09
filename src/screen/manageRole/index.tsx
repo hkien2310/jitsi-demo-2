@@ -16,6 +16,7 @@ import ButtonCommon from "../../component/Button";
 import DialogConfirm from "../../component/dialog/DialogConfirm";
 import { showError } from "../../helper/toast";
 import UserGroupService from "../../services/UserGroup.service";
+import { DeviceType } from "../../hooks/useDivices";
 
 const ManageRoleScreen = () => {
   const [open, setOpen] = useState(false);
@@ -25,6 +26,10 @@ const ManageRoleScreen = () => {
   const [itemSelectIsEdit, setItemSelectedIsEdit] = useState(false);
   const save = useSave()
   const searchUserGroup = useGet(cacheKeys.SEARCH_USER_GROUP)
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+  const isMobile = useMemo(() => {
+    return deviceType === DeviceType.MOBILE
+  }, [deviceType])
 
   const { filters, handleChangePage } = useFiltersHandler({
     page: 0,
@@ -46,6 +51,7 @@ const ManageRoleScreen = () => {
   };
   const onClickDetail = (row: any) => {
     setItemSelected(row)
+    setItemSelectedIsEdit(false)
     setOpenDetail(true)
   };
   const onClickEdit = (row: any) => {
@@ -93,6 +99,7 @@ const ManageRoleScreen = () => {
           onClickDelete,
           onClickDetail,
           onClickEdit,
+          isMobile
         })}
         rowCount={data?.total || 0}
         dataRows={dataRows}
@@ -119,13 +126,10 @@ const ManageRoleScreen = () => {
           }}
           sx={{ pt: '23px', pb: '25px' }}
           content={
-            <Box sx={{ width: "55vw" }}>
-              <AddRole onClose={() => setOpen(false)} onSuccess={() => refetch({
-                ...filters,
-                textSearch: searchUserGroup,
-              })} />
-              {/* <AddMeeting refetchList={refetch} onAdd={onAdd} data={dataRow} onClose={() => setOpen(false)} /> */}
-            </Box>
+            <AddRole onClose={() => setOpen(false)} onSuccess={() => refetch({
+              ...filters,
+              textSearch: searchUserGroup,
+            })} />
           }
         />
       )}
@@ -134,8 +138,9 @@ const ManageRoleScreen = () => {
           title={"Chi tiết nhóm quyền"}
           open={openDetail}
           handleClose={() => {
-            setOpenDetail(false);
-            // setDataRow(undefined);
+            setOpenDetail(false)
+            setItemSelected(undefined)
+            setItemSelectedIsEdit(false)
           }}
           sx={{ pt: '23px', pb: '25px' }}
           content={

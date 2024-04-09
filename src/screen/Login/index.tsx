@@ -4,10 +4,13 @@ import TextField from "../../component/TextField"
 import { FormLabel } from '@mui/material';
 import AuthServices from "../../services/Auth.services";
 import cacheKeys from "../../const/cachedKeys";
-import { useSave } from "../../store/useStores";
+import { useGet, useSave } from "../../store/useStores";
 import { ImageSource } from "../../assets/Image";
 import * as Yup from "yup";
 import ButtonCommon from "../../component/Button";
+import { DeviceType } from "../../hooks/useDivices";
+import { useMemo } from "react";
+import { showError, showSuccess } from "../../helper/toast";
 
 const validationSchema = () => {
     return Yup.object().shape({
@@ -19,18 +22,29 @@ const validationSchema = () => {
 
 const LoginScreen = () => {
     const save = useSave()
+    const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+    const isMobile = useMemo(() => {
+        return deviceType === DeviceType.MOBILE
+    }, [deviceType])
     const handleLogin = async (values: any) => {
-        await AuthServices.login({
-            username: values?.username,
-            password: values?.password
-        }).then(async (data) => {
-            if (data?.data?.accessToken) {
-                await AuthServices.saveToken(data?.data?.accessToken)
-                await AuthServices.saveUserToLocalStorage(data?.data?.user)
-                save(cacheKeys.IS_LOGGED, true)
-            }
-        })
+        try {
+            await AuthServices.login({
+                username: values?.username,
+                password: values?.password
+            }).then(async (data) => {
+                if (data?.data?.accessToken) {
+                    await AuthServices.saveToken(data?.data?.accessToken)
+                    await AuthServices.saveUserToLocalStorage(data?.data?.user)
+                    save(cacheKeys.IS_LOGGED, true)
+                    showSuccess('Đăng nhập thành công!')
+                }
+            })
+        } catch (e: any) {
+            const message = e?.response?.data?.message || 'Đã có lỗi!'
+            showError(message)
+        }
     }
+
     return <Box>
         <Formik
             initialValues={{
@@ -45,10 +59,12 @@ const LoginScreen = () => {
                 return <Box sx={{ width: '100vw', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#13167d', flexDirection: 'column' }}>
                     <Box sx={{ width: '75vw', backgroundColor: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRadius: '8px' }}>
                         <Grid container>
-                            <Grid item xs={8}>
-                                <img src={ImageSource.loginAvatar} alt='' style={{ width: '100%', height: '60vh', objectFit: 'cover', borderRadius: '8px', }} />
-                            </Grid>
-                            <Grid item xs={4} p={1}>
+                            {!isMobile &&
+                                <Grid item xs={12} md={8}>
+                                    <img src={ImageSource.loginAvatar} alt='' style={{ width: '100%', height: '60vh', objectFit: 'cover', borderRadius: '8px', }} />
+                                </Grid>
+                            }
+                            <Grid item xs={12} md={4} p={1}>
                                 <Box sx={{ display: 'flex', height: '100%' }}>
                                     <Box>
                                         <Box pb={2} pt={5}>

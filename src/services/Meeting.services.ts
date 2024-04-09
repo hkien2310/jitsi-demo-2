@@ -5,7 +5,6 @@ import httpServices from "./httpServices";
 
 class MeetingServices {
   getListMeeting(body: IRequestGetListMeeting) {
-    console.log(body, 'bodybody')
     return httpServices.get(`${GET_LIST_MEET}`, {params: body});
     // return httpServices.get(`${GET_LIST_MEET}`);
   };

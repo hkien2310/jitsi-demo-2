@@ -1,8 +1,11 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, Slide, SxProps, Theme } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
-import React from "react";
+import React, { useMemo } from "react";
 import { ImageSource } from "../../assets/Image";
 import TypographyCommon from "../Typography";
+import cacheKeys from "../../const/cachedKeys";
+import { useGet } from "../../store/useStores";
+import { DeviceType } from "../../hooks/useDivices";
 
 interface IProps {
   open: boolean;
@@ -24,6 +27,10 @@ const Transition = React.forwardRef(function Transition(
 
 const DialogCommon = (props: IProps) => {
   const { open, handleClose, title, content, footer, sx } = props;
+  const deviceType = useGet(cacheKeys.DEVICE_TYPE)
+  const isMobile = useMemo(() => {
+    return deviceType === DeviceType.MOBILE
+  }, [deviceType])
 
   return (
     <Dialog
@@ -37,10 +44,10 @@ const DialogCommon = (props: IProps) => {
     >
       <Box sx={{ borderRadius: `{8px} !important` }}>
         <Box
-         
+
           sx={{
-            paddingLeft: "40px",
-            paddingRight: "40px",
+            paddingLeft: isMobile ? '20px': "40px",
+            paddingRight: isMobile ? '20px': "40px",
             paddingTop: "18px",
             paddingBottom: "18px",
             display: "flex",
@@ -63,10 +70,18 @@ const DialogCommon = (props: IProps) => {
             <Box></Box>
           )}
           <Button sx={{ padding: 0, minWidth: 0 }} onClick={() => handleClose()}>
-            <img src={ImageSource.close} />
+            <img src={ImageSource.close} alt={''} />
           </Button>
         </Box>
-        <DialogContent sx={{ paddingLeft: '40px', paddingRight: '40px', paddingTop: '36px', paddingBottom: '36px', ...sx }} >{content}</DialogContent>
+        <DialogContent sx={{
+          paddingLeft: isMobile ? '20px': '40px',
+          paddingRight: isMobile ? '20px': '40px',
+          paddingTop: '36px',
+          paddingBottom: '36px',
+          ...sx
+        }}>
+          {content}
+        </DialogContent>
         <DialogActions>{footer && footer}</DialogActions>
       </Box>
     </Dialog>

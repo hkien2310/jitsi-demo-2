@@ -13,6 +13,10 @@ import { typeMeetingOptions } from "../AddMetting";
 import { colors } from "../../../const/colors";
 import { IconsSource } from "../../../const/icons";
 import { ImageSource } from "../../../assets/Image";
+import cacheKeys from "../../../const/cachedKeys";
+import useStore, { useGet } from "../../../store/useStores";
+import { useMemo } from "react";
+import { DeviceType } from "../../../hooks/useDivices";
 
 
 interface IProps {
@@ -21,6 +25,7 @@ interface IProps {
     onClickDelete: (row: any) => void
     onComplete: (row: any) => void
     onJoin: (row: any) => void
+    isMobile: boolean
 }
 
 export enum EnumMeetingStatus {
@@ -47,9 +52,8 @@ const meetingColorStatusBg: { [key: string]: string } = {
 };
 
 const columnsMeet = (props: IProps) => {
-    const { onClickDetail, onClickNote, onClickDelete, onComplete, onJoin } = props
+    const { onClickDetail, onClickNote, onClickDelete, onComplete, onJoin, isMobile } = props
     const userInfo = AuthServices.getUserLocalStorage();
-
 
     const columns: GridColDef[] = [
         {
@@ -66,7 +70,7 @@ const columnsMeet = (props: IProps) => {
             field: "title",
             headerName: "Tên cuộc họp",
             flex: 1,
-            // minWidth: 120,
+            minWidth: isMobile ? 120 : undefined,
             align: 'center',
             headerAlign: 'center',
             editable: false,
@@ -76,6 +80,7 @@ const columnsMeet = (props: IProps) => {
             field: "description",
             headerName: "Mô tả",
             flex: 1,
+            minWidth: isMobile ? 150 : undefined,
             // minWidth: 150,
             align: 'center',
             headerAlign: 'center',
@@ -85,6 +90,7 @@ const columnsMeet = (props: IProps) => {
         {
             field: "decentralize",
             headerName: "Thành viên",
+            minWidth: isMobile ? 250 : undefined,
             // minWidth: 250,
             editable: false,
             sortable: false,
@@ -100,6 +106,7 @@ const columnsMeet = (props: IProps) => {
             field: "type",
             headerName: "Loại phiên họp",
             flex: 1,
+            minWidth: isMobile ? 200 : undefined,
             // minWidth: 200,
             editable: false,
             sortable: false,
@@ -114,6 +121,7 @@ const columnsMeet = (props: IProps) => {
             field: "startTime",
             headerName: "Thời gian từ",
             flex: 1,
+            minWidth: isMobile ? 200 : undefined,
             // minWidth: 200,
             editable: false,
             sortable: false,
@@ -128,6 +136,7 @@ const columnsMeet = (props: IProps) => {
             field: "endTime",
             headerName: "Thời gian hết hạn",
             flex: 1,
+            minWidth: isMobile ? 200 : undefined,
             // minWidth: 200,
             editable: false,
             sortable: false,
@@ -142,6 +151,7 @@ const columnsMeet = (props: IProps) => {
             field: "location",
             headerName: "Địa điểm",
             flex: 1,
+            minWidth: isMobile ? 125 : undefined,
             // minWidth: 125,
             editable: false,
             sortable: false,
@@ -153,6 +163,7 @@ const columnsMeet = (props: IProps) => {
             headerName: "Trạng thái",
             // type: "number",
             flex: 1,
+            minWidth: isMobile ? 125 : undefined,
             // minWidth: 125,
             editable: false,
             sortable: false,

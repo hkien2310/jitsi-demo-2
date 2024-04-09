@@ -50,13 +50,9 @@ const CallScreen = () => {
     };
     const elements = Array.from(document.getElementsByTagName('span'))
     const elementssss = Array.from(document.getElementsByClassName('css-109tr2-emptyMessage'))
-    console.log(elementssss, 'elementselements')
     elements?.forEach((e) => {
-        console.log(e?.textContent, 'ádasdas')
-
         if (e?.textContent?.includes('There are no polls in the meeting yet. Start a poll here!')) {
             e.textContent = 'aaaaa';
-            console.log(e, 'ádasdas')
           }
     })
     

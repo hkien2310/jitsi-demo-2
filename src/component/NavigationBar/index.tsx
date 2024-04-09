@@ -26,6 +26,7 @@ import ButtonCommon from '../Button';
 import AuthServices from '../../services/Auth.services';
 import cacheKeys from '../../const/cachedKeys';
 import { useGet, useSave } from '../../store/useStores';
+import { DeviceType } from '../../hooks/useDivices';
 
 const drawerWidth = 350;
 
@@ -95,31 +96,30 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const controlRaw = useGet(cacheKeys.CONTROL_SIDE_BAR)
+    const deviceType = useGet(cacheKeys.DEVICE_TYPE)
     const control = React.useMemo(() => {
-        if(controlRaw === undefined) {
-            return true
+        if (controlRaw === undefined) {
+            return deviceType === DeviceType.PC ? true : false
         } else {
             return controlRaw
         }
-    }, [controlRaw])
+    }, [controlRaw, deviceType])
     const save = useSave()
 
     const handleToggle = (nextAction?: () => void) => {
         save(cacheKeys.CONTROL_SIDE_BAR, !control)
-        if(control) {
+        if (control) {
             setTimeout(() => {
                 nextAction?.()
                 // save(cacheKeys.CONTROL_SIDE_BAR, !control)
             }, 200)
         }
-
     }
-
 
     return (
         <Box sx={{ display: 'flex', maxWidth: '100vw', height: '100vh' }}>
             <CssBaseline />
-            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 1201 }}>
+            <AppBar position="fixed" sx={{ backgroundColor: colors.header.main, zIndex: 1201, minHeight: '64px' }}>
                 <Toolbar>
                     <Box sx={{ display: 'flex', flexDirection: 'row', flex: 1, alignItems: 'center', justifyContent: 'space-between' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -137,19 +137,24 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                             </TypographyCommon>
                         </Box>
                         <Box>
-                            <UserRight />
+                            {deviceType !== DeviceType.MOBILE &&
+                                <UserRight />
+                            }
                         </Box>
                     </Box>
                 </Toolbar>
             </AppBar>
             <Drawer
+                // variant="temporary"
                 sx={{
                     width: drawerWidth,
                     flexShrink: 0,
                     '& .MuiDrawer-paper': {
                         width: drawerWidth,
                         boxSizing: 'border-box',
+                        height: '100vh',
                         backgroundColor: colors.background.sideBar,
+                        minWidth: deviceType === DeviceType.MOBILE ? '100vw' : undefined
                         // minWidth: '25vw',
                     },
                 }}
@@ -167,7 +172,7 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
                     {listSideBar.map((text, index) => (
                         <ListItem key={index} disablePadding onClick={() => {
                             handleToggle(() => navigate(text.path))
-                            
+
                         }}>
                             <ListItemButton
                                 style={{
@@ -211,16 +216,21 @@ const NavigationBar = ({ children }: MainLayoutProps) => {
 
             </Drawer>
 
-            <Main open={Boolean(control)} sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', }}>
+            <Main open={Boolean(control)} sx={{
+                width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
+                padding: ( Boolean(control) && deviceType === DeviceType.MOBILE) ? 0 : '24px'
+                }}>
                 <DrawerHeader />
-                <Box sx={{ flex: 1 }} onClick={(e) => {
+                <Box sx={{ height: '100%', width: '100%' }} onClick={(e) => {
                     if (Boolean(control)) {
                         handleToggle()
                     } else {
                         e.preventDefault()
                     }
                 }}>
-                    {children}
+                    {Boolean(control) && deviceType === DeviceType.MOBILE ? <></> :
+                        children
+                    }
                 </Box>
                 {/* {props?.children} */}
             </Main>
